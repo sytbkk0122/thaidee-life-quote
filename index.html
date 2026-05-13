@@ -1165,7 +1165,10 @@ function submitOrder(){
   };
 
   // 1️⃣ 發送到本地服務器（寫入 JSON）
-  const LOCAL_SERVER = 'http://localhost:9999';
+  // 自動判斷後端地址（本地開發或 Railway）
+  const LOCAL_SERVER = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:9999'
+    : 'https://thaidee-life-backend-production.up.railway.app';
 
   // 2️⃣ 發送到 Discord（即時通知）
   const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1504142227029491783/UNUoYZBEUg8LL6jFLKlPqE75MOCet7I0_UQf-E3JyvnnnXC8cr1MkW9yooSPYz0yMMhO';
