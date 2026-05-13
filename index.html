@@ -1057,7 +1057,7 @@ function setCity(){
   renderAirportOptions();
   updatePrice();
 }
-function setVehicle(){ S.days[S.currentDay].vehicle = document.getElementById('sel-vehicle').value; updatePrice(); }
+function setVehicle(){ S.days[S.currentDay].vehicle = document.getElementById('sel-vehicle').value; renderAirportOptions(); updatePrice(); }
 function setAirport(){ S.days[S.currentDay].airport = document.getElementById('sel-airport').value; updatePrice(); }
 function setHotel(){ S.days[S.currentDay].hotel = document.getElementById('sel-hotel').value; updatePrice(); }
 function setMeal(m){ S.days[S.currentDay][m] = document.getElementById(`sel-${m}`).value; }
