@@ -1324,20 +1324,38 @@ init();
 <script>
 function showPage(page) {
   // 隱藏所有頁面
-  document.getElementById('page-home').style.display = 'none';
-  document.getElementById('page-quote').style.display = 'none';
-  document.getElementById('page-contact').style.display = 'none';
+  const home = document.getElementById('page-home');
+  const quote = document.getElementById('page-quote');
+  const contact = document.getElementById('page-contact');
+
+  if (home) home.style.display = 'none';
+  if (quote) quote.style.display = 'none';
+  if (contact) contact.style.display = 'none';
 
   // 顯示選中的頁面
-  document.getElementById('page-' + page).style.display = 'block';
+  const target = document.getElementById('page-' + page);
+  if (target) {
+    target.style.display = 'block';
+  }
 
   // 滑動到頂部
   window.scrollTo(0, 0);
 }
 
-// 頁面加載時顯示首頁
-window.addEventListener('load', function() {
+// 立即初始化首頁（不等待load事件）
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function() {
+    showPage('home');
+  });
+} else {
   showPage('home');
+}
+
+// 備用：確保首頁顯示
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    showPage('home');
+  }, 100);
 });
 </script>
 
