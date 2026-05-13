@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>鉅星旅運 × 泰迪生活｜泰國行程規劃</title>
+<style>
+:root{
+  --brand:#8B3A1A; --brand-d:#5C2410; --brand-m:#C0522A;
+  --gold:#D4860A;  --gold-l:#FFF8E1;
+  --green:#1A6E3C; --green-l:#E8F5EE;
+  --cream:#F7F2EA; --sand:#EDD9B8; --light:#F5C9A8;
+  --dark:#1A1A1A;  --mid:#555; --lite:#888;
+  --bg:#F4F0EB;    --card:#fff;
+  --border:#E4D9CC; --radius:14px; --radius-s:9px;
+  --shadow:0 2px 16px rgba(139,58,26,.10);
+  --font:"微軟正黑體","Noto Sans TC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14px;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── Header ── */
+#header{
+  background:linear-gradient(135deg,var(--brand) 0%,var(--brand-d) 100%);
+  color:#fff;padding:0 20px;display:flex;align-items:center;gap:16px;flex-shrink:0;height:56px;
+}
+.brand-logo{display:flex;align-items:center;gap:8px}
+.brand-logo .icon{font-size:22px}
+.brand-logo .name{font-size:16px;font-weight:700;letter-spacing:1px}
+.brand-logo .sub{font-size:10px;opacity:.7;margin-left:2px}
+#cinfo{display:flex;gap:8px;flex:1;align-items:center;flex-wrap:wrap}
+#cinfo input,#cinfo select{
+  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);
+  color:#fff;border-radius:7px;padding:4px 10px;font-size:12px;font-family:var(--font);outline:none;
+}
+#cinfo input::placeholder{color:rgba(255,255,255,.6)}
+#cinfo select option{color:var(--dark);background:#fff}
+#cinfo label{color:rgba(255,255,255,.75);font-size:11px;white-space:nowrap}
+.hgroup{display:flex;align-items:center;gap:5px}
+#btn-generate{
+  background:var(--gold);color:#fff;border:none;border-radius:9px;
+  padding:7px 18px;font-weight:700;font-size:13px;cursor:pointer;
+  font-family:var(--font);white-space:nowrap;flex-shrink:0;
+  transition:all .15s;box-shadow:0 2px 12px rgba(212,134,10,.4);
+}
+#btn-generate:hover{filter:brightness(1.1);transform:translateY(-1px)}
+
+/* ── Main layout ── */
+#main{display:flex;flex:1;overflow:hidden}
+
+/* ── Day col ── */
+#day-col{width:80px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+#day-col h3{font-size:10px;color:var(--lite);padding:10px 0 6px;text-align:center;border-bottom:1px solid var(--border);letter-spacing:1px}
+.day-tab{padding:10px 4px;text-align:center;cursor:pointer;border-bottom:1px solid #f0ebe4;transition:background .15s;position:relative}
+.day-tab:hover{background:#fff8f4}
+.day-tab.active{background:var(--light);border-left:3px solid var(--brand)}
+.day-num{font-size:11px;font-weight:700;color:var(--brand)}
+.day-dots{display:flex;justify-content:center;gap:2px;margin-top:4px}
+.day-dot{width:5px;height:5px;border-radius:50%;background:#e0d5c8}
+.day-dot.on{background:var(--brand)}
+.day-add{padding:8px;text-align:center;cursor:pointer;color:var(--lite);font-size:22px}
+.day-add:hover{color:var(--brand)}
+.day-del{position:absolute;top:3px;right:3px;font-size:9px;color:#ccc;cursor:pointer;display:none}
+.day-tab:hover .day-del{display:block}
+.day-del:hover{color:#e53935}
+
+/* ── Workspace ── */
+#workspace{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* Slot builder */
+#slot-builder{background:#fff;border-bottom:2px solid var(--border);padding:12px 16px;flex-shrink:0}
+#slot-title{font-size:11px;color:var(--lite);margin-bottom:10px;letter-spacing:1px}
+.slots-row{display:flex;gap:10px}
+
+.slot-wrap{flex:1;min-width:0}
+.slot-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 10px;border-radius:var(--radius-s) var(--radius-s) 0 0;
+  cursor:pointer;font-size:11px;font-weight:700;
+  background:var(--bg);border:1.5px solid var(--border);border-bottom:none;
+  transition:all .15s;
+}
+.slot-header.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.slot-header:not(.active):hover{border-color:var(--brand-m);color:var(--brand-m)}
+.slot-header .slot-count{font-size:10px;font-weight:400;opacity:.8}
+.slot-body{
+  border:1.5px solid var(--border);border-top:none;
+  border-radius:0 0 var(--radius-s) var(--radius-s);
+  background:#fff;min-height:64px;padding:5px;
+}
+.slot-header.active + .slot-body{border-color:var(--brand)}
+.slot-item{
+  display:flex;align-items:center;gap:4px;
+  background:var(--cream);border-radius:6px;padding:4px 6px;margin-bottom:3px;
+}
+.slot-item-name{font-size:11px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slot-item-x{background:none;border:none;color:#bbb;cursor:pointer;font-size:13px;padding:0;flex-shrink:0;line-height:1}
+.slot-item-x:hover{color:#e53935}
+.slot-empty-hint{font-size:10px;color:#bbb;text-align:center;padding:10px 0}
+.slot-full{font-size:10px;color:var(--gold);font-weight:600;text-align:center;padding:4px 0}
+
+/* Hotel row */
+.hotel-row{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.hm-lbl{font-size:10px;color:var(--lite);font-weight:600;white-space:nowrap}
+.hm-sel{border:1px solid var(--border);border-radius:7px;padding:4px 8px;font-size:11px;font-family:var(--font);background:#fff;outline:none;color:var(--dark);cursor:pointer}
+.hm-sel:focus{border-color:var(--brand)}
+
+/* Browser */
+#browser{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:10px 16px}
+#filter-bar{display:flex;gap:6px;margin-bottom:8px;align-items:center;flex-wrap:wrap;flex-shrink:0}
+#search-box{border:1.5px solid var(--border);border-radius:20px;padding:5px 12px 5px 32px;font-size:12px;font-family:var(--font);outline:none;width:180px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center}
+#search-box:focus{border-color:var(--brand)}
+.tags{display:flex;gap:4px;flex-wrap:wrap}
+.tag{padding:3px 10px;border-radius:20px;border:1.5px solid var(--border);font-size:11px;cursor:pointer;background:#fff;transition:all .15s;white-space:nowrap;font-weight:500}
+.tag:hover,.tag.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+#cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;overflow-y:auto;flex:1;align-content:start;padding-right:4px}
+#cards-grid::-webkit-scrollbar{width:4px}
+#cards-grid::-webkit-scrollbar-thumb{background:var(--sand);border-radius:10px}
+
+.acard{
+  background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius-s);
+  padding:10px;cursor:pointer;transition:all .18s;position:relative;display:flex;flex-direction:column;gap:3px;
+}
+.acard:hover{border-color:var(--brand-m);box-shadow:var(--shadow);transform:translateY(-1px)}
+.acard.in-use{border-color:var(--brand);background:var(--light)}
+.acard-badges{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:2px}
+.badge{font-size:9px;padding:2px 5px;border-radius:20px;font-weight:700}
+.badge-r{color:#fff}
+.badge-new{background:#e53935;color:#fff}
+.badge-hot{background:#ff6f00;color:#fff}
+.badge-cat{background:#f0ebe4;color:var(--mid)}
+.acard-name{font-size:12px;font-weight:700;line-height:1.3}
+.acard-desc{font-size:10px;color:var(--lite);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.acard-foot{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.acard-hrs{font-size:10px;color:var(--lite)}
+.acard-add{
+  position:absolute;bottom:7px;right:7px;background:var(--brand);color:#fff;border:none;
+  border-radius:50%;width:20px;height:20px;font-size:13px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;
+}
+.acard:hover .acard-add{opacity:1}
+.acard-add.added{opacity:1!important;background:var(--green)}
+#no-results{text-align:center;color:var(--lite);padding:40px;grid-column:1/-1}
+
+/* ── Right: summary ── */
+#summary-col{width:200px;background:#fff;border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+#summary-col h3{font-size:10px;color:var(--lite);padding:10px 12px 6px;border-bottom:1px solid var(--border);letter-spacing:1px}
+.mini-itinerary{padding:8px 12px;flex:1}
+.mini-day{margin-bottom:8px}
+.mini-day-lbl{font-size:10px;font-weight:700;color:var(--brand);margin-bottom:2px}
+.mini-spot{font-size:10px;color:var(--mid);padding-left:6px;line-height:1.6;display:flex;gap:3px}
+.pax-info{padding:10px 12px;border-top:1px solid var(--border)}
+.pax-row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px}
+.pax-lbl{color:var(--mid)}
+.pax-val{font-weight:700;color:var(--dark)}
+.pax-total{display:flex;flex-direction:column;align-items:center;padding:10px 12px;border-top:1px solid var(--border);background:var(--cream);border-radius:0 0 0 0}
+.pax-total .lbl{font-size:10px;color:var(--mid)}
+.pax-total .price{font-size:18px;font-weight:900;color:var(--brand);margin-top:2px}
+.pax-total .sub{font-size:10px;color:var(--lite);margin-top:2px}
+.vehicle-row{padding:8px 12px;border-top:1px solid var(--border)}
+.vehicle-row label{font-size:10px;color:var(--lite);display:block;margin-bottom:3px}
+.vehicle-row select{width:100%;border:1px solid var(--border);border-radius:7px;padding:4px 6px;font-size:10px;font-family:var(--font);outline:none}
+
+/* ── Modal ── */
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px}
+#modal.open{display:flex}
+#modal-inner{background:#fff;border-radius:var(--radius);width:100%;max-width:720px;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;margin:auto}
+#modal-head{background:linear-gradient(135deg,var(--brand),var(--brand-d));color:#fff;padding:22px 28px}
+#modal-head h1{font-size:19px;letter-spacing:2px;margin-bottom:3px}
+#modal-head p{opacity:.8;font-size:11px}
+#modal-body{padding:20px 28px}
+.q-sec{margin-bottom:18px}
+.q-sec-title{font-size:11px;font-weight:700;color:#fff;background:var(--green);padding:5px 12px;border-radius:6px;margin-bottom:10px;letter-spacing:1px}
+.q-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.q-info-item{display:flex;gap:6px;font-size:12px}
+.q-info-lbl{color:var(--lite);width:65px;flex-shrink:0}
+.q-info-val{font-weight:600}
+.q-day{border:1.5px solid var(--border);border-radius:var(--radius-s);margin-bottom:8px;overflow:hidden}
+.q-day-head{background:linear-gradient(90deg,var(--light),#fff);padding:6px 12px;font-weight:700;font-size:12px;color:var(--brand);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.q-day-hotel{font-size:10px;color:#1565c0;font-weight:400}
+.q-day-body{padding:8px 12px}
+.q-slot-section{margin-bottom:6px}
+.q-slot-lbl{font-size:10px;font-weight:700;color:var(--lite);margin-bottom:3px}
+.q-slot-item{font-size:12px;color:var(--dark);padding-left:8px;line-height:1.7}
+.q-meals{font-size:10px;color:var(--lite);margin-top:5px;padding-top:5px;border-top:1px dashed var(--border)}
+.price-box{background:linear-gradient(135deg,var(--light),#fff3e8);border:2px solid var(--brand);border-radius:var(--radius);padding:18px 22px;text-align:center;margin-bottom:16px}
+.price-box .plbl{font-size:12px;color:var(--mid)}
+.price-box .pmain{font-size:28px;font-weight:900;color:var(--brand);margin-top:2px}
+.price-box .psub{font-size:13px;color:var(--mid);margin-top:4px}
+.price-box .pnote{font-size:10px;color:var(--lite);margin-top:8px}
+.inc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:11px}
+.inc-y{color:var(--green);display:flex;gap:5px;align-items:flex-start;line-height:1.4}
+.inc-n{color:#e53935;display:flex;gap:5px;align-items:flex-start;line-height:1.4}
+.q-note{font-size:10px;color:var(--lite);line-height:1.8;border-top:1px solid var(--border);padding-top:10px;margin-top:10px}
+.modal-actions{padding:14px 28px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.mbtn{padding:8px 18px;border-radius:8px;border:none;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.mbtn-close{background:var(--bg);color:var(--mid)}
+.mbtn-line{background:#06C755;color:#fff}
+.mbtn-print{background:var(--brand);color:#fff}
+
+/* Slot picker popover */
+#slot-picker{position:fixed;background:#fff;border:1.5px solid var(--brand);border-radius:var(--radius-s);box-shadow:0 8px 32px rgba(0,0,0,.2);padding:10px;z-index:500;display:none;min-width:150px}
+#slot-picker.open{display:block}
+#slot-picker h4{font-size:10px;color:var(--lite);margin-bottom:6px;letter-spacing:1px}
+.sp-btn{display:block;width:100%;text-align:left;padding:7px 10px;border:none;background:none;border-radius:6px;font-family:var(--font);font-size:12px;cursor:pointer;transition:background .12s}
+.sp-btn:hover{background:var(--light);color:var(--brand);font-weight:700}
+
+/* Toast */
+#toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:9999;display:none}
+
+@media print{
+  #header,#main{display:none}
+  #modal{position:static;background:none;padding:0;display:block}
+  #modal-inner{box-shadow:none;max-width:100%;border-radius:0}
+  .modal-actions{display:none}
+}
+#day-col::-webkit-scrollbar,#summary-col::-webkit-scrollbar{width:4px}
+#day-col::-webkit-scrollbar-thumb,#summary-col::-webkit-scrollbar-thumb{background:var(--sand);border-radius:10px}
+
+/* ══════ MOBILE RWD ══════════════════════════════ */
+@media(max-width:768px){
+  body{height:auto;overflow:auto;font-size:13px}
+
+  /* Header: 兩行 */
+  #header{height:auto;padding:10px 12px;flex-wrap:wrap;gap:8px}
+  .brand-logo .name{font-size:14px}
+  #cinfo{gap:6px}
+  #cinfo input,#cinfo select{font-size:12px;padding:5px 8px}
+  .hgroup label{font-size:11px}
+  #btn-generate{padding:8px 14px;font-size:12px;width:100%;margin-top:4px}
+
+  /* Main: 垂直堆疊 */
+  #main{flex-direction:column;overflow:visible;height:auto}
+
+  /* Day tabs → 水平捲動列 */
+  #day-col{
+    width:100%;height:auto;border-right:none;
+    border-bottom:1px solid var(--border);
+    flex-direction:row;overflow-x:auto;overflow-y:hidden;
+    flex-shrink:0;
+  }
+  #day-col h3{display:none}
+  .day-tab{
+    flex-shrink:0;padding:10px 16px;border-bottom:none;
+    border-right:1px solid #f0ebe4;min-width:60px;
+  }
+  .day-tab.active{border-left:none;border-bottom:3px solid var(--brand);background:var(--light)}
+  .day-add{flex-shrink:0;padding:10px 14px;font-size:20px}
+  .day-del{display:none!important}
+
+  /* Workspace: 全寬 */
+  #workspace{overflow:visible}
+
+  /* Slot builder */
+  #slot-builder{padding:10px 12px}
+  #slot-title{font-size:10px;margin-bottom:8px}
+  .slots-row{gap:6px}
+  .slot-header{padding:8px 8px;font-size:12px}
+  .slot-body{min-height:52px}
+  .slot-empty-hint{font-size:10px;padding:6px 0}
+
+  /* Hotel row: 換行 */
+  .hotel-row{flex-wrap:wrap;gap:6px}
+  .hm-sel{font-size:11px;max-width:calc(100% - 30px)}
+
+  /* Browser / cards */
+  #browser{padding:8px 12px;overflow:visible}
+  #filter-bar{gap:5px}
+  #search-box{width:140px;font-size:11px}
+  .tag{font-size:10px;padding:3px 8px}
+  #cards-grid{
+    grid-template-columns:repeat(2,1fr);
+    gap:7px;overflow-y:visible;
+    max-height:none;
+  }
+  .acard{padding:8px}
+  .acard-name{font-size:11px}
+  .acard-desc{font-size:10px;-webkit-line-clamp:2}
+  .acard-add{width:22px;height:22px;font-size:14px;opacity:1}
+
+  /* Summary col: 移到最下面，平鋪 */
+  #summary-col{
+    width:100%;border-left:none;border-top:1px solid var(--border);
+    flex-direction:row;flex-wrap:wrap;
+  }
+  #summary-col h3{width:100%}
+  .mini-itinerary{min-width:200px;flex:1;max-height:160px;overflow-y:auto}
+  .vehicle-row{width:200px}
+  .pax-info{width:100%;border-top:1px solid var(--border)}
+  .pax-total{width:100%}
+  .pax-row{font-size:12px}
+
+  /* Modal */
+  #modal{padding:8px}
+  #modal-inner{border-radius:10px}
+  #modal-head{padding:16px 16px 0}
+  #modal-head h1{font-size:14px}
+  #modal-body{padding:14px 16px}
+  .q-info-grid{grid-template-columns:1fr}
+  .modal-actions{padding:10px 16px;gap:6px;flex-wrap:wrap}
+  .mbtn{padding:8px 14px;font-size:11px;flex:1}
+
+  /* Slot picker */
+  #slot-picker{min-width:130px}
+  .sp-btn{padding:10px 10px;font-size:13px}
+
+  /* Toast */
+  #toast{font-size:12px;width:80%;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- 🌐 導航菜單 -->
+<nav id="navbar" style="background:linear-gradient(135deg,#8B3A1A 0%,#5C2410 100%);padding:12px 20px;display:flex;gap:20px;color:#fff;align-items:center;flex-wrap:wrap;border-bottom:2px solid #D4860A">
+  <div style="font-weight:700;cursor:pointer;font-size:16px" onclick="showPage('home')">🏠 泰迪生活</div>
+  <div style="flex:1"></div>
+  <button onclick="showPage('home')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:5px 15px;border-radius:5px">首頁</button>
+  <button onclick="showPage('quote')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:5px 15px;border-radius:5px">立即報價</button>
+  <button onclick="showPage('contact')" style="background:none;border:none;color:#fff;cursor:pointer;font-size:14px;padding:5px 15px;border-radius:5px">聯絡我們</button>
+</nav>
+
+<!-- 📄 首頁 -->
+<div id="page-home" style="display:block;overflow-y:auto;flex:1">
+  <div style="padding:40px 20px;text-align:center;background:linear-gradient(135deg,#F7F2EA 0%,#EDD9B8 100%);min-height:60vh;display:flex;flex-direction:column;justify-content:center">
+    <h1 style="font-size:48px;margin-bottom:20px;color:#8B3A1A">🌴 泰迪生活</h1>
+    <p style="font-size:18px;margin-bottom:30px;color:#555">您在泰國一站式生活服務</p>
+    <button onclick="showPage('quote')" style="background:#D4860A;color:#fff;border:none;padding:15px 40px;font-size:16px;border-radius:10px;cursor:pointer;font-weight:700;max-width:200px;margin:0 auto">立即開始報價</button>
+  </div>
+</div>
+
+<!-- 📝 行程報價頁 -->
+<div id="page-quote" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+
+<!-- HEADER -->
+<div id="header">
+  <div class="brand-logo">
+    <span class="icon">🌴</span>
+    <div>
+      <div class="name">泰迪生活 Thai-Dee Life</div>
+      <div class="sub">鉅星旅運 × AI 訂製行程</div>
+    </div>
+  </div>
+  <div id="cinfo">
+    <div class="hgroup"><label>姓名</label><input id="c-name" placeholder="客戶/團名" style="width:100px"></div>
+    <div class="hgroup"><label>出發</label><input id="c-dep" type="date" style="width:128px"></div>
+    <div class="hgroup"><label>回程</label><input id="c-ret" type="date" style="width:128px"></div>
+    <div class="hgroup"><label>大人</label><input id="c-adults" type="number" value="2" min="1" max="200" style="width:46px"></div>
+    <div class="hgroup"><label>兒童</label><input id="c-kids" type="number" value="0" min="0" style="width:38px"></div>
+    <div class="hgroup"><label>房</label><input id="c-rooms" type="number" value="1" min="1" style="width:36px"></div>
+  </div>
+  <button id="btn-generate">✨ 產生行程報價單</button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- Day tabs -->
+  <div id="day-col">
+    <h3>行程天數</h3>
+    <div id="day-tabs"></div>
+    <div class="day-add" id="btn-add-day">＋</div>
+  </div>
+
+  <!-- Workspace -->
+  <div id="workspace">
+    <div id="slot-builder">
+      <div id="slot-title">DAY 1 ── 點時段啟用，再點景點卡 ＋ 新增（每時段最多 4 個）</div>
+      <div class="slots-row" id="slots-row"></div>
+      <div class="hotel-row">
+        <span class="hm-lbl">🏨 住宿</span>
+        <select class="hm-sel" id="sel-hotel" onchange="setHotel()"></select>
+        <span class="hm-lbl" style="margin-left:8px">早</span>
+        <select class="hm-sel" id="sel-bkf" onchange="setMeal('bkf')"></select>
+        <span class="hm-lbl">午</span>
+        <select class="hm-sel" id="sel-lun" onchange="setMeal('lun')"></select>
+        <span class="hm-lbl">晚</span>
+        <select class="hm-sel" id="sel-din" onchange="setMeal('din')"></select>
+      </div>
+    </div>
+
+    <div id="browser">
+      <div id="filter-bar">
+        <input id="search-box" placeholder="搜尋景點…" oninput="renderCards()">
+        <div class="tags" id="region-tags"></div>
+        <div class="tags" id="cat-tags"></div>
+      </div>
+      <div id="cards-grid"></div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div id="summary-col">
+    <h3>行程速覽</h3>
+    <div class="mini-itinerary" id="mini"></div>
+    <div class="vehicle-row">
+      <label>🚐 包車車型</label>
+      <select id="sel-vehicle" onchange="updatePrice()">
+        <option value="4140">9人座廂型車 (4,500 THB/日)</option>
+        <option value="5060">VIP 7人座豪華廂型車</option>
+        <option value="6900">Toyota Alphard</option>
+        <option value="8280">豪華保母車</option>
+      </select>
+    </div>
+    <div class="pax-info">
+      <div class="pax-row"><span class="pax-lbl">景點費用</span><span class="pax-val" id="p-spot">NT$ 0</span></div>
+      <div class="pax-row"><span class="pax-lbl">住宿費用</span><span class="pax-val" id="p-hotel">NT$ 0</span></div>
+      <div class="pax-row"><span class="pax-lbl">包車費用</span><span class="pax-val" id="p-veh">NT$ 0</span></div>
+      <div class="pax-row"><span class="pax-lbl">導遊費用</span><span class="pax-val" id="p-guide">NT$ 0</span></div>
+    </div>
+    <div class="pax-total">
+      <div class="lbl">每人估算費用</div>
+      <div class="price" id="p-perperson">NT$ 0</div>
+      <div class="sub" id="p-total">全團 NT$ 0</div>
+    </div>
+  </div>
+</div>
+
+<!-- Slot picker popover -->
+<div id="slot-picker">
+  <h4>加入哪個時段？</h4>
+  <button class="sp-btn" onclick="confirmAdd('am')">🌅 上午</button>
+  <button class="sp-btn" onclick="confirmAdd('pm')">☀️ 下午</button>
+  <button class="sp-btn" onclick="confirmAdd('eve')">🌙 晚間</button>
+</div>
+
+<!-- Quote Modal -->
+<div id="modal">
+  <div id="modal-inner">
+    <div id="modal-head">
+      <h1>🌴 泰迪生活 × 鉅星旅運｜行程報價書</h1>
+      <p>CHILL ～ HI ～ HI ～　專屬包車・全程中文導遊・訂製行程</p>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="mbtn mbtn-close" onclick="closeModal()">關閉</button>
+      <button class="mbtn mbtn-line" onclick="copyLine()">📱 複製 LINE 格式</button>
+      <button class="mbtn mbtn-print" onclick="window.print()">🖨️ 列印 / PDF</button>
+      <button class="mbtn" style="background:#e65100;color:#fff" onclick="openOrderForm()">✅ 確認下單</button>
+    </div>
+  </div>
+</div>
+
+<!-- 下單表單 Modal -->
+<div id="order-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:400px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <h2 style="font-size:16px;margin-bottom:16px;color:var(--brand)">📧 確認下單資訊</h2>
+    <div style="margin-bottom:12px">
+      <label style="display:block;font-size:12px;color:var(--lite);margin-bottom:4px">姓名 *</label>
+      <input id="order-name" type="text" placeholder="請輸入姓名" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none">
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="display:block;font-size:12px;color:var(--lite);margin-bottom:4px">郵件 *</label>
+      <input id="order-email" type="email" placeholder="example@gmail.com" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none">
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="display:block;font-size:12px;color:var(--lite);margin-bottom:4px">電話</label>
+      <input id="order-phone" type="tel" placeholder="09xx-xxx-xxx" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none">
+    </div>
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:12px;color:var(--lite);margin-bottom:4px">備註</label>
+      <textarea id="order-note" placeholder="特殊需求、飲食禁忌等..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none;height:80px;resize:none"></textarea>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onclick="closeOrderForm()" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:#f5f5f5;color:var(--dark);font-weight:700;cursor:pointer">取消</button>
+      <button onclick="submitOrder()" style="flex:1;padding:10px;border:none;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;cursor:pointer">送出下單</button>
+    </div>
+  </div>
+  </div>
+</div>
+
+<div id="toast">✅ 已複製！貼入 LINE 即可發送</div>
+
+<script>
+/* ════ 資料 ════════════════════════════════════ */
+const EX = 0.92, SPOT_MK = 200, HOTEL_MK = 300;
+
+const REGIONS = ['全部','曼谷','芭達雅','大城近郊','清邁','普吉','蘇梅島','華欣','甲米'];
+const CATS = ['全部','文化古蹟','新地標','自然生態','購物娛樂','夜生活','水上活動','美食體驗','按摩養生','冒險體驗','特色體驗'];
+const RC = {'曼谷':'#D45B00','芭達雅':'#0277BD','大城近郊':'#6A1B9A','清邁':'#2E7D32','普吉':'#00838F','蘇梅島':'#E65100','華欣':'#4527A0','甲米':'#00695C'};
+
+// [id, region, cat, name, desc, costThb, hours, isNew, isHot]
+// 曼谷 94 筆 + 芭達雅 95 筆（Excel匯入）+ 清邁/普吉/蘇梅/華欣/甲米
+const RAW = [
+['BKKX01','曼谷','文化古蹟','大皇宮 (Grand Palace)','門票',561,2,0,1],
+['BKKX02','曼谷','文化古蹟','玉佛寺 (Wat Phra Kaew)','門票',0,2,0,1],
+['BKKX03','曼谷','文化古蹟','鄭王廟 (Wat Arun)','門票',0,2,0,1],
+['BKKX04','曼谷','文化古蹟','臥佛寺 (Wat Pho)','門票',17,2,0,0],
+['BKKX05','曼谷','文化古蹟','水門寺大佛 (Wat Paknam)','水門寺大佛 (Wat Paknam)',0,2,0,0],
+['BKKX06','曼谷','新地標','Mahanakhon SkyWalk','夕陽門票',1191,2,0,1],
+['BKKX07','曼谷','新地標','彩虹雲霄酒店 (Baiyoke Sky)','自助餐+觀景台',724,2,0,0],
+['BKKX08','曼谷','自然生態','Safari World 賽佛瑞動物園','雙園門票',860,4,0,1],
+['BKKX09','曼谷','自然生態','暹羅海洋世界 (SEA LIFE)','門票',1028,3,0,1],
+['BKKX10','曼谷','自然生態','SEA LIFE + 杜莎夫人蠟像館','套票',1376,3,0,1],
+['BKKX11','曼谷','冒險體驗','夢幻世界 (Dream World)','門票',833,5,0,1],
+['BKKX12','曼谷','冒險體驗','暹羅樂園 (Siam Amazing Park)','門票',778,5,0,0],
+['BKKX13','曼谷','冒險體驗','侏羅紀恐龍冒險樂園','門票',583,5,0,0],
+['BKKX14','曼谷','特色體驗','丹嫩莎朵大象園','ATV越野車',670,3,0,1],
+['BKKX15','曼谷','文化古蹟','古城七十六府 (Ancient City)','門票',398,2,0,0],
+['BKKX16','曼谷','文化古蹟','三頭象神博物館','門票',343,2,0,0],
+['BKKX17','曼谷','夜生活','昭披耶河公主號 (晚餐)','船票',1050,2,0,1],
+['BKKX18','曼谷','夜生活','大珍珠號 (晚餐)','船票',1159,2,0,1],
+['BKKX19','曼谷','夜生活','悅榕莊番紅花號 (日落巡航)','門票',941,2,0,1],
+['BKKX20','曼谷','夜生活','金東尼人妖秀','普通座',507,2,0,1],
+['BKKX21','曼谷','夜生活','Muay Thai Live 泰拳秀','門票',833,2,0,1],
+['BKKX22','曼谷','特色體驗','SENSE OF THAI 泰服租借','單日租借',670,3,0,0],
+['BKKX23','曼谷','購物娛樂','ICONSIAM 暹羅天地','ICONSIAM 暹羅天地',0,3,0,1],
+['BKKX24','曼谷','購物娛樂','EmSphere (最新地標)','EmSphere (最新地標)',0,3,1,0],
+['BKKX25','曼谷','購物娛樂','Siam Paragon','Siam Paragon',0,3,0,0],
+['BKKX26','曼谷','夜生活','Jodd Fairs (Rama 9)','Jodd Fairs (Rama 9)',0,3,1,0],
+['BKKX27','曼谷','夜生活','Jodd Fairs (DanNeramit 城堡)','Jodd Fairs (DanNeramit 城堡)',0,3,1,0],
+['BKKX28','曼谷','夜生活','Asiatique 河濱夜市','Asiatique 河濱夜市',0,3,0,0],
+['BKKX29','曼谷','購物娛樂','洽圖洽週末市集','洽圖洽週末市集',0,3,0,0],
+['BKKX30','曼谷','購物娛樂','美功鐵道市集','美功鐵道市集',0,3,0,0],
+['BKKX31','曼谷','購物娛樂','安帕瓦水上市場','安帕瓦水上市場',0,3,0,0],
+['BKKX32','曼谷','購物娛樂','丹嫩莎朵水上市場','包船需另付',0,3,0,0],
+['BKKX33','曼谷','新地標','巧克力莊園 (Chocolate Ville)','入園券',164,2,0,0],
+['BKKX34','曼谷','新地標','747 Cafe 飛機咖啡廳','登機券',148,2,0,0],
+['BKKX35','曼谷','文化古蹟','四面佛 (Erawan Shrine)','四面佛 (Erawan Shrine)',0,2,0,0],
+['BKKX36','曼谷','自然生態','班嘉奇蒂公園 (天空步道)','班嘉奇蒂公園 (天空步道)',0,2,0,0],
+['BKKX37','曼谷','文化古蹟','金山寺 (Wat Saket)','門票',0,2,0,0],
+['BKKX38','曼谷','文化古蹟','雲石寺 (Wat Benchamabophit)','門票',0,2,0,0],
+['BKKX39','曼谷','購物娛樂','Terminal 21 Asok','Terminal 21 Asok',0,3,0,0],
+['BKKX40','曼谷','夜生活','席娜卡琳鐵道夜市','席娜卡琳鐵道夜市',0,3,0,0],
+['BKKX41','曼谷','新地標','Ari (阿里) 網美巷','Ari (阿里) 網美巷',0,2,0,0],
+['BKKX42','曼谷','新地標','石龍軍路藝術街','石龍軍路藝術街',0,2,0,0],
+['BKKX43','曼谷','文化古蹟','曼谷國柱神廟','曼谷國柱神廟',0,2,0,0],
+['BKKX44','曼谷','文化古蹟','吉姆湯普森之家','門票',235,2,0,0],
+['BKKX45','曼谷','文化古蹟','死亡博物館','門票',235,2,0,0],
+['BKKX46','曼谷','購物娛樂','Central Village Outlet','Central Village Outlet',0,3,0,0],
+['BKKX47','曼谷','購物娛樂','Siam Premium Outlets','Siam Premium Outlets',0,3,0,0],
+['BKKX48','曼谷','新地標','曼谷藝術文化中心 (BACC)','曼谷藝術文化中心 (BACC)',0,2,0,0],
+['BKKX49','曼谷','自然生態','倫披尼公園 (大蜥蜴公園)','倫披尼公園 (大蜥蜴公園)',0,2,0,0],
+['BKKX50','曼谷','夜生活','噗市場 (Talat Phlu美食)','噗市場 (Talat Phlu美食)',0,3,0,0],
+['BKKX51','曼谷','新地標','大叔飛機市集 (Chang Chui)','大叔飛機市集 (Chang Chui)',0,2,0,0],
+['BKKX52','曼谷','夜生活','Calypso 人妖秀','門票',778,2,0,1],
+['BKKX53','曼谷','文化古蹟','巨型鞦韆 (Giant Swing)','巨型鞦韆 (Giant Swing)',0,2,0,0],
+['BKKX54','曼谷','夜生活','理查德夜市','理查德夜市',0,3,0,0],
+['BKKX55','曼谷','購物娛樂','Siam Discovery','Siam Discovery',0,3,0,0],
+['BKKX56','曼谷','購物娛樂','Siam Center','Siam Center',0,3,0,0],
+['BKKX57','曼谷','特色體驗','藍象廚藝學校','半日課程',3061,3,0,1],
+['BKKX58','曼谷','文化古蹟','曼谷杜莎夫人蠟像館','門票',724,2,0,0],
+['BKKX59','曼谷','夜生活','勝利紀念碑夜市','勝利紀念碑夜市',0,3,0,0],
+['BKKX60','曼谷','購物娛樂','空叻瑪榮水上市場','空叻瑪榮水上市場',0,3,0,0],
+['BKKX61','曼谷','新地標','The Commons 文青商場','The Commons 文青商場',0,2,0,0],
+['BKKX62','曼谷','夜生活','Huai Khwang 匯狂夜市','Huai Khwang 匯狂夜市',0,3,0,0],
+['BKKX63','曼谷','新地標','考山路 (Khaosan Road)','考山路 (Khaosan Road)',0,2,0,0],
+['BKKX64','曼谷','文化古蹟','中國城 (Yaowarat)','中國城 (Yaowarat)',0,2,0,0],
+['BKKX65','曼谷','特色體驗','Let\'s Relax 溫泉桑拿','溫泉體驗',670,3,0,0],
+['BKKX66','曼谷','新地標','Lebua State Tower','酒吧低消',1430,2,0,1],
+['BKKX67','曼谷','夜生活','一號運河夜市','最新地標',0,3,1,0],
+['BKKX68','曼谷','文化古蹟','暹羅博物館','門票',126,2,0,0],
+['BKKX69','曼谷','新地標','Open House 書店','Open House 書店',0,2,0,0],
+['BKKX70','曼谷','新地標','河畔市集 (Warehouse 30)','河畔市集 (Warehouse 30)',0,2,0,0],
+['BKKX71','曼谷','新地標','Ong Ang 運河徒步區','Ong Ang 運河徒步區',0,2,0,0],
+['BKKX72','曼谷','夜生活','Mirinn 人妖秀','門票',670,2,0,1],
+['BKKX73','曼谷','文化古蹟','蘇泰寺 (Wat Suthat)','門票',0,2,0,0],
+['BKKX74','曼谷','特色體驗','Oasis SPA','貴婦按摩',1974,3,0,1],
+['BKKX75','曼谷','特色體驗','Drip Tea 網美茶店','飲品費',126,3,0,0],
+['BKKX76','曼谷','購物娛樂','MBK Center','MBK Center',0,3,0,0],
+['BKKX77','曼谷','文化古蹟','法政大學碼頭區','法政大學碼頭區',0,2,0,0],
+['BKKX78','曼谷','特色體驗','攀岩中心 (Urban Playground)','一日體驗',670,3,0,0],
+['BKKX79','曼谷','自然生態','恰圖洽公園','恰圖洽公園',0,2,0,0],
+['BKKX80','曼谷','文化古蹟','勝利紀念碑','勝利紀念碑',0,2,0,0],
+['BKKX81','曼谷','新地標','大林江水上市場','大林江水上市場',0,2,0,0],
+['BKKX82','曼谷','新地標','廊 1919 (LHONG 1919)','廊 1919 (LHONG 1919)',0,2,0,0],
+['BKKX83','曼谷','特色體驗','Divana SPA','高端按摩',2517,3,0,1],
+['BKKX84','曼谷','購物娛樂','Union Mall','Union Mall',0,3,0,0],
+['BKKX85','曼谷','夜生活','Indy Market','在地夜市',0,3,0,0],
+['BKKX86','曼谷','新地標','Octave Rooftop','飲品費',887,2,0,1],
+['BKKX87','曼谷','新地標','Tichuca Rooftop (水母酒吧)','門票/飲品',1430,2,0,1],
+['BKKX88','曼谷','自然生態','皇太后花園','皇太后花園',0,2,0,0],
+['BKKX89','曼谷','文化古蹟','金佛寺 (Wat Traimit)','門票',0,2,0,0],
+['BKKX90','曼谷','新地標','曼谷花市','曼谷花市',0,2,0,0],
+['BKKX91','曼谷','特色體驗','泰式料理課程 (Sompong)','課程費',1104,3,0,1],
+['BKKX92','曼谷','購物娛樂','Terminal 21 Rama 3','Terminal 21 Rama 3',0,3,0,0],
+['BKKX93','曼谷','文化古蹟','國立博物館','門票',126,2,0,0],
+['BKKX94','曼谷','新地標','老百貨公司巡禮','老百貨公司巡禮',0,2,0,0],
+['PTYX01','芭達雅','文化古蹟','真理寺 (Sanctuary of Truth)','門票+導覽',615,3,0,1],
+['PTYX02','芭達雅','夜生活','蒂芬妮人妖秀 (Tiffany\'s Show)','黃金VIP',1376,2,0,1],
+['PTYX03','芭達雅','夜生活','亞特蘭蒂斯男模秀 (789 Atlantis)','門票含飲品',1213,2,0,1],
+['PTYX04','芭達雅','夜生活','69 成人秀 (6996)','門票',1050,2,0,1],
+['PTYX05','芭達雅','夜生活','泰拳比賽 (MAX Muay Thai)','門票',1376,2,0,1],
+['PTYX06','芭達雅','水上活動','哥倫比亞影業水世界','全日門票',1300,5,0,1],
+['PTYX07','芭達雅','水上活動','羅摩衍那 (Ramayana) 水樂園','全日門票',1050,5,0,1],
+['PTYX08','芭達雅','特色體驗','老虎園 (Tiger Park)','拍照套票',572,3,0,0],
+['PTYX09','芭達雅','特色體驗','怪獸水族館','門票',159,3,0,0],
+['PTYX10','芭達雅','冒險體驗','東芭樂園 (Nong Nooch)','門票+車+表演',702,5,0,0],
+['PTYX11','芭達雅','冒險體驗','小人國景點 (Mini Siam)','門票',289,5,0,0],
+['PTYX12','芭達雅','自然生態','海底世界 (Underwater World)','門票',507,3,0,0],
+['PTYX13','芭達雅','特色體驗','芭達雅高空彈跳','單次彈跳',1974,3,0,1],
+['PTYX14','芭達雅','特色體驗','海上漂浮咖啡廳 (Tappia)','門票+釣烏賊',670,3,0,0],
+['PTYX15','芭達雅','特色體驗','實彈射擊中心','25發子彈',1539,3,0,1],
+['PTYX16','芭達雅','特色體驗','叢林探險飛索 (Zipline)','一日行程',1757,3,0,1],
+['PTYX17','芭達雅','特色體驗','ATV 越野車探險','單人體驗',1430,3,0,1],
+['PTYX18','芭達雅','文化古蹟','信不信由你','5合1套票',724,2,0,0],
+['PTYX19','芭達雅','文化古蹟','Art in Paradise 3D','門票',289,2,0,0],
+['PTYX20','芭達雅','新地標','House of Benedict','門票/低消',180,2,0,0],
+['PTYX21','芭達雅','新地標','七珍佛山','七珍佛山',0,2,0,0],
+['PTYX22','芭達雅','新地標','大佛寺 (Big Buddha Hill)','大佛寺 (Big Buddha Hill)',0,2,0,0],
+['PTYX23','芭達雅','新地標','芭達雅觀景台 (Sign)','芭達雅觀景台 (Sign)',0,2,0,0],
+['PTYX24','芭達雅','水上活動','芭達雅海灘','芭達雅海灘',0,4,0,0],
+['PTYX25','芭達雅','水上活動','中天海灘 (Jomtien Beach)','中天海灘 (Jomtien Beach)',0,4,0,0],
+['PTYX26','芭達雅','水上活動','格蘭島 (Koh Larn) 船票','來回快艇',343,6,0,1],
+['PTYX27','芭達雅','水上活動','格蘭島 - Tien Beach','網紅沙灘',0,4,0,1],
+['PTYX28','芭達雅','水上活動','格蘭島 - Tawaen Beach','格蘭島 - Tawaen Beach',0,4,0,1],
+['PTYX29','芭達雅','水上活動','格蘭島 - Samae Beach','格蘭島 - Samae Beach',0,4,0,1],
+['PTYX30','芭達雅','購物娛樂','Terminal 21 Pattaya','Terminal 21 Pattaya',0,3,0,0],
+['PTYX31','芭達雅','購物娛樂','Central Festival Pattaya','Central Festival Pattaya',0,3,0,0],
+['PTYX32','芭達雅','購物娛樂','Royal Garden Plaza','Royal Garden Plaza',0,3,0,0],
+['PTYX33','芭達雅','夜生活','Walking Street 步行街','Walking Street 步行街',0,3,0,0],
+['PTYX34','芭達雅','夜生活','Thepprasit 週末夜市','Thepprasit 週末夜市',0,3,0,0],
+['PTYX35','芭達雅','夜生活','Jomtien Night Market','Jomtien Night Market',0,3,0,0],
+['PTYX36','芭達雅','夜生活','Runway 88 機場夜市','Runway 88 機場夜市',0,3,1,0],
+['PTYX37','芭達雅','新地標','Cave Beach Club','低消',0,1,0,0],
+['PTYX38','芭達雅','新地標','The Glass House','沙灘餐飲',0,1,0,0],
+['PTYX39','芭達雅','新地標','Papa Beach Pattaya','打卡消費',0,1,0,0],
+['PTYX40','芭達雅','新地標','Sky Gallery Pattaya','海景晚餐',0,1,0,0],
+['PTYX41','芭達雅','新地標','Chocolate Factory','甜點景觀',0,1,0,0],
+['PTYX42','芭達雅','特色體驗','芭達雅卡丁車 (Go-Kart)','一日體驗',670,3,0,0],
+['PTYX43','芭達雅','新地標','銀湖葡萄園 (Silverlake)','門票',180,2,0,0],
+['PTYX44','芭達雅','文化古蹟','芭達雅公園塔','門票',452,2,0,0],
+['PTYX45','芭達雅','按摩養生','Grace Spa','精油按摩',1430,2,0,1],
+['PTYX46','芭達雅','按摩養生','Health Land Pattaya','泰式按摩',670,2,0,0],
+['PTYX47','芭達雅','特色體驗','芭達雅豪華遊艇出海','拼船/包船',2517,3,0,1],
+['PTYX48','芭達雅','文化古蹟','四方水上市場','門票',180,2,0,0],
+['PTYX49','芭達雅','特色體驗','大象保護營洗澡體驗','半日行程',1974,3,0,1],
+['PTYX50','芭達雅','文化古蹟','Soi 6 特色巷弄','Soi 6 特色巷弄',0,2,0,0],
+['PTYX51','芭達雅','新地標','海底世界 (Underwater)','門票',507,2,0,0],
+['PTYX52','芭達雅','新地標','百萬年石園鱷魚農場','門票',452,2,0,0],
+['PTYX53','芭達雅','新地標','Mongchang Cafe','低消',0,1,0,0],
+['PTYX54','芭達雅','新地標','泰國之窗冰雕','門票',398,2,0,0],
+['PTYX55','芭達雅','夜生活','Alcazar Show','VIP',833,2,0,1],
+['PTYX56','芭達雅','特色體驗','芭達雅深海釣魚','拼船',1757,3,0,1],
+['PTYX57','芭達雅','文化古蹟','Bali Hai Pier','Bali Hai Pier',0,2,0,0],
+['PTYX58','芭達雅','新地標','3 Mermaids','鳥巢咖啡',0,1,0,0],
+['PTYX59','芭達雅','文化古蹟','阿蘭若寺','阿蘭若寺',0,2,0,0],
+['PTYX60','芭達雅','新地標','綿羊農場','門票',180,2,0,0],
+['PTYX61','芭達雅','新地標','Oxygen Pattaya','海邊餐廳',0,1,0,0],
+['PTYX62','芭達雅','夜生活','Night Bazaar','Night Bazaar',0,3,0,0],
+['PTYX63','芭達雅','水上活動','Bang Saen 邦莎海灘','Bang Saen 邦莎海灘',0,4,0,0],
+['PTYX64','芭達雅','新地標','小威尼斯','門票',180,2,0,0],
+['PTYX65','芭達雅','特色體驗','潛水體驗','初級',3604,3,0,1],
+['PTYX66','芭達雅','購物娛樂','Outlet Mall','購物',0,3,0,0],
+['PTYX67','芭達雅','夜生活','魔術秀 (Tuxedo)','門票',452,2,0,0],
+['PTYX68','芭達雅','水上活動','格蘭島 - Sangwan Beach','格蘭島 - Sangwan Beach',0,4,0,1],
+['PTYX69','芭達雅','新地標','帕多海鮮市場','帕多海鮮市場',0,2,0,0],
+['PTYX70','芭達雅','購物娛樂','Central Marina','Central Marina',0,3,0,0],
+['PTYX71','芭達雅','夜生活','帕塔納克夜市','帕塔納克夜市',0,3,0,0],
+['PTYX72','芭達雅','水上活動','黃金沙灘','黃金沙灘',0,4,0,0],
+['PTYX73','芭達雅','按摩養生','Let\'s Relax Pattaya','按摩',670,2,0,0],
+['PTYX74','芭達雅','特色體驗','滑翔翼飛行','體驗價',2843,3,0,1],
+['PTYX75','芭達雅','購物娛樂','Pattaya Avenue','購物',0,3,0,0],
+['PTYX76','芭達雅','水上活動','薩島 (Koh Sak) 浮潛','拼船',1430,6,0,1],
+['PTYX77','芭達雅','水上活動','庫島 (Koh Krok)','拼船',1430,6,0,1],
+['PTYX78','芭達雅','文化古蹟','中天夕陽觀景台','中天夕陽觀景台',0,2,0,0],
+['PTYX79','芭達雅','新地標','芭達雅老街巡禮','芭達雅老街巡禮',0,2,0,0],
+['PTYX80','芭達雅','新地標','猴子島餵食體驗','船票另計',0,2,0,0],
+['PTYX81','芭達雅','水上活動','邦薩萊沙灘','邦薩萊沙灘',0,4,0,0],
+['PTYX82','芭達雅','特色體驗','芭達雅直升機遊覽','體驗價',5235,3,0,1],
+['PTYX83','芭達雅','夜生活','Naklua 海鮮市場','在地人最愛',0,3,0,0],
+['PTYX84','芭達雅','文化古蹟','淡水魚館','門票',126,2,0,0],
+['PTYX85','芭達雅','新地標','芭達雅塗鴉牆區','芭達雅塗鴉牆區',0,2,0,0],
+['PTYX86','芭達雅','文化古蹟','大佛寺龍梯','大佛寺龍梯',0,2,0,0],
+['PTYX87','芭達雅','水上活動','格蘭島 - Nual Beach','格蘭島 - Nual Beach',0,4,0,1],
+['PTYX88','芭達雅','水上活動','格蘭島 - Tonglang Beach','格蘭島 - Tonglang Beach',0,4,0,1],
+['PTYX89','芭達雅','購物娛樂','Mike Shopping Mall','平價購物',0,3,0,0],
+['PTYX90','芭達雅','自然生態','自行車租借體驗','租借費',0,2,0,0],
+['PTYX91','芭達雅','文化古蹟','芭達雅港口燈塔','芭達雅港口燈塔',0,2,0,0],
+['PTYX92','芭達雅','新地標','銀湖葡萄園花海','門票',17,2,0,0],
+['PTYX93','芭達雅','特色體驗','叢林探險飛越 (Skyline)','一日行程',1757,3,0,1],
+['PTYX94','芭達雅','文化古蹟','中天海灘地標','中天海灘地標',0,2,0,0],
+['PTYX95','芭達雅','新地標','熱門必訪景點-100','精選地標',0,2,0,0],
+['CNX01','清邁','文化古蹟','古城巡禮塔佩門護城河','古城牆＋塔佩門，散步漫遊',0,3,0,1],
+['CNX02','清邁','文化古蹟','大塔寺 Wat Chedi Luang','清邁最大寺廟，蘭納式建築精髓',100,1,0,1],
+['CNX03','清邁','文化古蹟','素帖寺 Doi Suthep山頂','山頂寺廟，俯瞰清邁城，雲海震撼',130,3,0,1],
+['CNX04','清邁','文化古蹟','蘭納泰服拍攝（古城牆）','清邁傳統服飾，古城牆磚紅背景',430,2,0,1],
+['CNX06','清邁','新地標','鏡面藝術博物館','波浪鏡面外牆，清邁IG爆紅新景點',230,2,1,1],
+['CNX07','清邁','新地標','尼曼路文青商圈','設計師市集＋網美咖啡廳，清邁必訪',0,3,0,1],
+['CNX28M','清邁','新地標','Mars.chiangmai','2026宇宙星球主題餐廳，清邁話題NO.1',480,2,1,1],
+['CNX28J','清邁','新地標','Jing Jai Market','清邁最文青週末農夫市集，在地人愛去',80,2,1,1],
+['CNX09','清邁','購物娛樂','週日步行街夜市','塔佩門延伸一公里，清邁最完整夜市',0,3,0,1],
+['CNX12','清邁','特色體驗','清邁大象學校三合一','大象繪畫＋騎象＋古牛車，最受歡迎',1600,5,0,1],
+['CNX13','清邁','特色體驗','倫理象園（友善版）','沐浴、餵食、與象共遊，KOL強推',2000,5,0,1],
+['CNX17','清邁','冒險體驗','叢林滑索 Zipline','清邁叢林高空滑索，腎上腺素飆升',1300,4,0,1],
+['CNX20','清邁','特色體驗','放天燈孔明燈體驗','清邁最浪漫體驗，親手放天燈',230,1,0,1],
+['CNX22','清邁','按摩養生','清邁傳統按摩SPA','清邁按摩品質聞名，2小時深度放鬆',530,2,0,1],
+['CNX23','清邁','特色體驗','清萊白廟＋藍廟一日遊','全泰最夢幻白廟＋寶藍藍廟，必訪',1300,8,0,1],
+['HKT01','普吉','水上活動','皮皮島跳島（快艇）','瑪雅灣＋猴子海灘＋浮潛，含午餐',2000,8,0,1],
+['HKT02','普吉','水上活動','攀牙灣獨木舟007島','石灰岩洞穴獨木舟，007取景地',1600,7,0,1],
+['HKT03','普吉','水上活動','皇帝島浮潛 Racha Island','夢幻白沙灘，清澈海水，浮潛天堂',1400,6,0,1],
+['HKT08','普吉','文化古蹟','普吉大佛＋卡隆觀景台','山頂白玉大佛，俯瞰安達曼海，夕陽必拍',130,3,0,1],
+['HKT09','普吉','文化古蹟','普吉鎮舊城漫遊','百年中葡式建築＋文青咖啡廳',0,3,0,1],
+['HKT10','普吉','購物娛樂','普吉週末夜市 Naka Market','最乾淨大型夜市，海鮮直送、在地小吃',0,3,0,1],
+['HKT11','普吉','夜生活','芭東夜生活 Bangla Road','普吉最熱鬧夜市街，酒吧＋泰拳秀',0,2,0,1],
+['HKT12','普吉','按摩養生','傳統泰式SPA 2小時','芳香精油全身放鬆，度假村等級SPA',730,2,0,1],
+['HKT14','普吉','夜生活','普吉幻境秀 FantaSea','大型主題樂園夜間表演，含自助晚餐',1600,4,0,0],
+['HKT20','普吉','自然生態','蘇林島浮潛','頂級浮潛地，珊瑚礁＋海龜，保護區',2000,8,0,1],
+['KSM04','蘇梅島','水上活動','蘇梅島快艇三島跳島','安通群島＋猴子島，海水清澈絕美',1600,8,0,1],
+['KSM06','蘇梅島','夜生活','空中酒吧 Air Bar（洲際）','懸崖上的無邊際空中酒吧，NYT必訪',630,2,0,1],
+['KSM08','蘇梅島','按摩養生','蘇梅島精油SPA','椰林度假SPA，全程精油',730,2,0,1],
+['HHN01','華欣','自然生態','華欣海灘騎馬','海灘騎馬漫步夕陽，浪漫體驗',630,2,0,1],
+['HHN02','華欣','水上活動','Vana Nava水上樂園','自然主題頂級水上樂園，親子首選',1000,5,0,1],
+['HHN03','華欣','購物娛樂','華欣夜市 Cicada Market','設計師手創市集，藝文氛圍濃厚',0,2,0,1],
+['KBV01','甲米','水上活動','甲米四島跳島精華版','小PP島＋雞蛋島＋竹島，浮潛天堂',1600,8,0,1],
+['KBV03','甲米','冒險體驗','甲米攀岩體驗','石灰岩峭壁，世界知名攀岩聖地',1300,4,0,1],
+['KBV04','甲米','自然生態','翡翠洞穴 Emerald Cave','漆黑洞穴穿越，翡翠綠秘境海灘',1000,3,0,1],
+['KBV06','甲米','文化古蹟','老虎洞寺廟（1237階）','石灰岩山頂佛寺，鳥瞰甲米',130,2,0,1]
+];
+
+const SPOTS = RAW.map(r => {
+  const costThb=r[5], sellThb=costThb>0?costThb+SPOT_MK:0;
+  return {id:r[0],region:r[1],category:r[2],name:r[3],desc:r[4],
+    costThb, sellThb, sellTwd:Math.ceil(sellThb*EX), costTwd:Math.ceil(costThb*EX),
+    hours:r[6], isNew:r[7], isHot:r[8]};
+});
+
+const HOTELS_RAW = [
+  {region:'曼谷', name:'Chatrium Residence Sathon Bangkok ★★★★★', costThb:6200},
+  {region:'曼谷', name:'Somerset Rama 9 Bangkok ★★★★★',            costThb:5600},
+  {region:'曼谷', name:'The Quarter Chaophraya ★★★★',              costThb:4600},
+  {region:'曼谷', name:'MAITRIA RESIDENCE RAMA 9 ★★★★',            costThb:4000},
+  {region:'芭達雅', name:'Grande Centre Point Space Pattaya ★★★★★',costThb:5200},
+  {region:'芭達雅', name:'The Grass Pattaya ★★★★',                 costThb:3900},
+  {region:'芭達雅', name:'Amari Pattaya ★★★★',                     costThb:4100},
+  {region:'清邁', name:'清邁 Nimman 精品五星 ★★★★★',              costThb:4800},
+  {region:'清邁', name:'清邁古城精品四星 ★★★★',                   costThb:3300},
+  {region:'清邁', name:'清邁尼曼路精品四星 ★★★★',                 costThb:3800},
+  {region:'普吉', name:'普吉 Kata/Karon 五星海景 ★★★★★',          costThb:6500},
+  {region:'普吉', name:'普吉卡倫區四星海景 ★★★★',                 costThb:4800},
+  {region:'普吉', name:'芭東區四星飯店 ★★★★',                     costThb:4300},
+  {region:'蘇梅島', name:'查汶海灘精品四星 ★★★★',                 costThb:4600},
+  {region:'蘇梅島', name:'蘇梅島五星度假村 ★★★★★',               costThb:6200},
+  {region:'華欣', name:'華欣海灘精品四星 ★★★★',                   costThb:4000},
+  {region:'甲米', name:'Ao Nang 海景精品四星 ★★★★',               costThb:4300},
+  {region:'通用', name:'🏠 溫暖的家（返台日）',                     costThb:0},
+  {region:'通用', name:'（此日不需住宿）',                          costThb:0},
+];
+const HOTELS = HOTELS_RAW.map(h => ({
+  ...h,
+  sellTwd: Math.ceil((h.costThb + HOTEL_MK) * EX),
+  costTwd: Math.ceil(h.costThb * EX),
+}));
+
+const MEALS = ['飯店早餐','機上餐','泰式風味套餐','代訂網美餐廳','海鮮大餐（代訂）','景點內自助餐','夜市自理','逛街自理','不含'];
+
+/* ════ 狀態 ════════════════════════════════════ */
+const MAX_PER_SLOT = 4;
+let S = {
+  currentDay: 0,
+  days: [],
+  filterRegion: '全部',
+  filterCat: '全部',
+  activeSlot: null,
+  pendingSpot: null,
+};
+
+function newDay(){
+  return {am:[],pm:[],eve:[],hotel:HOTELS[0].name,bkf:'飯店早餐',lun:'逛街自理',din:'代訂網美餐廳'};
+}
+function initDays(n){ S.days = Array.from({length:n}, newDay); }
+initDays(5);
+
+/* ════ 景點卡 ════════════════════════════════════ */
+function filteredSpots(){
+  const q = document.getElementById('search-box').value.trim().toLowerCase();
+  return SPOTS.filter(s => {
+    if(S.filterRegion!=='全部' && s.region!==S.filterRegion) return false;
+    if(S.filterCat!=='全部'    && s.category!==S.filterCat)  return false;
+    if(q && !s.name.toLowerCase().includes(q) && !s.desc.toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function renderCards(){
+  const grid = document.getElementById('cards-grid');
+  const spots = filteredSpots();
+  if(!spots.length){ grid.innerHTML='<div id="no-results">🔍 沒有符合的景點</div>'; return; }
+  const d = S.days[S.currentDay];
+  const usedIds = [...d.am,...d.pm,...d.eve].map(s=>s.id);
+
+  grid.innerHTML = spots.map(s => {
+    const rc = RC[s.region]||'#888';
+    const isUsed = usedIds.includes(s.id);
+    return `
+    <div class="acard ${isUsed?'in-use':''}" onclick="cardClick('${s.id}',event)">
+      <div class="acard-badges">
+        <span class="badge badge-r" style="background:${rc}">${s.region}</span>
+        ${s.isNew?'<span class="badge badge-new">NEW</span>':''}
+        ${s.isHot?'<span class="badge badge-hot">🔥</span>':''}
+        <span class="badge badge-cat">${s.category}</span>
+      </div>
+      <div class="acard-name">${s.name}</div>
+      <div class="acard-desc">${s.desc}</div>
+      <div class="acard-foot">
+        <span style="font-size:11px;color:#888">⏱ ${s.hours}h</span>
+        <span style="font-size:11px;font-weight:700;color:var(--green)">${s.sellTwd>0?'NT$ '+s.sellTwd.toLocaleString():'免費'}</span>
+      </div>
+      <button class="acard-add ${isUsed?'added':''}" onclick="quickAdd('${s.id}',event)">${isUsed?'✓':'＋'}</button>
+    </div>`;
+  }).join('');
+}
+
+function renderTags(){
+  document.getElementById('region-tags').innerHTML = REGIONS.map(r =>
+    `<span class="tag ${S.filterRegion===r?'on':''}" onclick="setFilter('region','${r}')">${r}</span>`
+  ).join('');
+  document.getElementById('cat-tags').innerHTML = CATS.map(c =>
+    `<span class="tag ${S.filterCat===c?'on':''}" onclick="setFilter('cat','${c}')">${c}</span>`
+  ).join('');
+}
+
+function setFilter(type, val){
+  if(type==='region') S.filterRegion=val; else S.filterCat=val;
+  renderTags(); renderCards(); renderHotelSelect();
+}
+
+/* ════ Day tabs ════════════════════════════════ */
+function renderDayTabs(){
+  const totalSlots = d => d.am.length + d.pm.length + d.eve.length;
+  document.getElementById('day-tabs').innerHTML = S.days.map((d,i) => {
+    const n = totalSlots(d);
+    const dots = Array.from({length:3}, (_,j) =>
+      `<div class="day-dot ${j<n?'on':''}"></div>`
+    ).join('');
+    return `<div class="day-tab ${i===S.currentDay?'active':''}" onclick="selectDay(${i})">
+      <span class="day-del" onclick="delDay(${i},event)">✕</span>
+      <div class="day-num">DAY ${i+1}</div>
+      <div class="day-dots">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectDay(i){ S.currentDay=i; S.activeSlot=null; renderDayTabs(); renderSlots(); renderCards(); updatePrice(); }
+function addDay(){
+  if(S.days.length>=14){alert('最多14天');return;}
+  S.days.push(newDay()); S.currentDay=S.days.length-1;
+  renderDayTabs(); renderSlots(); renderCards(); updatePrice();
+}
+function delDay(i,e){
+  e.stopPropagation();
+  if(S.days.length<=1){alert('至少需要1天');return;}
+  S.days.splice(i,1); if(S.currentDay>=S.days.length) S.currentDay=S.days.length-1;
+  renderDayTabs(); renderSlots(); renderCards(); updatePrice();
+}
+
+/* ════ Slots ════════════════════════════════════ */
+function renderSlots(){
+  const d = S.days[S.currentDay];
+  document.getElementById('slot-title').textContent =
+    `DAY ${S.currentDay+1} ── 點時段啟用，再點景點卡 ＋ 新增（每時段最多 ${MAX_PER_SLOT} 個）`;
+
+  const row = document.getElementById('slots-row');
+  row.innerHTML = [
+    {key:'am', icon:'🌅', label:'上午'},
+    {key:'pm', icon:'☀️', label:'下午'},
+    {key:'eve', icon:'🌙', label:'晚間'},
+  ].map(({key,icon,label}) => {
+    const spots = d[key];
+    const isActive = S.activeSlot === key;
+    const isFull = spots.length >= MAX_PER_SLOT;
+    return `
+    <div class="slot-wrap">
+      <div class="slot-header ${isActive?'active':''}" onclick="activateSlot('${key}')">
+        <span>${icon} ${label}</span>
+        <span class="slot-count">${spots.length}/${MAX_PER_SLOT} ${isActive?'▸ 新增中':''}</span>
+      </div>
+      <div class="slot-body">
+        ${spots.map(s => `
+          <div class="slot-item">
+            <span class="slot-item-name" title="${s.name}">${s.name}</span>
+            <button class="slot-item-x" onclick="removeFromSlot('${key}','${s.id}',event)">×</button>
+          </div>
+        `).join('')}
+        ${isFull
+          ? '<div class="slot-full">已滿 4 個景點</div>'
+          : `<div class="slot-empty-hint">${isActive?'⬇ 點下方景點卡 ＋ 新增':'點標題啟用此時段'}</div>`}
+      </div>
+    </div>`;
+  }).join('');
+
+  renderHotelSelect();
+
+  ['bkf','lun','din'].forEach(m => {
+    const sel = document.getElementById(`sel-${m}`);
+    sel.innerHTML = MEALS.map(v=>`<option ${d[m]===v?'selected':''}>${v}</option>`).join('');
+  });
+}
+
+function activateSlot(key){ S.activeSlot = S.activeSlot===key?null:key; renderSlots(); }
+
+function renderHotelSelect(){
+  const d = S.days[S.currentDay];
+  const region = S.filterRegion;
+  // 分組顯示
+  const groups = {};
+  HOTELS.forEach(h => {
+    if(region !== '全部' && h.region !== region && h.region !== '通用') return;
+    if(!groups[h.region]) groups[h.region] = [];
+    groups[h.region].push(h);
+  });
+  let html = '';
+  Object.entries(groups).forEach(([reg, hotels]) => {
+    if(reg === '通用'){
+      html += hotels.map(h => `<option value="${h.name}" ${h.name===d.hotel?'selected':''}>${h.name}</option>`).join('');
+    } else {
+      html += `<optgroup label="📍 ${reg}">`;
+      html += hotels.map(h => `<option value="${h.name}" ${h.name===d.hotel?'selected':''}>${h.name} ｜ NT$${h.sellTwd.toLocaleString()}/晚</option>`).join('');
+      html += '</optgroup>';
+    }
+  });
+  // 若沒有符合的，顯示全部
+  if(!html){
+    HOTELS.forEach(h => {
+      html += `<option value="${h.name}" ${h.name===d.hotel?'selected':''}>${h.name}</option>`;
+    });
+  }
+  document.getElementById('sel-hotel').innerHTML = html;
+}
+
+function removeFromSlot(key, id, e){
+  e.stopPropagation();
+  S.days[S.currentDay][key] = S.days[S.currentDay][key].filter(s=>s.id!==id);
+  renderSlots(); renderCards(); updatePrice(); renderDayTabs(); renderMini();
+}
+
+function setHotel(){ S.days[S.currentDay].hotel = document.getElementById('sel-hotel').value; updatePrice(); }
+function setMeal(m){ S.days[S.currentDay][m] = document.getElementById(`sel-${m}`).value; }
+
+/* ════ 景點選取 ════════════════════════════════ */
+function addToSlot(key, spot){
+  const d = S.days[S.currentDay];
+  if(d[key].find(s=>s.id===spot.id)) return;
+  if(d[key].length >= MAX_PER_SLOT){ alert(`每個時段最多 ${MAX_PER_SLOT} 個景點`); return; }
+  d[key].push(spot);
+  S.activeSlot = null;
+  renderSlots(); renderCards(); updatePrice(); renderDayTabs(); renderMini();
+}
+
+function cardClick(id, e){
+  if(e.target.classList.contains('acard-add')) return;
+  const spot = SPOTS.find(s=>s.id===id);
+  if(!spot) return;
+  if(S.activeSlot){ addToSlot(S.activeSlot, spot); return; }
+  S.pendingSpot = id;
+  const pk = document.getElementById('slot-picker');
+  pk.style.left=(e.clientX-60)+'px'; pk.style.top=(e.clientY+10)+'px';
+  pk.classList.add('open');
+}
+
+function quickAdd(id, e){
+  e.stopPropagation();
+  const spot = SPOTS.find(s=>s.id===id);
+  if(!spot) return;
+  const d = S.days[S.currentDay];
+  // 優先加入 activeSlot，否則找第一個未滿時段
+  const target = S.activeSlot && d[S.activeSlot].length < MAX_PER_SLOT
+    ? S.activeSlot
+    : ['am','pm','eve'].find(k => d[k].length < MAX_PER_SLOT);
+  if(target){ addToSlot(target, spot); return; }
+  S.pendingSpot = id;
+  const pk = document.getElementById('slot-picker');
+  pk.style.left=(e.clientX-60)+'px'; pk.style.top=(e.clientY+10)+'px';
+  pk.classList.add('open');
+}
+
+function confirmAdd(key){
+  document.getElementById('slot-picker').classList.remove('open');
+  if(!S.pendingSpot) return;
+  const spot = SPOTS.find(s=>s.id===S.pendingSpot);
+  if(spot) addToSlot(key, spot);
+  S.pendingSpot = null;
+}
+
+document.addEventListener('click', e => {
+  const pk = document.getElementById('slot-picker');
+  if(!pk.contains(e.target) && !e.target.classList.contains('acard-add'))
+    pk.classList.remove('open');
+});
+
+/* ════ 費用計算 ════════════════════════════════ */
+function calcCosts(){
+  const adults = parseInt(document.getElementById('c-adults').value)||1;
+  const rooms  = parseInt(document.getElementById('c-rooms').value)||1;
+  const veh    = parseInt(document.getElementById('sel-vehicle').value)||4140;
+  const days   = S.days.length;
+  const MARGIN = 0.20;
+
+  const spotCost = S.days.reduce((sum,d) =>
+    sum + [...d.am,...d.pm,...d.eve].reduce((s2,sp) => s2 + sp.costTwd, 0), 0) * adults;
+
+  const hotelCost = S.days.reduce((sum,d) => {
+    const h = HOTELS.find(h=>h.name===d.hotel);
+    return sum + (h?h.costTwd:0)*rooms;
+  }, 0);
+
+  const vehCost   = veh * days;
+  const guideCost = Math.ceil(2500*EX) * days;
+  const subtotal  = spotCost + hotelCost + vehCost + guideCost;
+  const profit    = Math.ceil(subtotal * MARGIN);
+  const total     = subtotal + profit;
+  const perPerson = Math.ceil(total/adults/100)*100;
+  const grand     = perPerson * adults;
+
+  return {spotCost, hotelCost, vehCost, guideCost, perPerson, grand, adults, rooms};
+}
+
+function updatePrice(){
+  const c = calcCosts();
+  const fmt = n => 'NT$ ' + n.toLocaleString();
+  document.getElementById('p-spot').textContent  = fmt(c.spotCost);
+  document.getElementById('p-hotel').textContent = fmt(c.hotelCost);
+  document.getElementById('p-veh').textContent   = fmt(c.vehCost);
+  document.getElementById('p-guide').textContent = fmt(c.guideCost);
+  document.getElementById('p-perperson').textContent = fmt(c.perPerson);
+  document.getElementById('p-total').textContent = `全團 ${fmt(c.grand)}`;
+  renderMini();
+}
+
+function renderMini(){
+  document.getElementById('mini').innerHTML = S.days.map((d,i) => {
+    const all = [
+      ...d.am.map(s=>'🌅 '+s.name),
+      ...d.pm.map(s=>'☀️ '+s.name),
+      ...d.eve.map(s=>'🌙 '+s.name),
+    ];
+    return `<div class="mini-day">
+      <div class="mini-day-lbl">DAY ${i+1}</div>
+      ${all.length ? all.map(t=>`<div class="mini-spot">${t}</div>`).join('') : '<div class="mini-spot">─ 尚未排定</div>'}
+    </div>`;
+  }).join('');
+}
+
+/* ════ 報價單 ════════════════════════════════════ */
+function generateQuote(){
+  const name  = document.getElementById('c-name').value  || '（未填）';
+  const dep   = document.getElementById('c-dep').value   || '─';
+  const ret   = document.getElementById('c-ret').value   || '─';
+  const kids  = document.getElementById('c-kids').value  || '0';
+  const vehTxt = document.getElementById('sel-vehicle').selectedOptions[0].text.split('(')[0].trim();
+  const today = new Date().toLocaleDateString('zh-TW');
+  const c = calcCosts();
+  const fmt = n => 'NT$ '+n.toLocaleString();
+
+  const daysHTML = S.days.map((d,i) => {
+    const slotSecs = [
+      {key:'am', icon:'🌅', label:'上午'},
+      {key:'pm', icon:'☀️', label:'下午'},
+      {key:'eve', icon:'🌙', label:'晚間'},
+    ].map(({key,icon,label}) => d[key].length === 0 ? '' : `
+      <div class="q-slot-section">
+        <div class="q-slot-lbl">${icon} ${label}</div>
+        ${d[key].map(s=>`<div class="q-slot-item">• ${s.name}</div>`).join('')}
+      </div>`).join('');
+    const h = HOTELS.find(h=>h.name===d.hotel);
+    const hotelDisp = d.hotel.replace(/★+/,'').trim();
+    return `<div class="q-day">
+      <div class="q-day-head">
+        DAY ${i+1}
+        <span class="q-day-hotel">🏨 ${hotelDisp}</span>
+      </div>
+      <div class="q-day-body">
+        ${slotSecs || '<div style="color:#bbb;font-size:12px">此日自由活動</div>'}
+        <div class="q-meals">🍽 早：${d.bkf}　午：${d.lun}　晚：${d.din}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="q-sec">
+      <div class="q-sec-title">▌ 旅遊資訊</div>
+      <div class="q-info-grid">
+        <div class="q-info-item"><span class="q-info-lbl">客戶/團名</span><span class="q-info-val">${name}</span></div>
+        <div class="q-info-item"><span class="q-info-lbl">出發日期</span><span class="q-info-val">${dep}</span></div>
+        <div class="q-info-item"><span class="q-info-lbl">回國日期</span><span class="q-info-val">${ret}</span></div>
+        <div class="q-info-item"><span class="q-info-lbl">人數</span><span class="q-info-val">大人 ${c.adults} 人，兒童 ${kids} 人</span></div>
+        <div class="q-info-item"><span class="q-info-lbl">房數</span><span class="q-info-val">${c.rooms} 間</span></div>
+        <div class="q-info-item"><span class="q-info-lbl">交通</span><span class="q-info-val">${vehTxt}</span></div>
+        <div class="q-info-item"><span class="q-info-lbl">報價日期</span><span class="q-info-val">${today}</span></div>
+      </div>
+    </div>
+    <div class="q-sec">
+      <div class="q-sec-title">▌ 逐日行程安排</div>
+      ${daysHTML}
+    </div>
+    <div class="q-sec">
+      <div class="q-sec-title">▌ 費用報價</div>
+      <div class="price-box">
+        <div class="plbl">每人費用</div>
+        <div class="pmain">${fmt(c.perPerson)}</div>
+        <div class="psub">全團總價：${fmt(c.grand)}（${c.adults} 人）</div>
+        <div class="pnote">已含專業中文導遊・全程豪華包車・行程景點門票・住宿</div>
+      </div>
+    </div>
+    <div class="q-sec">
+      <div class="q-sec-title">▌ 費用包含 / 不包含</div>
+      <div class="inc-grid">
+        <div class="inc-y">✔ 行程所列飯店住宿</div>
+        <div class="inc-n">✘ 台灣往返泰國機票</div>
+        <div class="inc-y">✔ 行程所列景點門票</div>
+        <div class="inc-n">✘ 個人消費、購物</div>
+        <div class="inc-y">✔ 全程豪華包車</div>
+        <div class="inc-n">✘ 旅遊平安險（建議自購）</div>
+        <div class="inc-y">✔ 全程專業中文導遊</div>
+        <div class="inc-n">✘ 簽證費（台灣護照免簽）</div>
+      </div>
+      <div class="q-note">
+        ※ 報價有效期限：報價日起 15 日內，逾期請重新詢價。<br>
+        ※ 行程景點順序依實際交通動線、天氣調整，以最佳遊覽效果為準。<br>
+        ※ 機票建議至少出發前60天確認；旺季（12月~2月、暑假）提早90天。
+      </div>
+    </div>`;
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+/* ════ 下單表單 ════════════════════════════════════ */
+function openOrderForm(){
+  document.getElementById('order-modal').style.display='flex';
+}
+
+function closeOrderForm(){
+  document.getElementById('order-modal').style.display='none';
+}
+
+function submitOrder(){
+  const name = document.getElementById('order-name').value.trim();
+  const email = document.getElementById('order-email').value.trim();
+  const phone = document.getElementById('order-phone').value.trim();
+  const note = document.getElementById('order-note').value.trim();
+
+  if(!name){ alert('請輸入姓名'); return; }
+  if(!email){ alert('請輸入郵件'); return; }
+
+  const c = calcCosts();
+  const dep = document.getElementById('c-dep').value || '─';
+  const ret = document.getElementById('c-ret').value || '─';
+  const adults = c.adults;
+
+  // 整理行程備註
+  let itinerary = '';
+  S.days.forEach((d,i) => {
+    const spots = [...d.am, ...d.pm, ...d.eve].map(s => s.name).join(' / ');
+    itinerary += `DAY ${i+1}: ${spots || '自由活動'} (${d.hotel})\n`;
+  });
+
+  // 送到 Google Sheet（需要你提供 Sheet ID）
+  const SHEET_ID = '替換為你的Sheet ID'; // 稍後填
+  const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+
+  const payload = {
+    timestamp: new Date().toLocaleString('zh-TW'),
+    name: name,
+    email: email,
+    phone: phone,
+    dep: dep,
+    ret: ret,
+    adults: adults,
+    perPerson: c.perPerson,
+    grand: c.grand,
+    itinerary: itinerary,
+    note: note
+  };
+
+  // 1️⃣ 發送到本地服務器（寫入 JSON）
+  const LOCAL_SERVER = 'http://localhost:9999';
+
+  // 2️⃣ 發送到 Discord（即時通知）
+  const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1504142227029491783/UNUoYZBEUg8LL6jFLKlPqE75MOCet7I0_UQf-E3JyvnnnXC8cr1MkW9yooSPYz0yMMhO';
+
+  const discordMessage = {
+    content: `🎉 **新訂單通知**`,
+    embeds: [{
+      color: 16711680,
+      title: `📋 ${name} 的訂單`,
+      fields: [
+        { name: '👤 客戶名稱', value: name, inline: true },
+        { name: '📧 郵件', value: email, inline: true },
+        { name: '📞 電話', value: phone || '─', inline: true },
+        { name: '📅 出發日期', value: dep, inline: true },
+        { name: '📅 回程日期', value: ret, inline: true },
+        { name: '👥 人數', value: `${adults} 人`, inline: true },
+        { name: '💰 每人費用', value: `NT$ ${c.perPerson.toLocaleString()}`, inline: true },
+        { name: '💰 總價', value: `NT$ ${c.grand.toLocaleString()}`, inline: true },
+        { name: '🗺️ 行程詳情', value: itinerary || '未指定', inline: false },
+        { name: '📝 特殊需求', value: note || '無', inline: false },
+        { name: '⏰ 提交時間', value: new Date().toLocaleString('zh-TW'), inline: false }
+      ]
+    }]
+  };
+
+  // 並行發送到兩個地方
+  Promise.all([
+    fetch(LOCAL_SERVER, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' }
+    }),
+    fetch(DISCORD_WEBHOOK, {
+      method: 'POST',
+      body: JSON.stringify(discordMessage),
+      headers: { 'Content-Type': 'application/json' }
+    })
+  ])
+  .then(() => {
+    console.log('Order submitted to both local server and Discord:', payload);
+    alert(`✅ 下單已送出！\n\n客戶資訊:\n${name}\n${email}\n\n我們會儘快聯絡您。\n\n點OK後會開啟LINE客服...`);
+    closeOrderForm();
+    setTimeout(() => {
+      window.open('https://line.me/R/ti/p/@468nnetj', '_blank');
+    }, 500);
+  })
+  .catch(err => {
+    console.error('Submission error:', err);
+    alert('⚠️ 提交過程中出現問題，但系統已記錄。\n請稍候 3 秒後開啟LINE客服...');
+    setTimeout(() => {
+      closeOrderForm();
+      window.open('https://line.me/R/ti/p/@468nnetj', '_blank');
+    }, 3000);
+  });
+}
+
+/* ════ LINE ════════════════════════════════════ */
+function copyLine(){
+  const name  = document.getElementById('c-name').value  || '（未填）';
+  const dep   = document.getElementById('c-dep').value   || '─';
+  const ret   = document.getElementById('c-ret').value   || '─';
+  const kids  = parseInt(document.getElementById('c-kids').value)||0;
+  const vehTxt = document.getElementById('sel-vehicle').selectedOptions[0].text.split('(')[0].trim();
+  const c = calcCosts();
+
+  let t = `🌴 鉅星旅運 × 泰迪生活\n✈ 泰國行程報價書\n${'─'.repeat(22)}\n`;
+  t += `👤 客戶：${name}\n📅 出發：${dep}　回程：${ret}\n`;
+  t += `👥 ${c.adults}大人${kids>0?` ${kids}小孩`:''}　${c.rooms}間房\n🚐 ${vehTxt}\n${'─'.repeat(22)}\n`;
+
+  S.days.forEach((d,i) => {
+    t += `\n🗓 DAY ${i+1}\n`;
+    d.am.forEach(s  => { t += `　🌅 ${s.name}\n`; });
+    d.pm.forEach(s  => { t += `　☀️ ${s.name}\n`; });
+    d.eve.forEach(s => { t += `　🌙 ${s.name}\n`; });
+    if(!d.am.length && !d.pm.length && !d.eve.length) t += `　（自由活動）\n`;
+    t += `　🏨 ${d.hotel.replace(/★+/,'').trim()}\n`;
+    t += `　🍽 早：${d.bkf}　午：${d.lun}　晚：${d.din}\n`;
+  });
+
+  t += `\n${'─'.repeat(22)}\n💰 費用報價\n${'─'.repeat(22)}\n`;
+  t += `每人費用：NT$ ${c.perPerson.toLocaleString()}\n`;
+  t += `全團總價：NT$ ${c.grand.toLocaleString()}（${c.adults}人）\n\n`;
+  t += `✅ 包含：住宿・包車・中文導遊・景點門票\n`;
+  t += `❌ 不含：來回機票・個人消費・旅遊保險\n\n`;
+  t += `⏰ 報價有效：15天　📞 LINE：@thaidee\n🌐 鉅星旅運 × 泰迪生活 Thai-Dee Life`;
+
+  navigator.clipboard.writeText(t).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value=t; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  });
+  const toast = document.getElementById('toast');
+  toast.style.display='block'; setTimeout(()=>{ toast.style.display='none'; }, 2500);
+}
+
+/* ════ Init ════════════════════════════════════ */
+function init(){
+  renderTags(); renderDayTabs(); renderSlots(); renderCards(); updatePrice();
+  document.getElementById('btn-add-day').onclick = addDay;
+  document.getElementById('btn-generate').onclick = generateQuote;
+  document.getElementById('c-adults').oninput = updatePrice;
+  document.getElementById('c-rooms').oninput  = updatePrice;
+  document.getElementById('sel-vehicle').onchange = updatePrice;
+  document.getElementById('search-box').oninput = renderCards;
+  const today = new Date();
+  const dep = new Date(today); dep.setDate(dep.getDate()+14);
+  const ret = new Date(dep);  ret.setDate(ret.getDate()+5);
+  document.getElementById('c-dep').value = dep.toISOString().split('T')[0];
+  document.getElementById('c-ret').value = ret.toISOString().split('T')[0];
+
+  // 添加 LINE 客服浮動按鈕
+  const lineBtn = document.createElement('button');
+  lineBtn.innerHTML = '💬';
+  lineBtn.title = '聯絡 LINE 客服';
+  lineBtn.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:999;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#00B900 0%,#00AA00 100%);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,185,0,0.4);display:flex;align-items:center;justify-content:center;font-size:28px;transition:all 0.3s;font-family:inherit;';
+  lineBtn.onmouseover = () => { lineBtn.style.transform = 'scale(1.1)'; lineBtn.style.boxShadow = '0 6px 24px rgba(0, 185, 0, 0.6)'; };
+  lineBtn.onmouseout = () => { lineBtn.style.transform = 'scale(1)'; lineBtn.style.boxShadow = '0 4px 16px rgba(0, 185, 0, 0.4)'; };
+  lineBtn.onclick = () => {
+    const lineURL = 'https://line.me/R/ti/p/@468nnetj';
+    window.open(lineURL, '_blank');
+  };
+  document.body.appendChild(lineBtn);
+}
+init();
+</script>
+
+</div> <!-- 結束 page-quote -->
+
+<!-- 📞 聯絡我們頁 -->
+<div id="page-contact" style="display:none;overflow-y:auto;flex:1;padding:40px 20px">
+  <div style="max-width:600px;margin:0 auto">
+    <h1 style="font-size:36px;margin-bottom:30px;color:#8B3A1A;text-align:center">聯絡我們</h1>
+
+    <div style="background:#fff;padding:30px;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.1);margin-bottom:30px">
+      <h3 style="font-size:18px;margin-bottom:20px;color:#8B3A1A">📱 快速聯絡</h3>
+      <p style="margin-bottom:15px"><strong>LINE 官方帳號：</strong> @468nnetj</p>
+      <button onclick="window.open('https://line.me/R/ti/p/@468nnetj','_blank')" style="background:#00B900;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;width:100%">💬 立即 LINE 客服</button>
+    </div>
+
+    <div style="background:#fff;padding:30px;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.1)">
+      <h3 style="font-size:18px;margin-bottom:20px;color:#8B3A1A">📝 線上諮詢表單</h3>
+      <form style="display:flex;flex-direction:column;gap:15px">
+        <input type="text" placeholder="您的名字" style="padding:10px;border:1px solid #ddd;border-radius:8px;font-family:inherit">
+        <input type="email" placeholder="您的郵箱" style="padding:10px;border:1px solid #ddd;border-radius:8px;font-family:inherit">
+        <textarea placeholder="您的訊息" rows="5" style="padding:10px;border:1px solid #ddd;border-radius:8px;font-family:inherit"></textarea>
+        <button type="button" onclick="alert('感謝您的訊息！我們會儘快回覆。')" style="background:#8B3A1A;color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:700">送出訊息</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 頁面切換 JavaScript -->
+<script>
+function showPage(page) {
+  // 隱藏所有頁面
+  document.getElementById('page-home').style.display = 'none';
+  document.getElementById('page-quote').style.display = 'none';
+  document.getElementById('page-contact').style.display = 'none';
+
+  // 顯示選中的頁面
+  document.getElementById('page-' + page).style.display = 'block';
+
+  // 滑動到頂部
+  window.scrollTo(0, 0);
+}
+
+// 頁面加載時顯示首頁
+window.addEventListener('load', function() {
+  showPage('home');
+});
+</script>
+
+</body>
+</html>
