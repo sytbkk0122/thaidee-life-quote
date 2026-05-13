@@ -371,14 +371,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
       <div id="slot-title">DAY 1 ── 點時段啟用，再點景點卡 ＋ 新增（每時段最多 4 個）</div>
       <div class="slots-row" id="slots-row"></div>
 
-      <!-- 車輛和機場接送選項 -->
+      <!-- 城市、車輛和機場接送選項 -->
       <div class="hotel-row" style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:8px">
-        <span class="hm-lbl">🚗 包車</span>
-        <select class="hm-sel" id="sel-vehicle" onchange="setVehicle()" style="width:140px">
+        <span class="hm-lbl">🗺️ 城市</span>
+        <select class="hm-sel" id="sel-city" onchange="setCity()" style="width:110px">
+          <option value="">選擇城市</option>
+        </select>
+        <span class="hm-lbl" style="margin-left:12px">🚗 包車</span>
+        <select class="hm-sel" id="sel-vehicle" onchange="setVehicle()" style="width:160px">
           <option value="">選擇車型</option>
         </select>
         <span class="hm-lbl" style="margin-left:12px">✈️ 機場</span>
-        <select class="hm-sel" id="sel-airport" onchange="setAirport()" style="width:160px">
+        <select class="hm-sel" id="sel-airport" onchange="setAirport()" style="width:180px">
           <option value="">選擇接送方式</option>
         </select>
       </div>
@@ -410,15 +414,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
   <div id="summary-col">
     <h3>行程速覽</h3>
     <div class="mini-itinerary" id="mini"></div>
-    <div class="vehicle-row">
-      <label>🚐 包車車型</label>
-      <select id="sel-vehicle" onchange="updatePrice()">
-        <option value="4140">9人座廂型車 (4,500 THB/日)</option>
-        <option value="5060">VIP 7人座豪華廂型車</option>
-        <option value="6900">Toyota Alphard</option>
-        <option value="8280">豪華保母車</option>
-      </select>
-    </div>
     <div class="pax-info">
       <div class="pax-row"><span class="pax-lbl">景點費用</span><span class="pax-val" id="p-spot">NT$ 0</span></div>
       <div class="pax-row"><span class="pax-lbl">住宿費用</span><span class="pax-val" id="p-hotel">NT$ 0</span></div>
@@ -818,17 +813,30 @@ const HOTELS = HOTELS_RAW.map(h => ({
   costTwd: Math.ceil(h.costThb * EX),
 }));
 
-/* 車輛選項和機場接送 */
+/* 車輛選項和定價 */
 const VEHICLES = [
-  {type:'4人座', costThb:3500, desc:'標準房車'},
-  {type:'7人座', costThb:4500, desc:'商務MPV'},
-  {type:'15人座', costThb:6500, desc:'豪華遊覽車'}
+  {
+    type:'4人座小車',
+    desc:'標準轎車',
+    airports: {曼谷:999, 芭達雅:2000},
+    daily: {曼谷:3000, 芭達雅:4000}
+  },
+  {
+    type:'7/8人座豪華車',
+    desc:'商務MPV',
+    airports: {曼谷:2500, 芭達雅:3500},
+    daily: {曼谷:5500, 芭達雅:6500}
+  },
+  {
+    type:'9人座保母車',
+    desc:'豪華遊覽車',
+    airports: {曼谷:1500, 芭達雅:2500},
+    daily: {曼谷:4500, 芭達雅:5500}
+  }
 ];
 
-const AIRPORT_SERVICES = [
-  {type:'機場往返接送', costThb:1800, desc:'蘇瓦納普米機場 ↔ 飯店'},
-  {type:'單點接送', costThb:600, desc:'市區任意兩點接送'}
-];
+/* 城市選擇 */
+const CITIES = ['曼谷', '芭達雅', '清邁', '普吉', '蘇梅島', '華欣', '甲米'];
 
 const MEALS = ['飯店早餐','機上餐','泰式風味套餐','代訂網美餐廳','海鮮大餐（代訂）','景點內自助餐','夜市自理','逛街自理','不含'];
 
@@ -846,6 +854,7 @@ let S = {
 function newDay(){
   return {
     am:[],pm:[],eve:[],
+    city:'曼谷',
     vehicle:'',
     airport:'',
     hotel:HOTELS[0].name,
@@ -856,8 +865,10 @@ function newDay(){
 }
 function initDays(n){ S.days = Array.from({length:n}, newDay); }
 initDays(5);
+renderCityOptions();
 renderVehicleOptions();
 renderAirportOptions();
+renderHotelSelect();
 
 /* ════ 景點卡 ════════════════════════════════════ */
 function filteredSpots(){
@@ -929,17 +940,32 @@ function renderDayTabs(){
   }).join('');
 }
 
-function selectDay(i){ S.currentDay=i; S.activeSlot=null; renderDayTabs(); renderSlots(); renderCards(); updatePrice(); }
+function selectDay(i){
+  S.currentDay=i;
+  S.activeSlot=null;
+  renderDayTabs();
+  renderSlots();
+  renderCards();
+  renderCityOptions();
+  renderVehicleOptions();
+  renderAirportOptions();
+  renderHotelSelect();
+  updatePrice();
+}
 function addDay(){
   if(S.days.length>=14){alert('最多14天');return;}
   S.days.push(newDay()); S.currentDay=S.days.length-1;
-  renderDayTabs(); renderSlots(); renderCards(); updatePrice();
+  renderDayTabs(); renderSlots(); renderCards();
+  renderCityOptions(); renderVehicleOptions(); renderAirportOptions();
+  renderHotelSelect(); updatePrice();
 }
 function delDay(i,e){
   e.stopPropagation();
   if(S.days.length<=1){alert('至少需要1天');return;}
   S.days.splice(i,1); if(S.currentDay>=S.days.length) S.currentDay=S.days.length-1;
-  renderDayTabs(); renderSlots(); renderCards(); updatePrice();
+  renderDayTabs(); renderSlots(); renderCards();
+  renderCityOptions(); renderVehicleOptions(); renderAirportOptions();
+  updatePrice();
 }
 
 /* ════ Slots ════════════════════════════════════ */
@@ -977,6 +1003,9 @@ function renderSlots(){
     </div>`;
   }).join('');
 
+  renderCityOptions();
+  renderVehicleOptions();
+  renderAirportOptions();
   renderHotelSelect();
 
   ['bkf','lun','din'].forEach(m => {
@@ -1022,23 +1051,61 @@ function removeFromSlot(key, id, e){
   renderSlots(); renderCards(); updatePrice(); renderDayTabs(); renderMini();
 }
 
+function setCity(){
+  S.days[S.currentDay].city = document.getElementById('sel-city').value;
+  renderVehicleOptions();
+  renderAirportOptions();
+  updatePrice();
+}
 function setVehicle(){ S.days[S.currentDay].vehicle = document.getElementById('sel-vehicle').value; updatePrice(); }
 function setAirport(){ S.days[S.currentDay].airport = document.getElementById('sel-airport').value; updatePrice(); }
 function setHotel(){ S.days[S.currentDay].hotel = document.getElementById('sel-hotel').value; updatePrice(); }
 function setMeal(m){ S.days[S.currentDay][m] = document.getElementById(`sel-${m}`).value; }
 
-// 初始化車輛下拉菜單
-function renderVehicleOptions(){
-  const sel = document.getElementById('sel-vehicle');
-  sel.innerHTML = '<option value="">選擇車型</option>' +
-    VEHICLES.map(v => `<option value="${v.type}">${v.type} (${v.costThb} THB/天)</option>`).join('');
+// 初始化城市下拉菜單
+function renderCityOptions(){
+  const d = S.days[S.currentDay];
+  const sel = document.getElementById('sel-city');
+  sel.innerHTML = '<option value="">選擇城市</option>' +
+    CITIES.map(c => `<option value="${c}" ${c===d.city?'selected':''}>${c}</option>`).join('');
 }
 
-// 初始化機場接送下拉菜單
+// 初始化車輛下拉菜單（城市相關）
+function renderVehicleOptions(){
+  const d = S.days[S.currentDay];
+  const city = d.city || '曼谷';
+  const sel = document.getElementById('sel-vehicle');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">選擇車型</option>' +
+    VEHICLES.map(v => {
+      const airport = v.airports[city] || v.airports['曼谷'];
+      const daily = v.daily[city] || v.daily['曼谷'];
+      return `<option value="${v.type}" ${v.type===d.vehicle?'selected':''}>${v.type} (✈️${airport}/${daily}THB)</option>`;
+    }).join('');
+}
+
+// 初始化機場接送下拉菜單（城市相關）
 function renderAirportOptions(){
+  const d = S.days[S.currentDay];
+  const city = d.city || '曼谷';
   const sel = document.getElementById('sel-airport');
-  sel.innerHTML = '<option value="">選擇接送方式</option>' +
-    AIRPORT_SERVICES.map(a => `<option value="${a.type}">${a.type} (${a.costThb} THB)</option>`).join('');
+  if(!sel) return;
+
+  if(d.vehicle){
+    const v = VEHICLES.find(v=>v.type===d.vehicle);
+    if(v && v.airports[city]){
+      const price = v.airports[city];
+      sel.innerHTML = `
+        <option value="">選擇接送方式</option>
+        <option value="${city}-airport" ${d.airport===`${city}-airport`?'selected':''}>機場往返 (${price} THB)</option>
+        <option value="${city}-point" ${d.airport===`${city}-point`?'selected':''}>單點接送 (${Math.ceil(price*0.6)} THB)</option>
+      `;
+    } else {
+      sel.innerHTML = '<option value="">請先選擇車型</option>';
+    }
+  } else {
+    sel.innerHTML = '<option value="">請先選擇車型</option>';
+  }
 }
 
 /* ════ 景點選取 ════════════════════════════════ */
@@ -1125,21 +1192,30 @@ function calcCosts(){
     return sum + (h?h.costTwd:0)*rooms;
   }, 0);
 
-  // 包車費用（每日計算）
+  // 包車費用（每日計算，城市相關）
   let vehCost = 0;
   S.days.forEach(d => {
     if(d.vehicle) {
       const v = VEHICLES.find(v=>v.type===d.vehicle);
-      if(v) vehCost += Math.ceil(v.costThb*EX);
+      const city = d.city || '曼谷';
+      if(v && v.daily[city]) {
+        vehCost += Math.ceil(v.daily[city]*EX);
+      }
     }
   });
 
-  // 機場接送費用
+  // 機場接送費用（城市相關）
   let airportCost = 0;
   S.days.forEach(d => {
     if(d.airport) {
-      const a = AIRPORT_SERVICES.find(a=>a.type===d.airport);
-      if(a) airportCost += Math.ceil(a.costThb*EX);
+      const v = VEHICLES.find(v=>v.type===d.vehicle);
+      const city = d.city || '曼谷';
+      if(v && v.airports[city]) {
+        const basePrice = v.airports[city];
+        // 如果選"單點接送"則為基價的60%
+        const price = d.airport.includes('point') ? Math.ceil(basePrice*0.6) : basePrice;
+        airportCost += Math.ceil(price*EX);
+      }
     }
   });
 
