@@ -370,6 +370,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
     <div id="slot-builder">
       <div id="slot-title">DAY 1 ── 點時段啟用，再點景點卡 ＋ 新增（每時段最多 4 個）</div>
       <div class="slots-row" id="slots-row"></div>
+
+      <!-- 車輛和機場接送選項 -->
+      <div class="hotel-row" style="background:#f9f9f9;padding:8px;border-radius:6px;margin-bottom:8px">
+        <span class="hm-lbl">🚗 包車</span>
+        <select class="hm-sel" id="sel-vehicle" onchange="setVehicle()" style="width:140px">
+          <option value="">選擇車型</option>
+        </select>
+        <span class="hm-lbl" style="margin-left:12px">✈️ 機場</span>
+        <select class="hm-sel" id="sel-airport" onchange="setAirport()" style="width:160px">
+          <option value="">選擇接送方式</option>
+        </select>
+      </div>
+
+      <!-- 飯店和餐食選項 -->
       <div class="hotel-row">
         <span class="hm-lbl">🏨 住宿</span>
         <select class="hm-sel" id="sel-hotel" onchange="setHotel()"></select>
@@ -409,6 +423,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
       <div class="pax-row"><span class="pax-lbl">景點費用</span><span class="pax-val" id="p-spot">NT$ 0</span></div>
       <div class="pax-row"><span class="pax-lbl">住宿費用</span><span class="pax-val" id="p-hotel">NT$ 0</span></div>
       <div class="pax-row"><span class="pax-lbl">包車費用</span><span class="pax-val" id="p-veh">NT$ 0</span></div>
+      <div class="pax-row"><span class="pax-lbl">✈️ 機場接送</span><span class="pax-val" id="p-airport">NT$ 0</span></div>
       <div class="pax-row"><span class="pax-lbl">導遊費用</span><span class="pax-val" id="p-guide">NT$ 0</span></div>
     </div>
     <div class="pax-total">
@@ -719,13 +734,71 @@ const SPOTS = RAW.map(r => {
 });
 
 const HOTELS_RAW = [
+  // 曼谷 - 30間評價好的飯店（2000+ THB）
   {region:'曼谷', name:'Chatrium Residence Sathon Bangkok ★★★★★', costThb:6200},
   {region:'曼谷', name:'Somerset Rama 9 Bangkok ★★★★★',            costThb:5600},
+  {region:'曼谷', name:'The Peninsula Bangkok ★★★★★',              costThb:7500},
+  {region:'曼谷', name:'Mandarin Oriental Bangkok ★★★★★',          costThb:8000},
+  {region:'曼谷', name:'W Bangkok ★★★★★',                          costThb:6500},
+  {region:'曼谷', name:'Okura Prestige Bangkok ★★★★★',             costThb:7200},
+  {region:'曼谷', name:'Sofitel Bangkok Central ★★★★★',            costThb:6800},
   {region:'曼谷', name:'The Quarter Chaophraya ★★★★',              costThb:4600},
   {region:'曼谷', name:'MAITRIA RESIDENCE RAMA 9 ★★★★',            costThb:4000},
+  {region:'曼谷', name:'Le Méridien Bangkok ★★★★★',                costThb:5200},
+  {region:'曼谷', name:'Ascott Sathorn Bangkok ★★★★★',             costThb:5800},
+  {region:'曼谷', name:'Siam Kempinski Hotel Bangkok ★★★★★',       costThb:6900},
+  {region:'曼谷', name:'InterContinental Bangkok ★★★★★',           costThb:6500},
+  {region:'曼谷', name:'Amari Watergate Bangkok ★★★★★',            costThb:5900},
+  {region:'曼谷', name:'JW Marriott Bangkok ★★★★★',                costThb:6200},
+  {region:'曼谷', name:'Hilton Bangkok ★★★★★',                     costThb:5700},
+  {region:'曼谷', name:'Banyan Tree Bangkok ★★★★★',                costThb:7800},
+  {region:'曼谷', name:'Park Hyatt Bangkok ★★★★★',                 costThb:7500},
+  {region:'曼谷', name:'Dusit Thani Bangkok ★★★★★',                costThb:5500},
+  {region:'曼谷', name:'Thailand Kyoto Hotel Bangkok ★★★★',        costThb:3800},
+  {region:'曼谷', name:'Arton Petburi Bangkok ★★★★',               costThb:3600},
+  {region:'曼谷', name:'Impress Hotel Bangkok ★★★★',               costThb:3400},
+  {region:'曼谷', name:'Royal Riverside Hotel ★★★★',               costThb:3200},
+  {region:'曼谷', name:'FX Hotel Bangkok ★★★',                      costThb:2400},
+  {region:'曼谷', name:'Loft on 20 Bangkok ★★★★',                  costThb:2600},
+  {region:'曼谷', name:'Akyra Manor Bangkok ★★★★',                 costThb:2800},
+  {region:'曼谷', name:'K Hotels Bangkok Petchburi ★★★★',          costThb:2500},
+  {region:'曼谷', name:'S31 Sukhumvit Hotel ★★★★',                 costThb:2700},
+  {region:'曼谷', name:'Lub d Bangkok Sathon ★★★',                 costThb:2200},
+  {region:'曼谷', name:'Na Mon Boutique Hotel ★★★',                costThb:2100},
+
+  // 芭達雅 - 30間評價好的飯店（2000+ THB）
+  {region:'芭達雅', name:'Centara Grand Mirage Beach Resort ★★★★★',costThb:6800},
+  {region:'芭達雅', name:'Hilton Pattaya ★★★★★',                  costThb:6200},
+  {region:'芭達雅', name:'Dusit Thani Pattaya ★★★★★',             costThb:5800},
+  {region:'芭達雅', name:'Movenpick Resort & Spa Pattaya ★★★★★',  costThb:6500},
+  {region:'芭達雅', name:'InterContinental Pattaya Resort ★★★★★', costThb:6300},
   {region:'芭達雅', name:'Grande Centre Point Space Pattaya ★★★★★',costThb:5200},
+  {region:'芭達雅', name:'Amari Pattaya ★★★★★',                   costThb:5900},
+  {region:'芭達雅', name:'Centara Mirage Resort Pattaya ★★★★',    costThb:4600},
   {region:'芭達雅', name:'The Grass Pattaya ★★★★',                 costThb:3900},
-  {region:'芭達雅', name:'Amari Pattaya ★★★★',                     costThb:4100},
+  {region:'芭達雅', name:'Pullman Pattaya Hotel G ★★★★',          costThb:4200},
+  {region:'芭達雅', name:'Centara Avenue Resort Pattaya ★★★★',    costThb:3800},
+  {region:'芭達雅', name:'Royal Cliff Beach Resort ★★★★★',        costThb:6100},
+  {region:'芭達雅', name:'Royal Cliff Grand ★★★★★',               costThb:7200},
+  {region:'芭達雅', name:'Royal Cliff Residence ★★★★',            costThb:5500},
+  {region:'芭達雅', name:'Eurasia Pattaya Hotel ★★★★',            costThb:4400},
+  {region:'芭達雅', name:'Sunshine Garden Hotel ★★★',              costThb:2800},
+  {region:'芭達雅', name:'Diamond Beach Hotel & Resort ★★★',      costThb:2600},
+  {region:'芭達雅', name:'Hansar Bangkok Pattaya ★★★',             costThb:2400},
+  {region:'芭達雅', name:'Flipper House Beach Resort ★★★',        costThb:2300},
+  {region:'芭達雅', name:'CC\'s Boutique Hotel Pattaya ★★★',      costThb:2200},
+  {region:'芭達雅', name:'Pattaya Paragon Hotel ★★★',              costThb:2100},
+  {region:'芭達雅', name:'The Loft Oceanside Pattaya ★★★',        costThb:2500},
+  {region:'芭達雅', name:'Urban Boutique Hotel Pattaya ★★★',      costThb:2400},
+  {region:'芭達雅', name:'Kala Samui Design Hotel ★★★',           costThb:2350},
+  {region:'芭達雅', name:'Impress Hotel Pattaya ★★★',             costThb:2200},
+  {region:'芭達雅', name:'Golden Beach Resort Pattaya ★★★',       costThb:2150},
+  {region:'芭達雅', name:'Baan Somphet Luxury House ★★★',         costThb:2000},
+  {region:'芭達雅', name:'PS Pattaya Hotel ★★',                    costThb:1900},
+  {region:'芭達雅', name:'Rabbit Resort Pattaya ★★★',             costThb:2050},
+  {region:'芭達雅', name:'Krabi Hua Hin Resort ★★★',              costThb:2100},
+
+  // 其他城市
   {region:'清邁', name:'清邁 Nimman 精品五星 ★★★★★',              costThb:4800},
   {region:'清邁', name:'清邁古城精品四星 ★★★★',                   costThb:3300},
   {region:'清邁', name:'清邁尼曼路精品四星 ★★★★',                 costThb:3800},
@@ -745,6 +818,18 @@ const HOTELS = HOTELS_RAW.map(h => ({
   costTwd: Math.ceil(h.costThb * EX),
 }));
 
+/* 車輛選項和機場接送 */
+const VEHICLES = [
+  {type:'4人座', costThb:3500, desc:'標準房車'},
+  {type:'7人座', costThb:4500, desc:'商務MPV'},
+  {type:'15人座', costThb:6500, desc:'豪華遊覽車'}
+];
+
+const AIRPORT_SERVICES = [
+  {type:'機場往返接送', costThb:1800, desc:'蘇瓦納普米機場 ↔ 飯店'},
+  {type:'單點接送', costThb:600, desc:'市區任意兩點接送'}
+];
+
 const MEALS = ['飯店早餐','機上餐','泰式風味套餐','代訂網美餐廳','海鮮大餐（代訂）','景點內自助餐','夜市自理','逛街自理','不含'];
 
 /* ════ 狀態 ════════════════════════════════════ */
@@ -759,10 +844,20 @@ let S = {
 };
 
 function newDay(){
-  return {am:[],pm:[],eve:[],hotel:HOTELS[0].name,bkf:'飯店早餐',lun:'逛街自理',din:'代訂網美餐廳'};
+  return {
+    am:[],pm:[],eve:[],
+    vehicle:'',
+    airport:'',
+    hotel:HOTELS[0].name,
+    bkf:'飯店早餐',
+    lun:'逛街自理',
+    din:'代訂網美餐廳'
+  };
 }
 function initDays(n){ S.days = Array.from({length:n}, newDay); }
 initDays(5);
+renderVehicleOptions();
+renderAirportOptions();
 
 /* ════ 景點卡 ════════════════════════════════════ */
 function filteredSpots(){
@@ -927,8 +1022,24 @@ function removeFromSlot(key, id, e){
   renderSlots(); renderCards(); updatePrice(); renderDayTabs(); renderMini();
 }
 
+function setVehicle(){ S.days[S.currentDay].vehicle = document.getElementById('sel-vehicle').value; updatePrice(); }
+function setAirport(){ S.days[S.currentDay].airport = document.getElementById('sel-airport').value; updatePrice(); }
 function setHotel(){ S.days[S.currentDay].hotel = document.getElementById('sel-hotel').value; updatePrice(); }
 function setMeal(m){ S.days[S.currentDay][m] = document.getElementById(`sel-${m}`).value; }
+
+// 初始化車輛下拉菜單
+function renderVehicleOptions(){
+  const sel = document.getElementById('sel-vehicle');
+  sel.innerHTML = '<option value="">選擇車型</option>' +
+    VEHICLES.map(v => `<option value="${v.type}">${v.type} (${v.costThb} THB/天)</option>`).join('');
+}
+
+// 初始化機場接送下拉菜單
+function renderAirportOptions(){
+  const sel = document.getElementById('sel-airport');
+  sel.innerHTML = '<option value="">選擇接送方式</option>' +
+    AIRPORT_SERVICES.map(a => `<option value="${a.type}">${a.type} (${a.costThb} THB)</option>`).join('');
+}
 
 /* ════ 景點選取 ════════════════════════════════ */
 function addToSlot(key, spot){
@@ -1001,27 +1112,45 @@ document.addEventListener('click', e => {
 function calcCosts(){
   const adults = parseInt(document.getElementById('c-adults').value)||1;
   const rooms  = parseInt(document.getElementById('c-rooms').value)||1;
-  const veh    = parseInt(document.getElementById('sel-vehicle').value)||4140;
   const days   = S.days.length;
   const MARGIN = 0.20;
 
+  // 景點費用
   const spotCost = S.days.reduce((sum,d) =>
     sum + [...d.am,...d.pm,...d.eve].reduce((s2,sp) => s2 + sp.costTwd, 0), 0) * adults;
 
+  // 飯店費用
   const hotelCost = S.days.reduce((sum,d) => {
     const h = HOTELS.find(h=>h.name===d.hotel);
     return sum + (h?h.costTwd:0)*rooms;
   }, 0);
 
-  const vehCost   = veh * days;
+  // 包車費用（每日計算）
+  let vehCost = 0;
+  S.days.forEach(d => {
+    if(d.vehicle) {
+      const v = VEHICLES.find(v=>v.type===d.vehicle);
+      if(v) vehCost += Math.ceil(v.costThb*EX);
+    }
+  });
+
+  // 機場接送費用
+  let airportCost = 0;
+  S.days.forEach(d => {
+    if(d.airport) {
+      const a = AIRPORT_SERVICES.find(a=>a.type===d.airport);
+      if(a) airportCost += Math.ceil(a.costThb*EX);
+    }
+  });
+
   const guideCost = Math.ceil(2500*EX) * days;
-  const subtotal  = spotCost + hotelCost + vehCost + guideCost;
+  const subtotal  = spotCost + hotelCost + vehCost + airportCost + guideCost;
   const profit    = Math.ceil(subtotal * MARGIN);
   const total     = subtotal + profit;
   const perPerson = Math.ceil(total/adults/100)*100;
   const grand     = perPerson * adults;
 
-  return {spotCost, hotelCost, vehCost, guideCost, perPerson, grand, adults, rooms};
+  return {spotCost, hotelCost, vehCost, airportCost, guideCost, perPerson, grand, adults, rooms};
 }
 
 function updatePrice(){
@@ -1030,6 +1159,11 @@ function updatePrice(){
   document.getElementById('p-spot').textContent  = fmt(c.spotCost);
   document.getElementById('p-hotel').textContent = fmt(c.hotelCost);
   document.getElementById('p-veh').textContent   = fmt(c.vehCost);
+
+  // 機場接送費用顯示（如果有該元素）
+  const airportEl = document.getElementById('p-airport');
+  if(airportEl) airportEl.textContent = fmt(c.airportCost);
+
   document.getElementById('p-guide').textContent = fmt(c.guideCost);
   document.getElementById('p-perperson').textContent = fmt(c.perPerson);
   document.getElementById('p-total').textContent = `全團 ${fmt(c.grand)}`;
