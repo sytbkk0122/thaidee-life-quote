@@ -1563,6 +1563,7 @@ function submitOrder(){
   const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
 
   const payload = {
+    id: Date.now(),
     timestamp: new Date().toLocaleString('zh-TW'),
     name: name,
     email: email,
@@ -1573,8 +1574,16 @@ function submitOrder(){
     perPerson: c.perPerson,
     grand: c.grand,
     itinerary: itinerary,
-    note: note
+    note: note,
+    diningMode: diningMode,
+    restaurant: restaurant
   };
+
+  // 💾 保存到 localStorage
+  let orders = JSON.parse(localStorage.getItem('thaidee_orders') || '[]');
+  orders.push(payload);
+  localStorage.setItem('thaidee_orders', JSON.stringify(orders));
+  console.log('✅ 訂單已保存:', payload.id);
 
   // 1️⃣ 發送到本地服務器（寫入 JSON）
   // 自動判斷後端地址（本地開發或 Railway）
