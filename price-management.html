@@ -25,9 +25,16 @@ header {
   color: white;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+header > div:first-child { flex: 1; }
 header h1 { font-size: 24px; margin-bottom: 5px; }
 header p { font-size: 12px; opacity: 0.9; }
+header .header-actions { display: flex; gap: 10px; }
+header .logout-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
+header .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
 .container {
   max-width: 1200px;
@@ -216,8 +223,13 @@ footer {
 </head>
 <body>
 <header>
-  <h1>💰 泰迪生活價格管理系統</h1>
-  <p>實時修改景點和飯店價格 • 前台自動同步</p>
+  <div>
+    <h1>💰 泰迪生活價格管理系統</h1>
+    <p>實時修改景點和飯店價格 • 前台自動同步</p>
+  </div>
+  <div class="header-actions">
+    <button class="logout-btn" onclick="logout()">🚪 登出</button>
+  </div>
 </header>
 
 <div class="container">
@@ -244,6 +256,8 @@ footer {
 
   <!-- 控制按鈕 -->
   <div class="controls">
+    <button onclick="location.href='/'">🏠 返回首頁</button>
+    <button onclick="location.href='admin.html'">📋 訂單管理</button>
     <button onclick="saveAllPrices()">💾 保存所有修改</button>
     <button class="secondary" onclick="resetAllPrices()">🔄 恢復預設價格</button>
     <button class="secondary" onclick="exportPrices()">📥 導出價格</button>
@@ -540,6 +554,14 @@ function clearAllModifications() {
   if (confirm('⚠️ 確定要清空所有價格修改嗎？')) {
     localStorage.removeItem('thaidee_price_overrides');
     location.reload();
+  }
+}
+
+// 登出
+function logout() {
+  if (confirm('確定要登出嗎？')) {
+    sessionStorage.removeItem('thaidee_admin_auth');
+    window.location.href = '/';
   }
 }
 

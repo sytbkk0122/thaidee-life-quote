@@ -25,9 +25,16 @@ header {
   color: white;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+header > div:first-child { flex: 1; }
 header h1 { font-size: 24px; margin-bottom: 5px; }
 header p { font-size: 12px; opacity: 0.9; }
+header .header-actions { display: flex; gap: 10px; }
+header .logout-btn { background: rgba(255,255,255,0.2); border: 1px solid white; color: white; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 12px; transition: all 0.3s; }
+header .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
 .container {
   max-width: 1200px;
@@ -151,8 +158,13 @@ footer {
 </head>
 <body>
 <header>
-  <h1>🏛️ 泰迪生活訂單管理後台</h1>
-  <p>追蹤所有客戶訂單 • 匯出業務數據</p>
+  <div>
+    <h1>🏛️ 泰迪生活訂單管理後台</h1>
+    <p>追蹤所有客戶訂單 • 匯出業務數據</p>
+  </div>
+  <div class="header-actions">
+    <button class="logout-btn" onclick="logout()">🚪 登出</button>
+  </div>
 </header>
 
 <div class="container">
@@ -178,6 +190,7 @@ footer {
 
   <!-- 控制面板 -->
   <div class="controls">
+    <button onclick="location.href='/'">🏠 返回首頁</button>
     <button onclick="location.href='price-management.html'" style="background:#E67E22">💰 價格管理</button>
     <button onclick="exportToCSV()">📥 導出 CSV</button>
     <button class="secondary" onclick="exportToExcel()">📊 導出 Excel</button>
@@ -396,6 +409,14 @@ function clearAllOrders() {
     localStorage.removeItem('thaidee_orders');
     loadOrders();
     alert('✅ 所有訂單已清空');
+  }
+}
+
+// 登出
+function logout() {
+  if (confirm('確定要登出嗎？')) {
+    sessionStorage.removeItem('thaidee_admin_auth');
+    window.location.href = '/';
   }
 }
 

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>泰迪生活系統 - 下載</title>
+    <style>
+        body { font-family: "微軟正黑體"; text-align: center; padding: 50px; background: #f5f5f5; }
+        h1 { color: #8B3A1A; }
+        .btn { background: #D4860A; color: white; padding: 15px 40px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin: 20px; }
+        .btn:hover { background: #C0522A; }
+        .info { background: white; padding: 20px; border-radius: 8px; max-width: 600px; margin: 20px auto; }
+    </style>
+</head>
+<body>
+    <h1>🌴 泰迪生活報價系統</h1>
+    <div class="info">
+        <p>✅ 432 景點 | ✅ 232 飯店 | ✅ 105 餐廳</p>
+        <p>系統已完全準備好</p>
+        <button class="btn" onclick="downloadAndUpload()">📥 下載並上傳系統</button>
+    </div>
+
+    <script>
+        function downloadAndUpload() {
+            // 下載文件
+            const link = document.createElement('a');
+            link.href = 'index.html';
+            link.download = 'thaidee-system.html';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // 3秒後打開tiiny.site編輯器
+            setTimeout(() => {
+                window.open('https://scarlet-tracy-87.tiiny.site/?edit', '_blank');
+                alert('✅ 文件已下載！\n\n現在：\n1. 打開剛才下載的 thaidee-system.html\n2. 用記事本打開\n3. Ctrl+A 全選\n4. Ctrl+C 複製\n5. 回到 tiiny.site 編輯器\n6. Ctrl+A → Delete → Ctrl+V\n7. 點保存');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>泰迪生活 - 自動上傳助手</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "微軟正黑體", sans-serif;
+            background: linear-gradient(135deg, #8B3A1A 0%, #5C2410 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+        h1 { color: #8B3A1A; margin-bottom: 20px; font-size: 32px; }
+        .status {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .status.info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-left: 4px solid #1565c0;
+        }
+        .status.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        .status.loading {
+            background: #fff3e0;
+            color: #e65100;
+            border-left: 4px solid #e65100;
+        }
+        button {
+            background: #D4860A;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        button:hover {
+            background: #C0522A;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 134, 10, 0.3);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .step {
+            text-align: left;
+            margin: 15px 0;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border-left: 4px solid #D4860A;
+        }
+        .step-num {
+            font-weight: 700;
+            color: #8B3A1A;
+            margin-bottom: 5px;
+        }
+        .code-block {
+            background: #1a1a1a;
+            color: #0f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #D4860A;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌴 泰迪生活</h1>
+        <h2 style="color: #666; margin-bottom: 30px; font-size: 18px;">自動上傳助手</h2>
+
+        <div id="status" class="status info">
+            ⏳ 準備上傳系統...
+        </div>
+
+        <div id="content">
+            <div class="step">
+                <div class="step-num">第1步: 打開編輯器</div>
+                <button onclick="openEditor()">🔗 打開 tiiny.site 編輯器</button>
+            </div>
+
+            <div class="step">
+                <div class="step-num">第2步: 自動上傳</div>
+                <button onclick="startAutoUpload()">🚀 開始自動上傳</button>
+                <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                    點擊後會自動複製代碼並上傳到編輯器
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-num">第3步: 驗證完成</div>
+                <button onclick="verifyUpload()">✅ 驗證上傳</button>
+            </div>
+        </div>
+
+        <div id="logs" style="display: none; margin-top: 20px; text-align: left;">
+            <div class="code-block" id="logContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // 系統數據（從 index.html 讀取）
+        let systemCode = null;
+
+        async function loadSystemCode() {
+            try {
+                const response = await fetch('index.html');
+                systemCode = await response.text();
+                updateStatus('✅ 系統代碼已加載 (' + (systemCode.length / 1024).toFixed(1) + ' KB)', 'success');
+                return true;
+            } catch (e) {
+                updateStatus('❌ 無法加載系統代碼: ' + e.message, 'error');
+                return false;
+            }
+        }
+
+        function updateStatus(text, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = text;
+            status.className = 'status ' + type;
+        }
+
+        function addLog(text) {
+            const logs = document.getElementById('logs');
+            logs.style.display = 'block';
+            document.getElementById('logContent').innerHTML += text + '\n';
+        }
+
+        function openEditor() {
+            window.open('https://scarlet-tracy-87.tiiny.site/?edit', '_blank');
+            updateStatus('✅ 編輯器已打開，請回到此窗口執行上傳');
+        }
+
+        async function startAutoUpload() {
+            if (!systemCode) {
+                if (!await loadSystemCode()) return;
+            }
+
+            updateStatus('⏳ 準備上傳...', 'loading');
+            addLog('🚀 [1/5] 正在複製代碼到剪貼板...');
+
+            try {
+                // 複製到剪貼板
+                await navigator.clipboard.writeText(systemCode);
+                addLog('✅ [1/5] 代碼已複製 (' + (systemCode.length / 1024).toFixed(1) + ' KB)');
+
+                updateStatus('✅ 代碼已複製到剪貼板！\n現在在 tiiny.site 編輯器中執行第3步', 'success');
+
+                addLog('✅ [2/5] 複製完成');
+                addLog('ℹ️  [3/5] 請轉到 tiiny.site 編輯器窗口');
+                addLog('ℹ️  [4/5] 按 Ctrl+A 全選所有內容');
+                addLog('ℹ️  [5/5] 按 Ctrl+V 粘貼代碼');
+                addLog('ℹ️  最後點「保存」按鈕');
+
+            } catch (e) {
+                updateStatus('❌ 複製失敗: ' + e.message, 'error');
+                addLog('❌ 錯誤: ' + e.message);
+            }
+        }
+
+        function verifyUpload() {
+            // 打開上傳的網站進行驗證
+            window.open('https://scarlet-tracy-87.tiiny.site', '_blank');
+            updateStatus('✅ 已打開系統地址進行驗證', 'success');
+        }
+
+        // 頁面加載時
+        window.addEventListener('load', async function() {
+            await loadSystemCode();
+        });
+    </script>
+</body>
+</html>

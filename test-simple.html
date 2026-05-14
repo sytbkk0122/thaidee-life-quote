@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test</title>
+</head>
+<body>
+<div id="test">Loading...</div>
+
+<script>
+console.log('Script executing');
+window.testVar = 'Script executed';
+const TEST_CONST = 123;
+function testFunc() { return 'test'; }
+
+document.getElementById('test').innerHTML = 'Script worked! testVar=' + window.testVar;
+</script>
+
+<script>
+window.secondScript = true;
+document.getElementById('test').innerHTML += '<br>Second script: ' + window.secondScript;
+</script>
+</body>
+</html>
