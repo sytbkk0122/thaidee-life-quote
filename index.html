@@ -982,7 +982,13 @@ const RAW = [
 ];
 
 const SPOTS = RAW.map(r => {
-  const costThb=r[5], sellThb=costThb>0?costThb+SPOT_MK:0;
+  let costThb = r[5];
+  // 讀取 localStorage 中的價格覆蓋
+  const priceOverrides = JSON.parse(localStorage.getItem('thaidee_price_overrides') || '{}');
+  if (priceOverrides.spots && priceOverrides.spots[r[0]]) {
+    costThb = priceOverrides.spots[r[0]];
+  }
+  const sellThb=costThb>0?costThb+SPOT_MK:0;
   return {id:r[0],region:r[1],category:r[2],name:r[3],desc:r[4],
     costThb, sellThb, sellTwd:Math.ceil(sellThb*EX), costTwd:Math.ceil(costThb*EX),
     hours:r[6], isNew:r[7], isHot:r[8]};
@@ -1067,11 +1073,20 @@ const HOTELS_RAW = [
   {region:'通用', name:'🏠 溫暖的家（返台日）',                     costThb:0},
   {region:'通用', name:'（此日不需住宿）',                          costThb:0},
 ];
-const HOTELS = HOTELS_RAW.map(h => ({
-  ...h,
-  sellTwd: Math.ceil((h.costThb + HOTEL_MK) * EX),
-  costTwd: Math.ceil(h.costThb * EX),
-}));
+const HOTELS = HOTELS_RAW.map(h => {
+  let costThb = h.costThb;
+  // 讀取 localStorage 中的價格覆蓋
+  const priceOverrides = JSON.parse(localStorage.getItem('thaidee_price_overrides') || '{}');
+  if (priceOverrides.hotels && priceOverrides.hotels[h.name]) {
+    costThb = priceOverrides.hotels[h.name];
+  }
+  return {
+    ...h,
+    costThb,
+    sellTwd: Math.ceil((costThb + HOTEL_MK) * EX),
+    costTwd: Math.ceil(costThb * EX),
+  };
+});
 
 /* 車輛選項和機場接送 */
 const VEHICLES = [
@@ -1687,6 +1702,10 @@ function copyLine(){
 
 /* ════ Init ════════════════════════════════════ */
 function init(){
+  // 🔄 保存景點和飯店數據到 sessionStorage，供後台管理系統使用
+  sessionStorage.setItem('thaidee_spots_data', JSON.stringify(SPOTS));
+  sessionStorage.setItem('thaidee_hotels_data', JSON.stringify(HOTELS));
+
   renderTags(); renderDayTabs(); renderSlots(); renderCards(); updatePrice();
   document.getElementById('btn-add-day').onclick = addDay;
   document.getElementById('btn-generate').onclick = generateQuote;

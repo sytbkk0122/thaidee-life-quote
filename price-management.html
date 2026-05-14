@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>泰迪生活 - 價格管理</title>
+<style>
+:root {
+  --brand: #8B3A1A;
+  --brand-d: #5C2410;
+  --gold: #D4860A;
+  --green: #1A6E3C;
+  --red: #e53935;
+  --bg: #F4F0EB;
+  --border: #E4D9CC;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "微軟正黑體", sans-serif;
+  background: var(--bg);
+  color: #333;
+}
+header {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-d) 100%);
+  color: white;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+header h1 { font-size: 24px; margin-bottom: 5px; }
+header p { font-size: 12px; opacity: 0.9; }
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--border);
+}
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #888;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+.tab-btn.active {
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+}
+.tab-btn:hover {
+  color: var(--brand);
+}
+
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+.price-table {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+.table-header {
+  background: var(--brand);
+  color: white;
+  padding: 15px;
+  font-weight: 700;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+  gap: 10px;
+  font-size: 12px;
+}
+.price-row {
+  padding: 15px;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr;
+  gap: 10px;
+  align-items: center;
+}
+.price-row:hover {
+  background: #f9f7f3;
+}
+.price-row.modified {
+  background: #fffacd;
+}
+
+.price-name {
+  font-weight: 600;
+  color: var(--dark, #333);
+}
+.price-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 13px;
+}
+.price-input:focus {
+  border-color: var(--brand);
+  outline: none;
+  background: #fffacd;
+}
+
+.price-display {
+  font-family: monospace;
+  font-size: 13px;
+  color: #666;
+}
+.price-display.changed {
+  color: var(--red);
+  font-weight: 700;
+}
+
+.btn-reset {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.3s;
+}
+.btn-reset:hover {
+  background: var(--red);
+  color: white;
+  border-color: var(--red);
+}
+
+.controls {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+button {
+  background: var(--gold);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+button:hover { background: var(--brand); }
+button.secondary {
+  background: var(--green);
+}
+button.danger {
+  background: var(--red);
+}
+
+.info-box {
+  background: #e3f2fd;
+  border-left: 4px solid #1565c0;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #1565c0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  border-left: 4px solid var(--brand);
+}
+.stat-card h4 {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.stat-card .value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 12px;
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>💰 泰迪生活價格管理系統</h1>
+  <p>實時修改景點和飯店價格 • 前台自動同步</p>
+</header>
+
+<div class="container">
+  <!-- 統計卡片 -->
+  <div class="stats">
+    <div class="stat-card">
+      <h4>景點總數</h4>
+      <div class="value" id="total-spots">0</div>
+    </div>
+    <div class="stat-card">
+      <h4>飯店總數</h4>
+      <div class="value" id="total-hotels">0</div>
+    </div>
+    <div class="stat-card">
+      <h4>已修改項目</h4>
+      <div class="value" id="modified-count">0</div>
+    </div>
+  </div>
+
+  <!-- 信息提示 -->
+  <div class="info-box">
+    ℹ️ 修改價格後會自動保存。前台系統會實時讀取最新價格。修改生效時間：刷新頁面後立即生效。
+  </div>
+
+  <!-- 控制按鈕 -->
+  <div class="controls">
+    <button onclick="saveAllPrices()">💾 保存所有修改</button>
+    <button class="secondary" onclick="resetAllPrices()">🔄 恢復預設價格</button>
+    <button class="secondary" onclick="exportPrices()">📥 導出價格</button>
+    <button class="danger" onclick="clearAllModifications()">🗑️ 清空所有修改</button>
+  </div>
+
+  <!-- 標籤頁 -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('spots')">🎯 景點價格 (<span id="spot-count">0</span>)</button>
+    <button class="tab-btn" onclick="switchTab('hotels')">🏨 飯店價格 (<span id="hotel-count">0</span>)</button>
+  </div>
+
+  <!-- 景點價格管理 -->
+  <div id="spots" class="tab-content active">
+    <div class="price-table">
+      <div class="table-header">
+        <div>景點名稱</div>
+        <div>原始價格 (THB)</div>
+        <div>修改後 (THB)</div>
+        <div>銷售價 (THB)</div>
+        <div>操作</div>
+      </div>
+      <div id="spots-list"></div>
+    </div>
+  </div>
+
+  <!-- 飯店價格管理 -->
+  <div id="hotels" class="tab-content">
+    <div class="price-table">
+      <div class="table-header">
+        <div>飯店名稱</div>
+        <div>原始價格 (THB)</div>
+        <div>修改後 (THB)</div>
+        <div>銷售價 (THB)</div>
+        <div>操作</div>
+      </div>
+      <div id="hotels-list"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 泰迪生活 Thai-Dee Life | 價格數據實時同步</p>
+</footer>
+
+<script>
+// 從主系統的 RAW 數據重建景點清單
+const SPOT_MK = 200;
+const HOTEL_MK = 300;
+const EX = 0.92;
+
+// 景點數據（簡化版）
+let SPOTS_DATA = [];
+let HOTELS_DATA = [];
+
+// 從 localStorage 讀取價格覆蓋
+function getPriceOverrides() {
+  return JSON.parse(localStorage.getItem('thaidee_price_overrides') || '{"spots":{},"hotels":{}}');
+}
+
+// 保存價格覆蓋到 localStorage
+function savePriceOverrides(overrides) {
+  localStorage.setItem('thaidee_price_overrides', JSON.stringify(overrides));
+  updateStats();
+}
+
+// 初始化景點數據（需要從主系統的 RAW 讀取）
+function initializeData() {
+  // 這裡我們會從主系統加載數據
+  // 為了簡單，我們使用一個初始化腳本
+  loadSpotsFromStorage();
+  loadHotelsFromStorage();
+  renderSpots();
+  renderHotels();
+  updateStats();
+}
+
+// 從 localStorage 加載景點（需要和主系統同步）
+function loadSpotsFromStorage() {
+  // 從 localStorage 讀取景點數據
+  const spotsStr = sessionStorage.getItem('thaidee_spots_data');
+  if (spotsStr) {
+    SPOTS_DATA = JSON.parse(spotsStr);
+  }
+}
+
+// 從 localStorage 加載飯店（需要和主系統同步）
+function loadHotelsFromStorage() {
+  const hotelsStr = sessionStorage.getItem('thaidee_hotels_data');
+  if (hotelsStr) {
+    HOTELS_DATA = JSON.parse(hotelsStr);
+  }
+}
+
+// 渲染景點價格管理界面
+function renderSpots() {
+  const overrides = getPriceOverrides();
+  const spotsList = document.getElementById('spots-list');
+
+  if (!SPOTS_DATA || SPOTS_DATA.length === 0) {
+    spotsList.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">正在加載景點數據...</div>';
+    return;
+  }
+
+  spotsList.innerHTML = SPOTS_DATA.map(spot => {
+    const overridePrice = overrides.spots[spot.id];
+    const currentPrice = overridePrice !== undefined ? overridePrice : spot.costThb;
+    const isModified = overridePrice !== undefined;
+    const sellPrice = currentPrice > 0 ? currentPrice + SPOT_MK : 0;
+
+    return `
+      <div class="price-row ${isModified ? 'modified' : ''}">
+        <div class="price-name">${spot.name || spot.id}</div>
+        <div class="price-display">${spot.costThb || 0}</div>
+        <div>
+          <input type="number" class="price-input" id="spot-${spot.id}"
+            value="${currentPrice}" min="0"
+            onchange="updateSpotPrice('${spot.id}', this.value)">
+        </div>
+        <div class="price-display ${isModified ? 'changed' : ''}">${sellPrice}</div>
+        <div>
+          ${isModified ? `<button class="btn-reset" onclick="resetSpotPrice('${spot.id}')">重設</button>` : '-'}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('spot-count').textContent = SPOTS_DATA.length;
+}
+
+// 渲染飯店價格管理界面
+function renderHotels() {
+  const overrides = getPriceOverrides();
+  const hotelsList = document.getElementById('hotels-list');
+
+  if (!HOTELS_DATA || HOTELS_DATA.length === 0) {
+    hotelsList.innerHTML = '<div style="padding:20px;text-align:center;color:#999;">正在加載飯店數據...</div>';
+    return;
+  }
+
+  hotelsList.innerHTML = HOTELS_DATA.map(hotel => {
+    const overridePrice = overrides.hotels[hotel.name];
+    const currentPrice = overridePrice !== undefined ? overridePrice : hotel.costThb;
+    const isModified = overridePrice !== undefined;
+    const sellPrice = currentPrice > 0 ? currentPrice + HOTEL_MK : 0;
+
+    return `
+      <div class="price-row ${isModified ? 'modified' : ''}">
+        <div class="price-name">${hotel.name}</div>
+        <div class="price-display">${hotel.costThb}</div>
+        <div>
+          <input type="number" class="price-input" id="hotel-${hotel.name}"
+            value="${currentPrice}" min="0"
+            onchange="updateHotelPrice('${hotel.name}', this.value)">
+        </div>
+        <div class="price-display ${isModified ? 'changed' : ''}">${sellPrice}</div>
+        <div>
+          ${isModified ? `<button class="btn-reset" onclick="resetHotelPrice('${hotel.name}')">重設</button>` : '-'}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('hotel-count').textContent = HOTELS_DATA.length;
+}
+
+// 更新景點價格
+function updateSpotPrice(spotId, newPrice) {
+  const overrides = getPriceOverrides();
+  if (!overrides.spots) overrides.spots = {};
+  overrides.spots[spotId] = parseInt(newPrice);
+  savePriceOverrides(overrides);
+  renderSpots();
+}
+
+// 更新飯店價格
+function updateHotelPrice(hotelName, newPrice) {
+  const overrides = getPriceOverrides();
+  if (!overrides.hotels) overrides.hotels = {};
+  overrides.hotels[hotelName] = parseInt(newPrice);
+  savePriceOverrides(overrides);
+  renderHotels();
+}
+
+// 重設景點價格
+function resetSpotPrice(spotId) {
+  const overrides = getPriceOverrides();
+  delete overrides.spots[spotId];
+  savePriceOverrides(overrides);
+  renderSpots();
+}
+
+// 重設飯店價格
+function resetHotelPrice(hotelName) {
+  const overrides = getPriceOverrides();
+  delete overrides.hotels[hotelName];
+  savePriceOverrides(overrides);
+  renderHotels();
+}
+
+// 標籤切換
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// 更新統計信息
+function updateStats() {
+  const overrides = getPriceOverrides();
+  const modifiedCount = Object.keys(overrides.spots || {}).length + Object.keys(overrides.hotels || {}).length;
+  document.getElementById('total-spots').textContent = SPOTS_DATA.length;
+  document.getElementById('total-hotels').textContent = HOTELS_DATA.length;
+  document.getElementById('modified-count').textContent = modifiedCount;
+}
+
+// 保存所有修改
+function saveAllPrices() {
+  alert('✅ 所有價格修改已保存！\n\n前台系統會在刷新後自動讀取最新價格。');
+}
+
+// 重設所有價格
+function resetAllPrices() {
+  if (confirm('⚠️ 確定要恢復所有價格為預設值嗎？')) {
+    localStorage.removeItem('thaidee_price_overrides');
+    renderSpots();
+    renderHotels();
+    updateStats();
+    alert('✅ 所有價格已恢復為預設值');
+  }
+}
+
+// 導出價格
+function exportPrices() {
+  const overrides = getPriceOverrides();
+  const json = JSON.stringify(overrides, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `泰迪生活價格_${new Date().toISOString().split('T')[0]}.json`;
+  link.click();
+}
+
+// 清空所有修改
+function clearAllModifications() {
+  if (confirm('⚠️ 確定要清空所有價格修改嗎？')) {
+    localStorage.removeItem('thaidee_price_overrides');
+    location.reload();
+  }
+}
+
+// 頁面加載時初始化
+window.addEventListener('load', initializeData);
+
+// 自動保存（每10秒）
+setInterval(saveAllPrices, 10000);
+</script>
+</body>
+</html>
