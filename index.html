@@ -1298,6 +1298,99 @@ function debounceRender(){
   debounceTimer = setTimeout(() => renderCards(), 300);
 }
 
+// 行程歷史和收藏管理
+const HISTORY_KEY = 'thaidee_history';
+const FAVORITES_KEY = 'thaidee_favorites';
+
+function saveToHistory(){
+  const data = {
+    timestamp: new Date().toISOString(),
+    name: document.getElementById('c-name').value,
+    email: document.getElementById('c-email').value,
+    phone: document.getElementById('c-phone').value,
+    adults: parseInt(document.getElementById('c-adults').value)||1,
+    dep: document.getElementById('c-dep').value,
+    ret: document.getElementById('c-ret').value,
+    spotCount: S.days.reduce((sum,d) => sum + d.am.length + d.pm.length + d.eve.length, 0),
+    cost: calcCosts().grand
+  };
+
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  history.unshift(data);
+  if(history.length > 20) history.pop(); // 保留最近20筆
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function toggleFavorite(spotId){
+  let favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  const idx = favorites.indexOf(spotId);
+  if(idx >= 0) {
+    favorites.splice(idx, 1);
+  } else {
+    favorites.push(spotId);
+  }
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+  renderCards();
+}
+
+function isFavorite(spotId){
+  const favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+  return favorites.includes(spotId);
+}
+
+// 性能監控工具
+function showPerformanceStats(){
+  const stats = {
+    '🎯 系統狀態': {
+      '景點總數': SPOTS.length,
+      '飯店選項': HOTELS.length,
+      '套裝行程': PACKAGE_TOURS.length,
+      '一日遊': DAY_TOURS.length,
+    },
+    '🚀 優化指標': {
+      '搜索快取': Object.keys(S.searchCache).length + ' / 20',
+      '價格快取': Object.keys(costCache).length + ' / 30',
+      '行程歷史': JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]').length + ' 筆',
+      '收藏景點': JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]').length + ' 個',
+    },
+    '💾 存儲使用': {
+      '訂單數': JSON.parse(localStorage.getItem('thaidee_orders') || '[]').length,
+      'localStorage大小': Math.round(
+        Object.keys(localStorage).reduce((sum, key) =>
+          sum + localStorage[key].length, 0) / 1024) + ' KB',
+    }
+  };
+
+  console.clear();
+  console.log('%c🌴 泰迪生活 × 鉅星旅運 系統監控', 'font-size:18px;font-weight:bold;color:#8B3A1A');
+  console.log('═'.repeat(50));
+
+  Object.entries(stats).forEach(([section, data]) => {
+    console.log(`\n%c${section}`, 'font-size:14px;font-weight:bold;color:#1A6E3C');
+    Object.entries(data).forEach(([key, val]) => {
+      console.log(`  ${key}: ${val}`);
+    });
+  });
+
+  console.log('\n' + '═'.repeat(50));
+  console.log('%c💡 提示：使用 exportItinerary() 導出行程', 'color:#FF6B6B');
+  console.log('%c💾 提示：系統自動保存到 localStorage', 'color:#FFA500');
+  return stats;
+}
+
+// 公開API供開發者使用
+window.thaidee = {
+  showStats: showPerformanceStats,
+  exportItinerary: exportItinerary,
+  importItinerary: importItinerary,
+  toggleFavorite: toggleFavorite,
+  getHistory: () => JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'),
+  getFavorites: () => JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'),
+  clearHistory: () => localStorage.removeItem(HISTORY_KEY),
+  clearFavorites: () => localStorage.removeItem(FAVORITES_KEY),
+  version: '2.5.0-optimized'
+};
+
 // 模糊搜尋 - 返回匹配分數
 function fuzzySearch(query, text){
   if(!query) return true;
@@ -2052,6 +2145,7 @@ function submitOrder(){
   let orders = JSON.parse(localStorage.getItem('thaidee_orders') || '[]');
   orders.push(payload);
   localStorage.setItem('thaidee_orders', JSON.stringify(orders));
+  saveToHistory(); // 保存到行程歷史
   console.log('✅ 訂單已保存:', payload.id);
 
   // 1️⃣ 發送到本地服務器（寫入 JSON）
@@ -2120,6 +2214,103 @@ function submitOrder(){
   });
 }
 
+/* ════ 行程導出 ════════════════════════════════════ */
+function exportItinerary(){
+  // 序列化行程為JSON
+  const data = {
+    name: document.getElementById('c-name').value,
+    email: document.getElementById('c-email').value,
+    phone: document.getElementById('c-phone').value,
+    adults: parseInt(document.getElementById('c-adults').value)||1,
+    kids: parseInt(document.getElementById('c-kids').value)||0,
+    rooms: parseInt(document.getElementById('c-rooms').value)||1,
+    dep: document.getElementById('c-dep').value,
+    ret: document.getElementById('c-ret').value,
+    days: S.days.map(d => ({
+      am: d.am.map(s => ({id:s.id, name:s.name, cost:s.costTwd})),
+      pm: d.pm.map(s => ({id:s.id, name:s.name, cost:s.costTwd})),
+      eve: d.eve.map(s => ({id:s.id, name:s.name, cost:s.costTwd})),
+      hotel: d.hotel,
+      vehicle: d.vehicle,
+      airport: d.airport,
+      meals: {bkf:d.bkf, lun:d.lun, din:d.din}
+    }))
+  };
+
+  // 轉換為Base64以便URL分享
+  const jsonStr = JSON.stringify(data);
+  const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+
+  // 複製到剪貼簿
+  const baseUrl = window.location.origin + window.location.pathname;
+  const shareUrl = `${baseUrl}?itinerary=${encoded}`;
+
+  navigator.clipboard.writeText(shareUrl).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value=shareUrl; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  });
+
+  const toast = document.getElementById('toast');
+  toast.textContent = '✅ 分享連結已複製';
+  toast.style.display='block';
+  setTimeout(()=>{ toast.style.display='none'; }, 2500);
+}
+
+// 從URL加載行程
+function importItinerary(){
+  const params = new URLSearchParams(window.location.search);
+  const encoded = params.get('itinerary');
+  if(!encoded) return;
+
+  try {
+    const jsonStr = decodeURIComponent(escape(atob(encoded)));
+    const data = JSON.parse(jsonStr);
+
+    // 填充表單
+    document.getElementById('c-name').value = data.name || '';
+    document.getElementById('c-email').value = data.email || '';
+    document.getElementById('c-phone').value = data.phone || '';
+    document.getElementById('c-adults').value = data.adults || 1;
+    document.getElementById('c-kids').value = data.kids || 0;
+    document.getElementById('c-rooms').value = data.rooms || 1;
+    document.getElementById('c-dep').value = data.dep || '';
+    document.getElementById('c-ret').value = data.ret || '';
+
+    // 恢復行程
+    if(data.days && Array.isArray(data.days)) {
+      initDays(data.days.length);
+      data.days.forEach((day, idx) => {
+        const d = S.days[idx];
+        if(day.am) day.am.forEach(s => {
+          const spot = SPOTS.find(x => x.id === s.id);
+          if(spot) d.am.push(spot);
+        });
+        if(day.pm) day.pm.forEach(s => {
+          const spot = SPOTS.find(x => x.id === s.id);
+          if(spot) d.pm.push(spot);
+        });
+        if(day.eve) day.eve.forEach(s => {
+          const spot = SPOTS.find(x => x.id === s.id);
+          if(spot) d.eve.push(spot);
+        });
+        d.hotel = day.hotel || d.hotel;
+        d.vehicle = day.vehicle || '';
+        d.airport = day.airport || '';
+        if(day.meals) {
+          d.bkf = day.meals.bkf || d.bkf;
+          d.lun = day.meals.lun || d.lun;
+          d.din = day.meals.din || d.din;
+        }
+      });
+
+      renderDayTabs(); renderSlots(); renderCards(); updatePrice();
+    }
+  } catch(e) {
+    console.error('行程導入失敗:', e);
+  }
+}
+
 /* ════ LINE ════════════════════════════════════ */
 function copyLine(){
   const name  = document.getElementById('c-name').value  || '（未填）';
@@ -2181,6 +2372,19 @@ function init(){
   const ret = new Date(dep);  ret.setDate(ret.getDate()+5);
   document.getElementById('c-dep').value = dep.toISOString().split('T')[0];
   document.getElementById('c-ret').value = ret.toISOString().split('T')[0];
+
+  // 導入行程（如果URL中有參數）
+  importItinerary();
+
+  // 添加導出行程按鈕
+  const exportBtn = document.createElement('button');
+  exportBtn.innerHTML = '📤';
+  exportBtn.title = '導出行程分享';
+  exportBtn.style.cssText = 'position:fixed;bottom:90px;right:20px;z-index:999;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#FF6B6B 0%,#EE5A52 100%);color:#fff;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(255,107,107,0.4);display:flex;align-items:center;justify-content:center;font-size:28px;transition:all 0.3s;font-family:inherit;';
+  exportBtn.onmouseover = () => { exportBtn.style.transform = 'scale(1.1)'; exportBtn.style.boxShadow = '0 6px 24px rgba(255,107,107,0.6)'; };
+  exportBtn.onmouseout = () => { exportBtn.style.transform = 'scale(1)'; exportBtn.style.boxShadow = '0 4px 16px rgba(255,107,107,0.4)'; };
+  exportBtn.onclick = exportItinerary;
+  document.body.appendChild(exportBtn);
 
   // 添加 LINE 客服浮動按鈕
   const lineBtn = document.createElement('button');
