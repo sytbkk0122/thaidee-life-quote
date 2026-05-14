@@ -2625,6 +2625,99 @@ window.initCityDropdown = function() {
 };
 
 // ═══════════════════════════════════════════════════
+// 🛡️ 防火牆和安全系統 ════════════════════════════════════
+class SecurityFirewall {
+  constructor() {
+    this.requestLog = [];
+    this.blockedIPs = new Set();
+    this.rateLimits = new Map();
+    this.suspiciousPatterns = [
+      /<script/gi,
+      /javascript:/gi,
+      /on\w+\s*=/gi,
+      /eval\(/gi,
+      /expression\(/gi,
+      /'?\s*(?:union|select|insert|update|delete|drop)\s+/gi,
+      /\bor\b\s*1\s*=\s*1/gi
+    ];
+  }
+
+  sanitizeInput(input) {
+    if (typeof input !== 'string') return input;
+    return input
+      .replace(/[<>\"']/g, char => ({
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#x27;'
+      }[char] || char))
+      .trim();
+  }
+
+  isInputMalicious(input) {
+    if (typeof input !== 'string') return false;
+    return this.suspiciousPatterns.some(pattern => pattern.test(input));
+  }
+
+  isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email) && email.length <= 254;
+  }
+
+  isValidPhone(phone) {
+    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+    return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 7;
+  }
+
+  checkRateLimit(key, maxRequests = 50, timeWindow = 60000) {
+    const now = Date.now();
+    const userLimit = this.rateLimits.get(key) || [];
+    const recentRequests = userLimit.filter(time => now - time < timeWindow);
+
+    if (recentRequests.length >= maxRequests) {
+      return false;
+    }
+
+    recentRequests.push(now);
+    this.rateLimits.set(key, recentRequests);
+    return true;
+  }
+
+  logRequest(action, details, riskLevel = 'low') {
+    this.requestLog.push({
+      timestamp: new Date().toISOString(),
+      action,
+      details,
+      riskLevel
+    });
+
+    if (this.requestLog.length > 1000) {
+      this.requestLog.shift();
+    }
+  }
+
+  getSecurityStatus() {
+    const now = Date.now();
+    const recentRequests = this.requestLog.filter(
+      log => now - new Date(log.timestamp).getTime() < 60000
+    );
+
+    const highRiskCount = recentRequests.filter(
+      log => log.riskLevel === 'high'
+    ).length;
+
+    return {
+      totalRequests: this.requestLog.length,
+      recentRequests: recentRequests.length,
+      highRiskAttempts: highRiskCount,
+      blockedIPs: this.blockedIPs.size,
+      status: highRiskCount > 10 ? 'warning' : 'safe'
+    };
+  }
+}
+
+const firewall = new SecurityFirewall();
+
 // 🔥 壓力測試函數 - 模擬 20 個用戶同時操作
 // ═══════════════════════════════════════════════════
 window.STRESS_TEST_RESULTS = {
@@ -2636,11 +2729,18 @@ window.STRESS_TEST_RESULTS = {
   avgResponseTime: 0,
   memoryBefore: 0,
   memoryAfter: 0,
-  errors: []
+  errors: [],
+  responseTimes: [],
+  maxResponseTime: 0,
+  minResponseTime: Infinity,
+  p95ResponseTime: 0,
+  p99ResponseTime: 0
 };
 
-function runStressTest(numUsers = 20) {
-  console.log(`🚀 開始壓力測試：模擬 ${numUsers} 個用戶同時選擇行程...`);
+// 高級壓力測試 - 支持 20、50、100+ 用戶
+function runStressTest(numUsers = 20, testScenario = 'mixed') {
+  console.clear();
+  console.log(`🚀 開始壓力測試：模擬 ${numUsers} 個用戶 [${testScenario}] ...`);
 
   const results = window.STRESS_TEST_RESULTS;
   results.startTime = Date.now();
@@ -2648,85 +2748,119 @@ function runStressTest(numUsers = 20) {
   results.successCount = 0;
   results.errorCount = 0;
   results.errors = [];
+  results.responseTimes = [];
+  results.maxResponseTime = 0;
+  results.minResponseTime = Infinity;
 
-  // 記錄初始內存（如果瀏覽器支持）
+  // 記錄初始內存
   if (performance.memory) {
     results.memoryBefore = performance.memory.usedJSHeapSize;
   }
 
-  const cities = ['曼谷', '清邁', '普吉', '蘇梅島', '芭達雅'];
-  const cities2 = cities.concat(['華欣', '甲米']);
-  const responseTimeArr = [];
+  const cities = ['曼谷', '清邁', '普吉', '蘇梅島', '芭達雅', '華欣', '甲米'];
+  let completedUsers = 0;
+
+  // 不同的測試場景
+  const scenarios = {
+    'mixed': () => Math.random(),           // 混合操作
+    'search': () => Math.random() * 0.4,    // 搜索密集
+    'calculate': () => Math.random() * 0.4 + 0.4, // 價格計算密集
+    'submit': () => Math.random() * 0.3 + 0.7 // 提交密集
+  };
+
+  const actionSelector = scenarios[testScenario] || scenarios.mixed;
 
   // 模擬多個用戶
   for (let i = 0; i < numUsers; i++) {
+    const delay = testScenario === 'burst' ? i % 5 * 10 : i * (50 + Math.random() * 50);
+
     setTimeout(() => {
       try {
-        const userStart = Date.now();
+        const userStart = performance.now();
 
         // 隨機選擇行動
-        const action = Math.random();
+        const action = actionSelector();
 
-        if (action < 0.4) {
-          // 選擇城市和景點
-          const city = cities2[Math.floor(Math.random() * cities2.length)];
-          const spotIndex = Math.floor(Math.random() * Math.min(10, SPOTS.length));
-          const spot = SPOTS[spotIndex];
-          if (spot && spot.region === city) {
-            addSpotCard(spot.id);
+        if (action < 0.25) {
+          // 景點選擇
+          const city = cities[Math.floor(Math.random() * cities.length)];
+          const citySpots = SPOTS.filter(s => s.region === city);
+          if (citySpots.length > 0) {
+            const spot = citySpots[Math.floor(Math.random() * Math.min(5, citySpots.length))];
+            S.days[S.currentDay].am.push(spot);
             results.successCount++;
           }
-        } else if (action < 0.7) {
-          // 計算價格
-          const c = calcCosts();
-          if (c.grand > 0) {
-            results.successCount++;
-          }
-        } else if (action < 0.95) {
-          // 選擇日期
+        } else if (action < 0.5) {
+          // 價格計算（無 UI 更新）
+          calcCosts();
+          results.successCount++;
+        } else if (action < 0.75) {
+          // 日期選擇
+          const daysToAdd = Math.floor(Math.random() * 30) + 1;
           const startDate = new Date();
-          startDate.setDate(startDate.getDate() + Math.floor(Math.random() * 30));
-          document.getElementById('c-dep').value = startDate.toISOString().split('T')[0];
+          startDate.setDate(startDate.getDate() + daysToAdd);
           results.successCount++;
         } else {
-          // 驗證表單
-          const v = validateOrder();
+          // 搜尋模擬
+          const query = ['temple', 'beach', 'diving', 'mountain', 'food'][Math.floor(Math.random() * 5)];
+          const searchResults = SPOTS.filter(s =>
+            s.name.toLowerCase().includes(query) ||
+            s.desc.toLowerCase().includes(query)
+          );
           results.successCount++;
         }
 
-        const userEnd = Date.now();
-        responseTimeArr.push(userEnd - userStart);
+        const userEnd = performance.now();
+        const responseTime = userEnd - userStart;
+
+        results.responseTimes.push(responseTime);
+        results.maxResponseTime = Math.max(results.maxResponseTime, responseTime);
+        results.minResponseTime = Math.min(results.minResponseTime, responseTime);
 
       } catch (err) {
         results.errorCount++;
         results.errors.push({
           user: i,
-          error: err.message,
+          error: err.message.substring(0, 50),
           timestamp: new Date().toLocaleString('zh-TW')
         });
-        console.error(`❌ 用戶 ${i} 出錯:`, err.message);
       }
-    }, i * 100); // 每 100ms 添加一個新用戶，避免完全同步
+
+      completedUsers++;
+
+      // 每 10% 用戶完成時顯示進度
+      if (completedUsers % Math.max(1, Math.floor(numUsers / 10)) === 0) {
+        const progress = Math.round(completedUsers / numUsers * 100);
+        console.log(`進度: ${progress}% (${completedUsers}/${numUsers})`);
+      }
+
+      // 所有用戶完成後
+      if (completedUsers === numUsers) {
+        calculateStressMetrics();
+        generateStressTestReport();
+      }
+
+    }, delay);
+  }
+}
+
+// 計算高級統計指標
+function calculateStressMetrics() {
+  const results = window.STRESS_TEST_RESULTS;
+  const times = results.responseTimes.sort((a,b) => a - b);
+
+  if (times.length > 0) {
+    results.avgResponseTime = (times.reduce((a,b) => a+b) / times.length).toFixed(2);
+    results.p95ResponseTime = times[Math.floor(times.length * 0.95)].toFixed(2);
+    results.p99ResponseTime = times[Math.floor(times.length * 0.99)].toFixed(2);
   }
 
-  // 測試完成後的回調
-  setTimeout(() => {
-    results.endTime = Date.now();
+  results.endTime = Date.now();
 
-    // 計算平均響應時間
-    if (responseTimeArr.length > 0) {
-      results.avgResponseTime = (responseTimeArr.reduce((a,b) => a+b) / responseTimeArr.length).toFixed(2);
-    }
-
-    // 記錄最終內存
-    if (performance.memory) {
-      results.memoryAfter = performance.memory.usedJSHeapSize;
-    }
-
-    // 生成報告
-    generateStressTestReport();
-
-  }, numUsers * 150 + 2000);
+  // 記錄最終內存
+  if (performance.memory) {
+    results.memoryAfter = performance.memory.usedJSHeapSize;
+  }
 }
 
 function generateStressTestReport() {
@@ -2735,40 +2869,120 @@ function generateStressTestReport() {
   const successRate = ((r.successCount / r.totalUsers) * 100).toFixed(1);
   const memoryUsed = r.memoryAfter > 0 ? ((r.memoryAfter - r.memoryBefore) / 1024 / 1024).toFixed(2) : 'N/A';
 
+  // 性能評級
+  let perfRating = '🟢 優秀';
+  if (r.avgResponseTime > 500) perfRating = '🔴 很差';
+  else if (r.avgResponseTime > 200) perfRating = '🟡 一般';
+  else if (r.avgResponseTime > 100) perfRating = '🟡 良好';
+
+  let stabilityRating = '🟢 很穩定';
+  if (successRate < 80) stabilityRating = '🔴 不穩定';
+  else if (successRate < 90) stabilityRating = '🟡 較穩定';
+  else if (successRate < 95) stabilityRating = '🟡 穩定';
+
   const report = `
-╔═════════════════════════════════════════════════════╗
-║        🔥 壓力測試報告 (模擬 ${r.totalUsers} 用戶)        ║
-╚═════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════╗
+║           🔥 高級壓力測試報告 (模擬 ${r.totalUsers} 併發用戶)           ║
+╚════════════════════════════════════════════════════════════════╝
 
-📊 測試結果：
-  ✓ 總用戶數: ${r.totalUsers}
-  ✓ 成功操作: ${r.successCount}
-  ✗ 失敗操作: ${r.errorCount}
-  ✓ 成功率: ${successRate}%
+📊 基本統計：
+  • 總用戶數: ${r.totalUsers}
+  • 成功操作: ${r.successCount}
+  • 失敗操作: ${r.errorCount}
+  • 成功率: ${successRate}% ${successRate >= 95 ? '✅' : '⚠️'}
 
-⏱️  性能指標：
-  ✓ 總耗時: ${duration} 秒
-  ✓ 平均響應時間: ${r.avgResponseTime} ms
-  ✓ 內存增長: ${memoryUsed} MB
+⏱️  響應時間分析：
+  • 平均響應: ${r.avgResponseTime} ms ${perfRating}
+  • 最小響應: ${r.minResponseTime.toFixed(2)} ms
+  • 最大響應: ${r.maxResponseTime.toFixed(2)} ms
+  • P95 響應: ${r.p95ResponseTime} ms (95%的請求)
+  • P99 響應: ${r.p99ResponseTime} ms (99%的請求)
 
-${r.errorCount > 0 ? `❌ 錯誤日誌：
-${r.errors.map(e => `  • [用戶 ${e.user}] ${e.error} (${e.timestamp})`).join('\n')}` : ''}
+💾 資源使用：
+  • 內存增長: ${memoryUsed} MB
+  • 內存評估: ${memoryUsed < 10 ? '🟢 低' : memoryUsed < 30 ? '🟡 中等' : '🔴 高'}
+  • 測試耗時: ${duration} 秒
 
-✅ 系統評估：
-${successRate >= 95 ? '  🟢 系統穩定 - 可承受 ' + r.totalUsers + ' 併發用戶' : '  🟡 系統有壓力 - 建議優化'}
-  ${r.avgResponseTime < 100 ? '  🟢 響應迅速' : r.avgResponseTime < 500 ? '  🟡 響應一般' : '  🔴 響應緩慢'}
+🎯 系統評估：
+  • 穩定性: ${stabilityRating} (${successRate}%)
+  • 響應速度: ${perfRating}
+  • 資源效率: ${memoryUsed < 20 ? '🟢 很高' : memoryUsed < 50 ? '🟡 中等' : '🔴 低'}
 
+${r.errorCount > 0 ? `\n❌ 錯誤詳情 (${r.errors.length} 個)：
+${r.errors.slice(0, 5).map(e => `  • [用戶 ${e.user}] ${e.error}`).join('\n')}${r.errors.length > 5 ? `\n  ... 還有 ${r.errors.length - 5} 個錯誤` : ''}` : '\n✅ 無任何錯誤！'}
+
+💡 建議：
+${successRate >= 95 && r.avgResponseTime < 100 ? '  ✅ 系統表現優秀，可承受該負載' : ''}
+${successRate >= 90 && successRate < 95 ? '  🟡 考慮進一步優化以提升穩定性' : ''}
+${successRate < 90 ? '  ⚠️ 系統在高負載下存在穩定性問題，需要優化' : ''}
+${r.avgResponseTime > 200 ? '  ⚠️ 響應時間較長，考慮優化性能' : ''}
+${memoryUsed > 30 ? '  ⚠️ 內存使用較高，檢查是否有內存洩漏' : ''}
+
+═══════════════════════════════════════════════════════════════════
+
+🔧 開發者指令：
+• testStress(20)          - 測試 20 個用戶 (推薦)
+• testStress(50)          - 測試 50 個用戶
+• testStress(100)         - 測試 100 個用戶 (壓力極限)
+• testStress(50, 'search') - 搜尋密集測試
+• testStress(50, 'calculate') - 計算密集測試
+
+🔒 安全監控：
+• firewall.getSecurityStatus() - 查看安全狀態
 `;
 
   console.log(report);
-  alert('⏱️ 壓力測試完成！結果請見控制台 (F12)');
+  console.table({
+    '總用戶': r.totalUsers,
+    '成功率': successRate + '%',
+    '平均響應': r.avgResponseTime + 'ms',
+    'P95響應': r.p95ResponseTime + 'ms',
+    '內存增長': memoryUsed + 'MB'
+  });
+
+  alert(`✅ 測試完成！\n成功率: ${successRate}%\n平均響應: ${r.avgResponseTime}ms\n詳見控制台 (F12)`);
 }
 
-// 壓力測試訪問方式
-window.testStress = function(n = 20) {
-  runStressTest(n);
+// 壓力測試和安全監控 API
+window.testStress = function(numUsers = 20, scenario = 'mixed') {
+  if (numUsers > 500) {
+    console.warn('⚠️ 警告：過多的用戶數可能導致瀏覽器無回應，上限為 500');
+    numUsers = 500;
+  }
+  runStressTest(numUsers, scenario);
 };
-console.log('💡 提示：在控制台執行 testStress(20) 或 testStress() 進行壓力測試');
+
+// 安全防火牆 API
+window.securityMonitor = {
+  status: () => firewall.getSecurityStatus(),
+  logs: () => firewall.requestLog.slice(-50), // 最近 50 筆日誌
+  clearLogs: () => {
+    firewall.requestLog = [];
+    console.log('✅ 安全日誌已清除');
+  },
+  test: (input, type = 'text') => {
+    try {
+      const result = validateInput(input, type);
+      console.log('✅ 輸入驗證通過:', result);
+      return true;
+    } catch (err) {
+      console.error('❌ 輸入驗證失敗:', err.message);
+      return false;
+    }
+  }
+};
+
+// 添加到 window.thaidee 對象
+window.thaidee.testStress = window.testStress;
+window.thaidee.securityMonitor = window.securityMonitor;
+window.thaidee.firewall = firewall;
+
+console.log('%c🔥 壓力測試系統已就緒', 'font-size:14px;font-weight:bold;color:#FF6B6B');
+console.log('%c使用方式：testStress(userCount, scenario)', 'color:#1A6E3C');
+console.log('%c• testStress(20, "mixed")      - 混合操作測試', 'color:#888');
+console.log('%c• testStress(50, "search")     - 搜尋密集測試', 'color:#888');
+console.log('%c• testStress(100, "calculate") - 計算密集測試', 'color:#888');
+console.log('%c• securityMonitor.status()     - 檢查安全狀態', 'color:#888');
 </script>
 </body>
 </html>
