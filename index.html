@@ -401,6 +401,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
     </div>
 
     <div id="browser">
+      <!-- 瀏覽模式切換 -->
+      <div style="display:flex;gap:8px;padding:8px 12px;background:#fff;border-bottom:2px solid var(--border);border-radius:0;font-size:12px">
+        <button onclick="setBrowseMode('attractions')" style="flex:1;padding:8px 12px;background:#8B3A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-attractions">🎯 熱門景點</button>
+        <button onclick="setBrowseMode('packages')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-packages">📦 套裝行程</button>
+        <button onclick="setBrowseMode('daytours')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-daytours">🌅 一日遊</button>
+      </div>
+
       <div id="filter-bar">
         <input id="search-box" placeholder="搜尋景點…" oninput="renderCards()">
         <div class="tags" id="region-tags"></div>
@@ -1102,6 +1109,37 @@ const AIRPORT_SERVICES = [
 
 const MEALS = ['飯店早餐','機上餐','泰式風味套餐','代訂網美餐廳','海鮮大餐（代訂）','景點內自助餐','夜市自理','逛街自理','不含'];
 
+/* ════ 套裝行程（預制套餐）════════════════════════ */
+const PACKAGE_TOURS = [
+  {id:'PKG001', name:'✈️ 曼谷三日夢幻之旅', desc:'大皇宮+鄭王廟+夜市美食體驗', days:3, cities:'曼谷', price:25000, type:'suite'},
+  {id:'PKG002', name:'🏖️ 普吉海島五日假期', desc:'PP島+皮皮島+珊瑚潛水+海灘度假', days:5, cities:'普吉', price:35000, type:'suite'},
+  {id:'PKG003', name:'🏯 清邁古城四日體驗', desc:'古城古廟+清邁夜間市場+象營騎象', days:4, cities:'清邁', price:28000, type:'suite'},
+  {id:'PKG004', name:'🌴 甲米度假六日套餐', desc:'翡翠池+四島遊+火車站+奧南海灘', days:6, cities:'甲米', price:40000, type:'suite'},
+  {id:'PKG005', name:'⛱️ 華欣悠閒三日遊', desc:'音樂餐廳+鐵路市場+海邊度假', days:3, cities:'華欣', price:22000, type:'suite'},
+  {id:'PKG006', name:'🎭 大城古都五日探險', desc:'大城古蹟+水上市場+柚木宮殿', days:5, cities:'大城', price:32000, type:'suite'},
+  {id:'PKG007', name:'🌊 孤獨島嶼探險三日', desc:'斯米蘭群島+浮潛+沙灘露營', days:3, cities:'甲米', price:38000, type:'suite'},
+  {id:'PKG008', name:'🎊 跨城市環遊八日', desc:'曼谷+清邁+清萊+歡慶文化之旅', days:8, cities:'曼谷,清邁,清萊', price:55000, type:'suite'},
+  {id:'PKG009', name:'🏨 五星海島奢華四日', desc:'瑪雅灣+PP島+五星度假村+SPA', days:4, cities:'普吉', price:48000, type:'suite'},
+  {id:'PKG010', name:'🎪 文化藝術七日深度遊', desc:'柚木宮+大皇宮+古城+寺廟冥想', days:7, cities:'曼谷,大城,清邁', price:52000, type:'suite'}
+];
+
+/* ════ 一日遊行程 ════════════════════════════════ */
+const DAY_TOURS = [
+  /* 曼谷 5個 */
+  {id:'DAY001', name:'🏛️ 曼谷古蹟一日遊', desc:'大皇宮→鄭王廟→臥佛寺→寶石工坊', city:'曼谷', hours:8, price:2800, type:'daytour'},
+  {id:'DAY002', name:'🌴 夜市美食之旅', desc:'路邊攤→水上市場→浮動市場→夜市小食', city:'曼谷', hours:6, price:1800, type:'daytour'},
+  {id:'DAY003', name:'🛕 寺廟冥想靈修日', desc:'翡翠佛寺→四面佛→金山寺→靜坐冥想', city:'曼谷', hours:7, price:2200, type:'daytour'},
+  {id:'DAY004', name:'🎡 週末假日樂園', desc:'杜莎蠟像館→暹邏廣場→賽福瑞公園', city:'曼谷', hours:8, price:2600, type:'daytour'},
+  {id:'DAY005', name:'🎰 市區購物美食節', desc:'洽圖洽市場→曼谷港區→河濱廣場→地方小食', city:'曼谷', hours:6, price:1600, type:'daytour'},
+
+  /* 清邁 5個 */
+  {id:'DAY006', name:'🐘 騎象山寨探險日', desc:'象營騎象→山地部落→手工藝坊→溫泉', city:'清邁', hours:8, price:2500, type:'daytour'},
+  {id:'DAY007', name:'🏯 清邁古城漫步遊', desc:'古城四寺→清邁門→夜間市場→古城牆', city:'清邁', hours:6, price:1500, type:'daytour'},
+  {id:'DAY008', name:'🌅 清邁山景日出行', desc:'雙龍寺→素貼山→清邁觀景台→黃金三角', city:'清邁', hours:7, price:2300, type:'daytour'},
+  {id:'DAY009', name:'🎨 手工藝人文體驗', desc:'陶藝工坊→手工傘製作→蘭花園→丝綢工廠', city:'清邁', hours:7, price:2100, type:'daytour'},
+  {id:'DAY010', name:'🌸 清邁花卉文化遊', desc:'清邁花園→牡丹花田→香草莊園→花卉市場', city:'清邁', hours:6, price:1900, type:'daytour'}
+];
+
 /* ════ 狀態 ════════════════════════════════════ */
 const MAX_PER_SLOT = 4;
 let S = {
@@ -1111,6 +1149,7 @@ let S = {
   filterCat: '全部',
   activeSlot: null,
   pendingSpot: null,
+  browseMode: 'attractions', // attractions, packages, daytours
 };
 
 function newDay(){
@@ -1141,6 +1180,12 @@ function filteredSpots(){
 }
 
 function renderCards(){
+  if(S.browseMode==='packages') renderPackages();
+  else if(S.browseMode==='daytours') renderDayTours();
+  else renderAttractions();
+}
+
+function renderAttractions(){
   const grid = document.getElementById('cards-grid');
   const spots = filteredSpots();
   if(!spots.length){ grid.innerHTML='<div id="no-results">🔍 沒有符合的景點</div>'; return; }
@@ -1169,7 +1214,88 @@ function renderCards(){
   }).join('');
 }
 
+function renderPackages(){
+  const grid = document.getElementById('cards-grid');
+  const q = document.getElementById('search-box').value.trim().toLowerCase();
+  const packages = PACKAGE_TOURS.filter(p => !q || p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
+
+  if(!packages.length){ grid.innerHTML='<div id="no-results">🔍 沒有符合的套裝行程</div>'; return; }
+
+  grid.innerHTML = packages.map(p => `
+    <div class="acard" onclick="selectPackage('${p.id}')">
+      <div class="acard-badges">
+        <span class="badge badge-r" style="background:var(--gold)">${p.days}天</span>
+        <span class="badge badge-cat">套裝</span>
+      </div>
+      <div class="acard-name">${p.name}</div>
+      <div class="acard-desc">${p.desc}</div>
+      <div class="acard-foot">
+        <span style="font-size:11px;color:#888">📍 ${p.cities}</span>
+        <span style="font-size:11px;font-weight:700;color:var(--brand)">THB ${p.price.toLocaleString()}</span>
+      </div>
+      <button class="acard-add" onclick="selectPackage('${p.id}',event)">選擇</button>
+    </div>
+  `).join('');
+}
+
+function renderDayTours(){
+  const grid = document.getElementById('cards-grid');
+  const q = document.getElementById('search-box').value.trim().toLowerCase();
+  const dayTours = DAY_TOURS.filter(d => !q || d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q));
+
+  if(!dayTours.length){ grid.innerHTML='<div id="no-results">🔍 沒有符合的一日遊</div>'; return; }
+
+  grid.innerHTML = dayTours.map(d => `
+    <div class="acard" onclick="selectDayTour('${d.id}')">
+      <div class="acard-badges">
+        <span class="badge badge-r" style="background:var(--green)">${d.hours}小時</span>
+        <span class="badge badge-cat">${d.city}</span>
+      </div>
+      <div class="acard-name">${d.name}</div>
+      <div class="acard-desc">${d.desc}</div>
+      <div class="acard-foot">
+        <span style="font-size:11px;color:#888">⏱ ${d.hours}h</span>
+        <span style="font-size:11px;font-weight:700;color:var(--green)">THB ${d.price.toLocaleString()}</span>
+      </div>
+      <button class="acard-add" onclick="selectDayTour('${d.id}',event)">選擇</button>
+    </div>
+  `).join('');
+}
+
+function setBrowseMode(mode){
+  S.browseMode = mode;
+  document.getElementById('search-box').placeholder =
+    mode==='packages'?'搜尋套裝行程…':
+    mode==='daytours'?'搜尋一日遊…':'搜尋景點…';
+
+  document.querySelectorAll('[id^="mode-btn-"]').forEach(btn => btn.style.background='#ddd', btn.style.color='#333');
+  document.getElementById('mode-btn-'+mode).style.background='#8B3A1A';
+  document.getElementById('mode-btn-'+mode).style.color='#fff';
+
+  S.filterRegion='全部'; S.filterCat='全部';
+  renderTags(); renderCards();
+}
+
+function selectPackage(id, e){
+  if(e) e.stopPropagation();
+  const pkg = PACKAGE_TOURS.find(p => p.id===id);
+  if(!pkg) return;
+  alert(`✅ 已選擇套裝行程：${pkg.name}\n\n價格：THB ${pkg.price.toLocaleString()}\n天數：${pkg.days}天\n\n套裝行程已加入購物車，請選擇旅客人數進行結帳。`);
+}
+
+function selectDayTour(id, e){
+  if(e) e.stopPropagation();
+  const tour = DAY_TOURS.find(d => d.id===id);
+  if(!tour) return;
+  alert(`✅ 已選擇一日遊：${tour.name}\n\n價格：THB ${tour.price.toLocaleString()}/人\n城市：${tour.city}\n\n一日遊已加入購物車，請選擇旅客人數進行結帳。`);
+}
+
 function renderTags(){
+  if(S.browseMode!=='attractions'){
+    document.getElementById('region-tags').innerHTML = '';
+    document.getElementById('cat-tags').innerHTML = '';
+    return;
+  }
   document.getElementById('region-tags').innerHTML = REGIONS.map(r =>
     `<span class="tag ${S.filterRegion===r?'on':''}" onclick="setFilter('region','${r}')">${r}</span>`
   ).join('');
@@ -1705,6 +1831,10 @@ function init(){
   // 🔄 保存景點和飯店數據到 sessionStorage，供後台管理系統使用
   sessionStorage.setItem('thaidee_spots_data', JSON.stringify(SPOTS));
   sessionStorage.setItem('thaidee_hotels_data', JSON.stringify(HOTELS));
+
+  // 初始化浏覽模式按鈕
+  document.getElementById('mode-btn-attractions').style.background='#8B3A1A';
+  document.getElementById('mode-btn-attractions').style.color='#fff';
 
   renderTags(); renderDayTabs(); renderSlots(); renderCards(); updatePrice();
   document.getElementById('btn-add-day').onclick = addDay;
