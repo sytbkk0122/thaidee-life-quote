@@ -409,7 +409,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
       </div>
 
       <div id="filter-bar">
-        <input id="search-box" placeholder="搜尋景點…" oninput="debounceRender()">
+        <input id="search-box" placeholder="搜尋景點…" oninput="renderCards()">
         <div class="tags" id="region-tags"></div>
         <div class="tags" id="cat-tags"></div>
       </div>
@@ -1061,67 +1061,7 @@ const RAW = [
 ['KSM65','蘇梅島','特色體驗','下廚課程','烹飪教室',550,3,0,0],
 ['KSM66','蘇梅島','購物娛樂','蘇梅購物中心','現代商業',0,2,0,0],
 ['KSM67','蘇梅島','水上活動','日落釣魚','海上活動',800,4,0,0],
-['KSM68','蘇梅島','自然生態','蘇梅叢林跋涉','登山冒險',600,4,0,0],
-['BKKT01','曼谷','文化古蹟','大皇宮 & 玉佛寺 (2合1)','王室宮殿群參訪',1200,3,1,1],
-['BKKT02','曼谷','文化古蹟','鄭王廟 (Wat Arun) - 含昭披耶河遊船','寺廟+河遊',900,2.5,1,1],
-['BKKT03','曼谷','夜生活','Muay Thai Live 泰拳秀 + 晚餐','世界級泰拳表演',1400,2.5,1,1],
-['BKKT04','曼谷','新地標','Mahanakhon SkyWalk 玻璃步道','曼谷最高景觀',1500,1.5,1,1],
-['BKKT05','曼谷','自然生態','Safari World + Marine Park (雙園)','大型主題公園',1500,6,1,1],
-['BKKT06','曼谷','夜生活','昭披耶河晚餐遊船 (五星等級)','5星晚餐體驗',2200,2.5,1,1],
-['BKKT07','曼谷','特色體驗','丹嫩莎朵水上市場 + 大象營','水上市場+動物互動',1100,4,1,1],
-['BKKT08','曼谷','購物娛樂','洽圖洽週末市集 (含導遊)','最大週末市集',600,3,1,1],
-['BKKT09','曼谷','新地標','詩麗吉水上市場 (家庭式體驗)','原汁原味水上市場',450,2,1,1],
-['BKKT10','曼谷','文化古蹟','臥佛寺 (Wat Pho)','全球最大臥佛',550,2,1,1],
-['BKKT11','曼谷','購物娛樂','Central World (亞洲最大購物中心)','頂級購物體驗',0,3,1,1],
-['BKKT12','曼谷','夜生活','東芭樂園 (變性人秀)','文化特色表演',700,2,1,1],
-['BKKT13','曼谷','特色體驗','泰式烹飪課程 (五星廚師)','米其林等級烹飪',1600,4,1,1],
-['BKKT14','曼谷','自然生態','暹羅海洋世界 + 杜莎夫人蠟像館','雙景點套票',1600,4,1,1],
-['BKKT15','曼谷','文化古蹟','吉姆湯普森之家 (參訪)','泰絲大王故居',400,1.5,1,1],
-['CMXT01','清邁','特色體驗','清邁大象營 (騎象+洗象)','最受歡迎象營',1400,4,1,1],
-['CMXT02','清邁','文化古蹟','清邁古城群 (5大寺廟)','古城文化巡禮',700,3.5,1,1],
-['CMXT03','清邁','特色體驗','蒲屏皇宮 (冬季開放)','王室宮殿參訪',550,2.5,1,1],
-['CMXT04','清邁','自然生態','清邁叢林騎馬 + 瀑布','馬背+自然',900,3,1,1],
-['CMXT05','清邁','夜生活','清邁古城夜市 + 夜間尋香','傳統夜市體驗',500,3,1,1],
-['CMXT06','清邁','特色體驗','竹筏漂流 + 午餐','河流冒險+美食',800,4,1,1],
-['CMXT07','清邁','購物娛樂','清邁手工傘工坊 (參訪製作)','文化工藝體驗',450,2,1,1],
-['CMXT08','清邁','水上活動','白水漂流 (Rafting)','驚險河流運動',1000,4,1,1],
-['CMXT09','清邁','文化古蹟','清邁佛寺之光秀','夜間藝術表演',600,1.5,1,1],
-['CMXT10','清邁','特色體驗','清邁烹飪學校 (全日課程)','深度烹飪培訓',1800,5,1,1],
-['HKTT01','普吉','水上活動','斯米蘭群島浮潛 (5星等級)','世界級浮潛',1600,8,1,1],
-['HKTT02','普吉','水上活動','PP島跳島遊 (4島)','夢幻群島探險',1000,6,1,1],
-['HKTT03','普吉','自然生態','普吉大佛 + 觀景台','山頂宗教地標',500,2,1,1],
-['HKTT04','普吉','水上活動','皮皮島獨木舟探險','秘密灣探索',900,4,1,1],
-['HKTT05','普吉','夜生活','幻多奇秀 (Phuket Fantasea)','5星娛樂秀',1800,2.5,1,1],
-['HKTT06','普吉','水上活動','帆船日落遊 (含晚餐)','浪漫帆船體驗',1400,5,1,1],
-['HKTT07','普吉','購物娛樂','普吉舊城 (含導遊)','歷史文化街道',450,2,1,1],
-['HKTT08','普吉','按摩養生','普吉高級SPA度假村','5星SPA體驗',1200,2,1,1],
-['HKTT09','普吉','特色體驗','象騎+溫泉+叢林','叢林全體驗',1300,4,1,1],
-['HKTT10','普吉','水上活動','漂流跳島 (Krabi)','冒險刺激遊',800,5,1,1],
-['SMIT01','蘇梅島','水上活動','安通國家海洋公園浮潛','天堂海灣浮潛',950,5,1,1],
-['SMIT02','蘇梅島','特色體驗','蘇梅叢林飛行員 (Zipline)','樹上冒險',1100,2.5,1,1],
-['SMIT03','蘇梅島','特色體驗','蘇梅大象保護營','倫理大象體驗',1200,4,1,1],
-['SMIT04','蘇梅島','水上活動','美人魚潛水 (認證課程)','專業潛水培訓',1600,6,1,1],
-['SMIT05','蘇梅島','夜生活','蘇梅滿月派對 (季節)','世界級沙灘派對',800,6,1,1],
-['SMIT06','蘇梅島','特色體驗','蘇梅瑜伽度假村','瑜伽修行課程',1400,6,1,1],
-['SMIT07','蘇梅島','按摩養生','海邊五感SPA','海濱奢華SPA',1300,2,1,1],
-['SMIT08','蘇梅島','購物娛樂','蘇梅漁人碼頭 (海鮮自助)','海鮮自助餐',700,2,1,1],
-['PAYT01','芭達雅','水上活動','珊瑚島浮潛 (3島)','彩色珊瑚浮潛',900,5,1,1],
-['PAYT02','芭達雅','特色體驗','芭達雅大象營 (騎象+洗象)','近距離大象互動',1100,3,1,1],
-['PAYT03','芭達雅','自然生態','芭達雅浮動市場 (含導遊)','水上市場體驗',600,2,1,1],
-['PAYT04','芭達雅','夜生活','提咖酒吧街 (Walking Street)','不夜城體驗',0,3,1,1],
-['PAYT05','芭達雅','水上活動','滑翔傘飛行 (海上)','刺激空中運動',1300,0.5,1,1],
-['PAYT06','芭達雅','購物娛樂','中天購物廣場 + 海邊夜市','購物美食體驗',0,4,1,1],
-['PAYT07','芭達雅','特色體驗','射擊中心 (含教練)','槍械體驗',1500,2,1,1],
-['HNXT01','華欣','特色體驗','華欣騎馬沙灘','海邊馬術體驗',850,2,1,1],
-['HNXT02','華欣','文化古蹟','華欣火車站 (古蹟)','泰式建築參訪',200,1,1,1],
-['HNXT03','華欣','自然生態','華欣漂流 (溫和)','家庭友善漂流',600,3,1,1],
-['HNXT04','華欣','購物娛樂','華欣夜市街 (傳統)','地方特色夜市',0,2,1,1],
-['HNXT05','華欣','按摩養生','Chiva-Som度假村體驗','頂級療養中心',2500,8,1,1],
-['KBVT01','甲米','水上活動','萊利灣跳島遊 (4島)','喀斯特地貌浮潛',1050,6,1,1],
-['KBVT02','甲米','水上活動','香港灣皮划艇探險','秘境探索',800,3,1,1],
-['KBVT03','甲米','特色體驗','甲米叢林騎馬','山地騎馬體驗',950,2.5,1,1],
-['KBVT04','甲米','自然生態','翡翠池溫泉 + 瀑布','天然溫泉',500,2,1,1],
-['KBVT05','甲米','文化古蹟','甲米老城文化之旅','歷史建築群參訪',450,2,1,1]
+['KSM68','蘇梅島','自然生態','蘇梅叢林跋涉','登山冒險',600,4,0,0]
 ];
 
 const SPOTS = RAW.map(r => {
@@ -1285,71 +1225,8 @@ let S = {
   filterCat: '全部',
   activeSlot: null,
   pendingSpot: null,
-  browseMode: 'attractions',
-  searchCache: {},
-  lastSearchQuery: '',
-  renderTimer: null,
+  browseMode: 'attractions', // attractions, packages, daytours
 };
-
-// 搜索防抖 - 延遲500ms後執行搜索
-let debounceTimer = null;
-function debounceRender(){
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => renderCards(), 300);
-}
-
-// 模糊搜尋 - 返回匹配分數
-function fuzzySearch(query, text){
-  if(!query) return true;
-  const q = query.toLowerCase();
-  const t = text.toLowerCase();
-  if(t.includes(q)) return 1; // 完全匹配
-  let score = 0;
-  let lastIdx = -1;
-  for(let i = 0; i < q.length; i++){
-    const idx = t.indexOf(q[i], lastIdx + 1);
-    if(idx === -1) return 0;
-    lastIdx = idx;
-    score += 1;
-  }
-  return score / q.length * 0.5;
-}
-
-// 智能搜尋函數 - 支持多個關鍵詞
-function smartSearch(query, spot){
-  if(!query) return true;
-  const keywords = query.toLowerCase().split(/\s+/).filter(k => k);
-  return keywords.every(keyword =>
-    fuzzySearch(keyword, spot.name) > 0 ||
-    fuzzySearch(keyword, spot.desc) > 0 ||
-    fuzzySearch(keyword, spot.category) > 0
-  );
-}
-
-// 智能排序 - 搜尋結果優先級
-function sortResults(results, query){
-  if(!query) {
-    // 未搜尋時：推薦景點 > 新景點 > 一般景點
-    return results.sort((a,b) => {
-      if(a.isHot !== b.isHot) return b.isHot - a.isHot;
-      if(a.isNew !== b.isNew) return b.isNew - a.isNew;
-      return (a.sellTwd || 0) - (b.sellTwd || 0);
-    });
-  }
-
-  const q = query.toLowerCase();
-  // 搜尋時：完全匹配 > 名稱匹配 > 描述匹配
-  return results.sort((a,b) => {
-    const aNameMatch = a.name.toLowerCase().includes(q) ? 2 : 0;
-    const aDescMatch = a.desc.toLowerCase().includes(q) ? 1 : 0;
-    const bNameMatch = b.name.toLowerCase().includes(q) ? 2 : 0;
-    const bDescMatch = b.desc.toLowerCase().includes(q) ? 1 : 0;
-
-    const aScore = aNameMatch + aDescMatch + (a.isHot ? 0.5 : 0);
-    const bScore = bNameMatch + bDescMatch + (b.isHot ? 0.5 : 0);
-    return bScore - aScore;
-  });
-}
 
 function newDay(){
   return {
@@ -1369,30 +1246,13 @@ renderAirportOptions();
 
 /* ════ 景點卡 ════════════════════════════════════ */
 function filteredSpots(){
-  const q = document.getElementById('search-box').value.trim();
-
-  // 檢查快取
-  const cacheKey = `${q}|${S.filterRegion}|${S.filterCat}`;
-  if(S.searchCache[cacheKey]) return S.searchCache[cacheKey];
-
-  const results = SPOTS.filter(s => {
+  const q = document.getElementById('search-box').value.trim().toLowerCase();
+  return SPOTS.filter(s => {
     if(S.filterRegion!=='全部' && s.region!==S.filterRegion) return false;
     if(S.filterCat!=='全部'    && s.category!==S.filterCat)  return false;
-    if(q && !smartSearch(q, s)) return false;
+    if(q && !s.name.toLowerCase().includes(q) && !s.desc.toLowerCase().includes(q)) return false;
     return true;
   });
-
-  // 限制快取大小 (最多20個查詢)
-  if(Object.keys(S.searchCache).length > 20) {
-    const firstKey = Object.keys(S.searchCache)[0];
-    delete S.searchCache[firstKey];
-  }
-
-  // 排序結果
-  const sorted = sortResults(results, q);
-
-  S.searchCache[cacheKey] = sorted;
-  return sorted;
 }
 
 function renderCards(){
@@ -1432,8 +1292,8 @@ function renderAttractions(){
 
 function renderPackages(){
   const grid = document.getElementById('cards-grid');
-  const q = document.getElementById('search-box').value.trim();
-  const packages = PACKAGE_TOURS.filter(p => !q || smartSearch(q, {name:p.name, desc:p.desc, category:'套裝'}));
+  const q = document.getElementById('search-box').value.trim().toLowerCase();
+  const packages = PACKAGE_TOURS.filter(p => !q || p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q));
 
   if(!packages.length){ grid.innerHTML='<div id="no-results">🔍 沒有符合的套裝行程</div>'; return; }
 
@@ -1456,8 +1316,8 @@ function renderPackages(){
 
 function renderDayTours(){
   const grid = document.getElementById('cards-grid');
-  const q = document.getElementById('search-box').value.trim();
-  const dayTours = DAY_TOURS.filter(d => !q || smartSearch(q, {name:d.name, desc:d.desc, category:d.city}));
+  const q = document.getElementById('search-box').value.trim().toLowerCase();
+  const dayTours = DAY_TOURS.filter(d => !q || d.name.toLowerCase().includes(q) || d.desc.toLowerCase().includes(q));
 
   if(!dayTours.length){ grid.innerHTML='<div id="no-results">🔍 沒有符合的一日遊</div>'; return; }
 
@@ -1721,23 +1581,7 @@ document.addEventListener('click', e => {
 });
 
 /* ════ 費用計算 ════════════════════════════════ */
-let costCache = {};
-function getCostCacheKey(){
-  // 基於行程結構和人數的唯一密鑰
-  const adults = parseInt(document.getElementById('c-adults').value)||1;
-  const rooms  = parseInt(document.getElementById('c-rooms').value)||1;
-  const dayStr = S.days.map(d =>
-    (d.am.map(s=>s.id) + d.pm.map(s=>s.id) + d.eve.map(s=>s.id)).join(',') +
-    '|' + d.hotel + '|' + d.vehicle + '|' + d.airport
-  ).join(';');
-  return `${adults}|${rooms}|${dayStr}`;
-}
-
 function calcCosts(){
-  // 檢查快取
-  const cacheKey = getCostCacheKey();
-  if(costCache[cacheKey]) return costCache[cacheKey];
-
   const adults = parseInt(document.getElementById('c-adults').value)||1;
   const rooms  = parseInt(document.getElementById('c-rooms').value)||1;
   const days   = S.days.length;
@@ -1778,16 +1622,7 @@ function calcCosts(){
   const perPerson = Math.ceil(total/adults/100)*100;
   const grand     = perPerson * adults;
 
-  const result = {spotCost, hotelCost, vehCost, airportCost, guideCost, perPerson, grand, adults, rooms};
-
-  // 限制快取大小 (最多30筆)
-  if(Object.keys(costCache).length > 30) {
-    const firstKey = Object.keys(costCache)[0];
-    delete costCache[firstKey];
-  }
-
-  costCache[cacheKey] = result;
-  return result;
+  return {spotCost, hotelCost, vehCost, airportCost, guideCost, perPerson, grand, adults, rooms};
 }
 
 function highlightPrice(el){
@@ -2175,7 +2010,7 @@ function init(){
   document.getElementById('c-adults').oninput = updatePrice;
   document.getElementById('c-rooms').oninput  = updatePrice;
   document.getElementById('sel-vehicle').onchange = updatePrice;
-  document.getElementById('search-box').oninput = debounceRender;
+  document.getElementById('search-box').oninput = renderCards;
   const today = new Date();
   const dep = new Date(today); dep.setDate(dep.getDate()+14);
   const ret = new Date(dep);  ret.setDate(ret.getDate()+5);
