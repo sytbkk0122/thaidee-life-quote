@@ -514,7 +514,28 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
   </div>
 </div>
 
+<div id="success-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:3000;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:380px;padding:32px 24px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center">
+    <div style="font-size:60px;margin-bottom:16px;animation:bounce 0.6s">✅</div>
+    <h2 style="font-size:18px;margin-bottom:8px;color:var(--brand)">訂單已提交！</h2>
+    <p style="color:#666;font-size:13px;margin-bottom:16px;line-height:1.6">
+      感謝您的預訂<br>
+      訂單編號：<strong id="order-id-display">─</strong><br>
+      我們將儘快透過郵件或電話聯絡您
+    </p>
+    <div id="success-details" style="background:#f5f5f5;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;text-align:left;color:#555"></div>
+    <button onclick="completeOrder()" style="width:100%;padding:12px;background:var(--brand);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px">確認 &amp; 開啟客服</button>
+  </div>
+</div>
+
 <div id="toast">✅ 已複製！貼入 LINE 即可發送</div>
+
+<script>
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+</script>
 
 <script>
 /* ════ 資料 ════════════════════════════════════ */
@@ -1685,6 +1706,25 @@ function closeOrderForm(){
   document.getElementById('order-modal').style.display='none';
 }
 
+function showSuccessModal(orderId, name, email){
+  document.getElementById('order-id-display').textContent = orderId;
+  const details = `
+    <div><strong>客戶名稱：</strong> ${name}</div>
+    <div><strong>郵件地址：</strong> ${email}</div>
+    <div style="margin-top:8px;color:#1a6e3c"><strong>✓ 訂單已保存到系統</strong></div>
+  `;
+  document.getElementById('success-details').innerHTML = details;
+  document.getElementById('success-modal').style.display='flex';
+  document.getElementById('order-modal').style.display='none';
+}
+
+function completeOrder(){
+  document.getElementById('success-modal').style.display='none';
+  setTimeout(() => {
+    window.open('https://line.me/R/ti/p/@468nnetj', '_blank');
+  }, 300);
+}
+
 function validateOrder(){
   const name = document.getElementById('order-name').value.trim();
   const email = document.getElementById('order-email').value.trim();
@@ -1811,11 +1851,8 @@ function submitOrder(){
   ])
   .then(() => {
     console.log('Order submitted to both local server and Discord:', payload);
-    alert(`✅ 下單已送出！\n\n客戶資訊:\n${name}\n${email}\n\n我們會儘快聯絡您。\n\n點OK後會開啟LINE客服...`);
-    closeOrderForm();
-    setTimeout(() => {
-      window.open('https://line.me/R/ti/p/@468nnetj', '_blank');
-    }, 500);
+    const orderId = payload.id.toString().slice(-8);
+    showSuccessModal(orderId, name, email);
     if(submitBtn) {
       submitBtn.disabled = false;
       submitBtn.textContent = '送出下單';
