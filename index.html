@@ -484,9 +484,10 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
       <textarea id="order-note" placeholder="特殊需求、飲食禁忌等..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none;height:80px;resize:none"></textarea>
       <!-- 用餐安排 -->
       <label style="font-weight:700;color:var(--brand);margin-bottom:8px;display:block">🍽️ 用餐方式</label>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button type="button" onclick="setDiningMode('self')" id="btn-self" style="flex:1;padding:10px;background:#f5f5f5;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-weight:700;color:var(--dark)">🛍️ 逛街自理</button>
-        <button type="button" onclick="setDiningMode('service')" id="btn-service" style="flex:1;padding:10px;background:#f5f5f5;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-weight:700;color:var(--dark)">👨‍💼 客服代訂</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+        <button type="button" onclick="setDiningMode('self')" id="btn-self" style="padding:10px;background:#f5f5f5;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-weight:700;color:var(--dark);font-size:13px">🛍️ 逛街自理</button>
+        <button type="button" onclick="setDiningMode('service')" id="btn-service" style="padding:10px;background:#f5f5f5;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-weight:700;color:var(--dark);font-size:13px">👨‍💼 客服代訂</button>
+        <button type="button" onclick="setDiningMode('confirm')" id="btn-confirm" style="padding:10px;background:#f5f5f5;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-weight:700;color:var(--dark);font-size:13px;grid-column:1/-1">📞 與客服確認</button>
       </div>
       <div id="restaurant-select" style="display:none;margin-bottom:12px">
         <label style="font-weight:700;color:var(--brand);margin-bottom:6px;display:block;font-size:12px">餐廳選擇</label>
@@ -1857,6 +1858,7 @@ function setDiningMode(mode) {
   document.getElementById('current-dining-mode').value = mode;
   document.getElementById('btn-self').style.borderColor = mode === 'self' ? 'var(--brand)' : '#ddd';
   document.getElementById('btn-service').style.borderColor = mode === 'service' ? 'var(--brand)' : '#ddd';
+  document.getElementById('btn-confirm').style.borderColor = mode === 'confirm' ? 'var(--brand)' : '#ddd';
 
   const restaurantDiv = document.getElementById('restaurant-select');
   if (restaurantDiv) {
@@ -1868,6 +1870,15 @@ function setDiningMode(mode) {
     const city = document.getElementById('sel-city').value || '曼谷';
     console.log('更新城市:', city);
     updateRestaurantList(city);
+  }
+
+  if (mode === 'confirm') {
+    // 與客服確認 - 打開 LINE
+    setTimeout(() => {
+      const lineURL = 'https://line.me/R/ti/p/@468nnetj';
+      window.open(lineURL, '_blank');
+      alert('✅ 已打開 LINE 客服！\\n請告訴客服你的用餐需求，我們會協助確認最適合的方案。');
+    }, 300);
   }
 }
 
