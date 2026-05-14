@@ -1503,6 +1503,9 @@ function closeModal(){ document.getElementById('modal').classList.remove('open')
 /* ════ 下單表單 ════════════════════════════════════ */
 function openOrderForm(){
   document.getElementById('order-modal').style.display='flex';
+  // 初始化餐廳列表
+  const city = document.getElementById('sel-city').value;
+  if(city) updateRestaurantList(city);
 }
 
 function closeOrderForm(){
