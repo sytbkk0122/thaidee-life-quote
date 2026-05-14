@@ -2254,6 +2254,152 @@ window.initCityDropdown = function() {
     });
   }
 };
+
+// ═══════════════════════════════════════════════════
+// 🔥 壓力測試函數 - 模擬 20 個用戶同時操作
+// ═══════════════════════════════════════════════════
+window.STRESS_TEST_RESULTS = {
+  startTime: null,
+  endTime: null,
+  totalUsers: 0,
+  successCount: 0,
+  errorCount: 0,
+  avgResponseTime: 0,
+  memoryBefore: 0,
+  memoryAfter: 0,
+  errors: []
+};
+
+function runStressTest(numUsers = 20) {
+  console.log(`🚀 開始壓力測試：模擬 ${numUsers} 個用戶同時選擇行程...`);
+
+  const results = window.STRESS_TEST_RESULTS;
+  results.startTime = Date.now();
+  results.totalUsers = numUsers;
+  results.successCount = 0;
+  results.errorCount = 0;
+  results.errors = [];
+
+  // 記錄初始內存（如果瀏覽器支持）
+  if (performance.memory) {
+    results.memoryBefore = performance.memory.usedJSHeapSize;
+  }
+
+  const cities = ['曼谷', '清邁', '普吉', '蘇梅島', '芭達雅'];
+  const cities2 = cities.concat(['華欣', '甲米']);
+  const responseTimeArr = [];
+
+  // 模擬多個用戶
+  for (let i = 0; i < numUsers; i++) {
+    setTimeout(() => {
+      try {
+        const userStart = Date.now();
+
+        // 隨機選擇行動
+        const action = Math.random();
+
+        if (action < 0.4) {
+          // 選擇城市和景點
+          const city = cities2[Math.floor(Math.random() * cities2.length)];
+          const spotIndex = Math.floor(Math.random() * Math.min(10, SPOTS.length));
+          const spot = SPOTS[spotIndex];
+          if (spot && spot.region === city) {
+            addSpotCard(spot.id);
+            results.successCount++;
+          }
+        } else if (action < 0.7) {
+          // 計算價格
+          const c = calcCosts();
+          if (c.grand > 0) {
+            results.successCount++;
+          }
+        } else if (action < 0.95) {
+          // 選擇日期
+          const startDate = new Date();
+          startDate.setDate(startDate.getDate() + Math.floor(Math.random() * 30));
+          document.getElementById('c-dep').value = startDate.toISOString().split('T')[0];
+          results.successCount++;
+        } else {
+          // 驗證表單
+          const v = validateOrder();
+          results.successCount++;
+        }
+
+        const userEnd = Date.now();
+        responseTimeArr.push(userEnd - userStart);
+
+      } catch (err) {
+        results.errorCount++;
+        results.errors.push({
+          user: i,
+          error: err.message,
+          timestamp: new Date().toLocaleString('zh-TW')
+        });
+        console.error(`❌ 用戶 ${i} 出錯:`, err.message);
+      }
+    }, i * 100); // 每 100ms 添加一個新用戶，避免完全同步
+  }
+
+  // 測試完成後的回調
+  setTimeout(() => {
+    results.endTime = Date.now();
+
+    // 計算平均響應時間
+    if (responseTimeArr.length > 0) {
+      results.avgResponseTime = (responseTimeArr.reduce((a,b) => a+b) / responseTimeArr.length).toFixed(2);
+    }
+
+    // 記錄最終內存
+    if (performance.memory) {
+      results.memoryAfter = performance.memory.usedJSHeapSize;
+    }
+
+    // 生成報告
+    generateStressTestReport();
+
+  }, numUsers * 150 + 2000);
+}
+
+function generateStressTestReport() {
+  const r = window.STRESS_TEST_RESULTS;
+  const duration = ((r.endTime - r.startTime) / 1000).toFixed(2);
+  const successRate = ((r.successCount / r.totalUsers) * 100).toFixed(1);
+  const memoryUsed = r.memoryAfter > 0 ? ((r.memoryAfter - r.memoryBefore) / 1024 / 1024).toFixed(2) : 'N/A';
+
+  const report = `
+╔═════════════════════════════════════════════════════╗
+║        🔥 壓力測試報告 (模擬 ${r.totalUsers} 用戶)        ║
+╚═════════════════════════════════════════════════════╝
+
+📊 測試結果：
+  ✓ 總用戶數: ${r.totalUsers}
+  ✓ 成功操作: ${r.successCount}
+  ✗ 失敗操作: ${r.errorCount}
+  ✓ 成功率: ${successRate}%
+
+⏱️  性能指標：
+  ✓ 總耗時: ${duration} 秒
+  ✓ 平均響應時間: ${r.avgResponseTime} ms
+  ✓ 內存增長: ${memoryUsed} MB
+
+${r.errorCount > 0 ? `❌ 錯誤日誌：
+${r.errors.map(e => `  • [用戶 ${e.user}] ${e.error} (${e.timestamp})`).join('\n')}` : ''}
+
+✅ 系統評估：
+${successRate >= 95 ? '  🟢 系統穩定 - 可承受 ' + r.totalUsers + ' 併發用戶' : '  🟡 系統有壓力 - 建議優化'}
+  ${r.avgResponseTime < 100 ? '  🟢 響應迅速' : r.avgResponseTime < 500 ? '  🟡 響應一般' : '  🔴 響應緩慢'}
+
+`;
+
+  console.log(report);
+  alert('⏱️ 壓力測試完成！結果請見控制台 (F12)');
+}
+
+// 壓力測試訪問方式
+window.testStress = function(n = 20) {
+  runStressTest(n);
+};
+console.log('💡 提示：在控制台執行 testStress(20) 或 testStress() 進行壓力測試');
 </script>
 </body>
 </html>
