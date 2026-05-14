@@ -1256,7 +1256,9 @@ const PACKAGE_TOURS = [
   {id:'PKG007', name:'🌊 孤獨島嶼探險三日', desc:'斯米蘭群島+浮潛+沙灘露營', days:3, cities:'甲米', price:38000, type:'suite'},
   {id:'PKG008', name:'🎊 跨城市環遊八日', desc:'曼谷+清邁+清萊+歡慶文化之旅', days:8, cities:'曼谷,清邁,清萊', price:55000, type:'suite'},
   {id:'PKG009', name:'🏨 五星海島奢華四日', desc:'瑪雅灣+PP島+五星度假村+SPA', days:4, cities:'普吉', price:48000, type:'suite'},
-  {id:'PKG010', name:'🎪 文化藝術七日深度遊', desc:'柚木宮+大皇宮+古城+寺廟冥想', days:7, cities:'曼谷,大城,清邁', price:52000, type:'suite'}
+  {id:'PKG010', name:'🎪 文化藝術七日深度遊', desc:'柚木宮+大皇宮+古城+寺廟冥想', days:7, cities:'曼谷,大城,清邁', price:52000, type:'suite'},
+  {id:'PKG011', name:'🏮 清邁水燈節五日慶典', desc:'古城水燈放祈福+寺廟慶祝+天燈升空+傳統美食', days:5, cities:'清邁', price:38000, type:'suite', season:'水燈節'},
+  {id:'PKG012', name:'💡 曼谷水燈節四日體驗', desc:'昭披耶河放燈+大皇宮夜景+水燈市集+傳統薈萃', days:4, cities:'曼谷', price:32000, type:'suite', season:'水燈節'}
 ];
 
 /* ════ 一日遊行程 ════════════════════════════════ */
@@ -1273,7 +1275,13 @@ const DAY_TOURS = [
   {id:'DAY007', name:'🏯 清邁古城漫步遊', desc:'古城四寺→清邁門→夜間市場→古城牆', city:'清邁', hours:6, price:1500, type:'daytour'},
   {id:'DAY008', name:'🌅 清邁山景日出行', desc:'雙龍寺→素貼山→清邁觀景台→黃金三角', city:'清邁', hours:7, price:2300, type:'daytour'},
   {id:'DAY009', name:'🎨 手工藝人文體驗', desc:'陶藝工坊→手工傘製作→蘭花園→丝綢工廠', city:'清邁', hours:7, price:2100, type:'daytour'},
-  {id:'DAY010', name:'🌸 清邁花卉文化遊', desc:'清邁花園→牡丹花田→香草莊園→花卉市場', city:'清邁', hours:6, price:1900, type:'daytour'}
+  {id:'DAY010', name:'🌸 清邁花卉文化遊', desc:'清邁花園→牡丹花田→香草莊園→花卉市場', city:'清邁', hours:6, price:1900, type:'daytour'},
+
+  /* 水燈節專題 - 清邁 1個 */
+  {id:'DAY011', name:'🏮 清邁水燈節放祈福', desc:'古城護城河放燈→寺廟祈福→天燈升空→傳統美食夜宴', city:'清邁', hours:8, price:3200, type:'daytour', season:'水燈節'},
+
+  /* 水燈節專題 - 曼谷 1個 */
+  {id:'DAY012', name:'💡 曼谷水燈節慶典遊', desc:'昭披耶河沿岸放燈→水燈市集逛街→寺廟夜間祈福→河濱美食節', city:'曼谷', hours:7, price:2800, type:'daytour', season:'水燈節'}
 ];
 
 /* ════ 狀態 ════════════════════════════════════ */
