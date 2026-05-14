@@ -303,16 +303,38 @@ function checkPassword() {
 }
 
 function showPasswordPrompt() {
-  const password = prompt('🔐 請輸入後台密碼:');
-  if (password === ADMIN_PASSWORD) {
+  const html = `
+    <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;" id="password-modal">
+      <div style="background:white;padding:30px;border-radius:10px;text-align:center;max-width:300px;box-shadow:0 4px 6px rgba(0,0,0,0.1);">
+        <h2 style="margin-bottom:20px;color:#8B3A1A;">🔐 後台密碼</h2>
+        <input type="password" id="password-input" placeholder="請輸入密碼" style="width:100%;padding:10px;border:1px solid #E4D9CC;border-radius:6px;margin-bottom:20px;font-size:14px;" autofocus>
+        <div style="display:flex;gap:10px;">
+          <button onclick="verifyPassword()" style="flex:1;padding:10px;background:#8B3A1A;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:700;">確認</button>
+          <button onclick="cancelPassword()" style="flex:1;padding:10px;background:#ccc;color:#333;border:none;border-radius:6px;cursor:pointer;">取消</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('afterbegin', html);
+  document.getElementById('password-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') verifyPassword();
+  });
+}
+
+function verifyPassword() {
+  const input = document.getElementById('password-input').value;
+  if (input === ADMIN_PASSWORD) {
     sessionStorage.setItem('thaidee_admin_auth', ADMIN_PASSWORD);
+    document.getElementById('password-modal').remove();
     initializeData();
-  } else if (password !== null) {
-    alert('❌ 密碼錯誤，請重試');
-    showPasswordPrompt();
   } else {
-    window.location.href = '/';
+    alert('❌ 密碼錯誤，請重試');
+    document.getElementById('password-input').value = '';
   }
+}
+
+function cancelPassword() {
+  window.location.href = '/';
 }
 
 // 從主系統的 RAW 數據重建景點清單
@@ -523,11 +545,11 @@ function clearAllModifications() {
 
 // 頁面加載時初始化
 window.addEventListener('load', () => {
-  checkPassword();
+  if (checkPassword()) {
+    // 自動保存（每10秒）
+    setInterval(saveAllPrices, 10000);
+  }
 });
-
-// 自動保存（每10秒）
-setInterval(saveAllPrices, 10000);
 </script>
 </body>
 </html>
