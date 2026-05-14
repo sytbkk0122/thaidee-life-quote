@@ -217,6 +217,31 @@ footer {
 </footer>
 
 <script>
+// 🔐 密碼驗證
+const ADMIN_PASSWORD = 'syt0122bkk';
+
+function checkPassword() {
+  const stored = sessionStorage.getItem('thaidee_admin_auth');
+  if (stored !== ADMIN_PASSWORD) {
+    showPasswordPrompt();
+    return false;
+  }
+  return true;
+}
+
+function showPasswordPrompt() {
+  const password = prompt('🔐 請輸入後台密碼:');
+  if (password === ADMIN_PASSWORD) {
+    sessionStorage.setItem('thaidee_admin_auth', ADMIN_PASSWORD);
+    loadOrders();
+  } else if (password !== null) {
+    alert('❌ 密碼錯誤，請重試');
+    showPasswordPrompt();
+  } else {
+    window.location.href = '/';
+  }
+}
+
 // 載入訂單數據
 function loadOrders() {
   const orders = JSON.parse(localStorage.getItem('thaidee_orders') || '[]');
@@ -353,7 +378,11 @@ function clearAllOrders() {
 }
 
 // 頁面加載時初始化
-window.addEventListener('load', loadOrders);
+window.addEventListener('load', () => {
+  if (checkPassword()) {
+    loadOrders();
+  }
+});
 
 // 自動刷新（每10秒檢查一次新訂單）
 setInterval(loadOrders, 10000);

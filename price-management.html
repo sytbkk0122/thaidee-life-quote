@@ -290,6 +290,31 @@ footer {
 </footer>
 
 <script>
+// 🔐 密碼驗證
+const ADMIN_PASSWORD = 'syt0122bkk';
+
+function checkPassword() {
+  const stored = sessionStorage.getItem('thaidee_admin_auth');
+  if (stored !== ADMIN_PASSWORD) {
+    showPasswordPrompt();
+    return false;
+  }
+  return true;
+}
+
+function showPasswordPrompt() {
+  const password = prompt('🔐 請輸入後台密碼:');
+  if (password === ADMIN_PASSWORD) {
+    sessionStorage.setItem('thaidee_admin_auth', ADMIN_PASSWORD);
+    initializeData();
+  } else if (password !== null) {
+    alert('❌ 密碼錯誤，請重試');
+    showPasswordPrompt();
+  } else {
+    window.location.href = '/';
+  }
+}
+
 // 從主系統的 RAW 數據重建景點清單
 const SPOT_MK = 200;
 const HOTEL_MK = 300;
@@ -497,7 +522,9 @@ function clearAllModifications() {
 }
 
 // 頁面加載時初始化
-window.addEventListener('load', initializeData);
+window.addEventListener('load', () => {
+  checkPassword();
+});
 
 // 自動保存（每10秒）
 setInterval(saveAllPrices, 10000);
