@@ -489,8 +489,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
         <button type="button" onclick="setDiningMode('service')" id="btn-service" style="flex:1;padding:10px;background:#f5f5f5;border:2px solid #ddd;border-radius:8px;cursor:pointer;font-weight:700;color:var(--dark)">👨‍💼 客服代訂</button>
       </div>
       <div id="restaurant-select" style="display:none;margin-bottom:12px">
-        <select id="order-restaurant" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none">
-          <option value="">選擇餐廳...</option>
+        <label style="font-weight:700;color:var(--brand);margin-bottom:6px;display:block;font-size:12px">餐廳選擇</label>
+        <select id="order-restaurant" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none;background:#fff;color:var(--dark)">
+          <option value="">-- 選擇餐廳 --</option>
         </select>
       </div>
       <input type="hidden" id="current-dining-mode" value="self">
@@ -1852,13 +1853,20 @@ window.RESTAURANTS_DATA = {
 };
 
 function setDiningMode(mode) {
+  console.log('設定用餐模式:', mode);
   document.getElementById('current-dining-mode').value = mode;
   document.getElementById('btn-self').style.borderColor = mode === 'self' ? 'var(--brand)' : '#ddd';
   document.getElementById('btn-service').style.borderColor = mode === 'service' ? 'var(--brand)' : '#ddd';
-  document.getElementById('restaurant-select').style.display = mode === 'service' ? 'block' : 'none';
-  
+
+  const restaurantDiv = document.getElementById('restaurant-select');
+  if (restaurantDiv) {
+    restaurantDiv.style.display = mode === 'service' ? 'block' : 'none';
+    console.log('餐廳選擇顯示:', mode === 'service');
+  }
+
   if (mode === 'service') {
-    const city = document.getElementById('sel-city').value;
+    const city = document.getElementById('sel-city').value || '曼谷';
+    console.log('更新城市:', city);
     updateRestaurantList(city);
   }
 }
