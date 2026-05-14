@@ -1571,20 +1571,49 @@ function calcCosts(){
   return {spotCost, hotelCost, vehCost, airportCost, guideCost, perPerson, grand, adults, rooms};
 }
 
+function highlightPrice(el){
+  if(!el) return;
+  el.style.backgroundColor = '#FFF8E1';
+  el.style.transition = 'background-color 0.3s';
+  setTimeout(() => {
+    el.style.backgroundColor = 'transparent';
+  }, 800);
+}
+
 function updatePrice(){
   const c = calcCosts();
   const fmt = n => 'NT$ ' + n.toLocaleString();
-  document.getElementById('p-spot').textContent  = fmt(c.spotCost);
-  document.getElementById('p-hotel').textContent = fmt(c.hotelCost);
-  document.getElementById('p-veh').textContent   = fmt(c.vehCost);
 
-  // 機場接送費用顯示（如果有該元素）
-  const airportEl = document.getElementById('p-airport');
-  if(airportEl) airportEl.textContent = fmt(c.airportCost);
+  const pSpot = document.getElementById('p-spot');
+  const pHotel = document.getElementById('p-hotel');
+  const pVeh = document.getElementById('p-veh');
+  const pAirport = document.getElementById('p-airport');
+  const pGuide = document.getElementById('p-guide');
+  const pPerperson = document.getElementById('p-perperson');
+  const pTotal = document.getElementById('p-total');
 
-  document.getElementById('p-guide').textContent = fmt(c.guideCost);
-  document.getElementById('p-perperson').textContent = fmt(c.perPerson);
-  document.getElementById('p-total').textContent = `全團 ${fmt(c.grand)}`;
+  pSpot.textContent = fmt(c.spotCost);
+  highlightPrice(pSpot);
+
+  pHotel.textContent = fmt(c.hotelCost);
+  highlightPrice(pHotel);
+
+  pVeh.textContent = fmt(c.vehCost);
+  highlightPrice(pVeh);
+
+  if(pAirport) {
+    pAirport.textContent = fmt(c.airportCost);
+    highlightPrice(pAirport);
+  }
+
+  pGuide.textContent = fmt(c.guideCost);
+  highlightPrice(pGuide);
+
+  pPerperson.textContent = fmt(c.perPerson);
+  highlightPrice(pPerperson);
+
+  pTotal.textContent = `全團 ${fmt(c.grand)}`;
+  highlightPrice(pTotal);
 
   // 更新價格透明度提示
   const priceNote = document.getElementById('price-transparency-note');
