@@ -441,7 +441,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
       <div class="lbl">每人估算費用</div>
       <div class="price" id="p-perperson">NT$ 0</div>
       <div class="sub" id="p-total">全團 NT$ 0</div>
-      <div id="price-transparency-note" style="margin-top:8px"></div>
     </div>
   </div>
 </div>
@@ -1564,14 +1563,6 @@ function updatePrice(){
   document.getElementById('p-guide').textContent = fmt(c.guideCost);
   document.getElementById('p-perperson').textContent = fmt(c.perPerson);
   document.getElementById('p-total').textContent = `全團 ${fmt(c.grand)}`;
-
-  // 更新價格透明度提示
-  const priceNote = document.getElementById('price-transparency-note');
-  if(priceNote) {
-    const subtotal = c.spotCost + c.hotelCost + c.vehCost + c.airportCost + c.guideCost;
-    const margin = Math.ceil(subtotal * 0.20);
-    priceNote.innerHTML = `<small style="color:#888;font-size:11px">成本 ${fmt(subtotal)} + 服務費 ${fmt(margin)} = 每人 ${fmt(c.perPerson)}</small>`;
-  }
   renderMini();
 }
 
@@ -1685,27 +1676,6 @@ function closeOrderForm(){
   document.getElementById('order-modal').style.display='none';
 }
 
-function validateOrder(){
-  const name = document.getElementById('order-name').value.trim();
-  const email = document.getElementById('order-email').value.trim();
-  const phone = document.getElementById('order-phone').value.trim();
-
-  if(!name) return { valid: false, message: '❌ 請輸入姓名' };
-  if(name.length < 2) return { valid: false, message: '❌ 姓名至少 2 個字' };
-
-  if(!email) return { valid: false, message: '❌ 請輸入郵件地址' };
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if(!emailRegex.test(email)) return { valid: false, message: '❌ 請輸入有效的郵件地址' };
-
-  if(!phone) return { valid: false, message: '❌ 請輸入電話號碼' };
-  if(phone.length < 7) return { valid: false, message: '❌ 電話號碼至少 7 碼' };
-
-  const hasItinerary = S.days.some(d => d.am.length > 0 || d.pm.length > 0 || d.eve.length > 0);
-  if(!hasItinerary) return { valid: false, message: '❌ 請至少添加一個景點' };
-
-  return { valid: true, message: '' };
-}
-
 function submitOrder(){
   const name = document.getElementById('order-name').value.trim();
   const email = document.getElementById('order-email').value.trim();
@@ -1714,18 +1684,8 @@ function submitOrder(){
   const diningMode = document.getElementById('current-dining-mode').value;
   const restaurant = document.getElementById('order-restaurant').value;
 
-  const validation = validateOrder();
-  if(!validation.valid){
-    alert(validation.message);
-    return;
-  }
-
-  // 禁用提交按鈕，防止重複提交
-  const submitBtn = event.target;
-  if(submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ 提交中...';
-  }
+  if(!name){ alert('請輸入姓名'); return; }
+  if(!email){ alert('請輸入郵件'); return; }
 
   const c = calcCosts();
   const dep = document.getElementById('c-dep').value || '─';
@@ -1816,10 +1776,6 @@ function submitOrder(){
     setTimeout(() => {
       window.open('https://line.me/R/ti/p/@468nnetj', '_blank');
     }, 500);
-    if(submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = '送出下單';
-    }
   })
   .catch(err => {
     console.error('Submission error:', err);
@@ -1828,10 +1784,6 @@ function submitOrder(){
       closeOrderForm();
       window.open('https://line.me/R/ti/p/@468nnetj', '_blank');
     }, 3000);
-    if(submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = '送出下單';
-    }
   });
 }
 
