@@ -2569,19 +2569,54 @@ function updateVehicleOptions() {
   });
 }
 
-// 初始化飯店選項
+// 初始化飯店選項 - 按分類分組
 function initHotelOptions() {
   const citySelect = document.getElementById('sel-city');
   const hotelSelect = document.getElementById('sel-hotel');
   const city = citySelect.value || '曼谷';
-  
+
   if (!window.CITIES_DATA[city]) return;
-  
-  hotelSelect.innerHTML = '<option value="">選擇飯店</option>';
+
+  // 按飯店星級和類型分組
+  const grouped = {
+    '五星豪華飯店': [],
+    '四星標準飯店': [],
+    '公寓式酒店': [],
+    '旅館/背包客': []
+  };
+
   window.CITIES_DATA[city].hotels.forEach(hotel => {
-    hotelSelect.innerHTML += `<option value="${hotel.name}">
-      ${hotel.name} - NT$${Math.ceil(hotel.cost * 0.92)}/晚
-    </option>`;
+    const name = hotel.name;
+
+    // 分類邏輯：五星 → 公寓/套房/陽台 → 旅館/背包 → 四星標準
+    if (name.includes('★★★★★')) {
+      grouped['五星豪華飯店'].push(hotel);
+    } else if (name.includes('(Balcony)') || name.includes('陽台') || name.includes('Terrace') || name.includes('套房') || name.includes('Apartment') || name.includes('公寓') || name.includes('House')) {
+      grouped['公寓式酒店'].push(hotel);
+    } else if (name.includes('Hostel') || name.includes('旅館') || name.includes('Youth') || hotel.cost < 1800) {
+      grouped['旅館/背包客'].push(hotel);
+    } else {
+      grouped['四星標準飯店'].push(hotel);
+    }
+  });
+
+  hotelSelect.innerHTML = '<option value="">選擇飯店</option>';
+
+  // 渲染分組飯店
+  Object.entries(grouped).forEach(([category, hotels]) => {
+    if (hotels.length > 0) {
+      const optgroup = document.createElement('optgroup');
+      optgroup.label = `${category} (${hotels.length}間)`;
+
+      hotels.forEach(hotel => {
+        const option = document.createElement('option');
+        option.value = hotel.name;
+        option.textContent = `${hotel.name} - NT$${Math.ceil(hotel.cost * 0.92)}/晚`;
+        optgroup.appendChild(option);
+      });
+
+      hotelSelect.appendChild(optgroup);
+    }
   });
 }
 
