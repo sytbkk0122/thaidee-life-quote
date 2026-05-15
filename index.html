@@ -406,6 +406,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
         <button onclick="setBrowseMode('attractions')" style="flex:1;padding:8px 12px;background:#8B3A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-attractions">🎯 熱門景點</button>
         <button onclick="setBrowseMode('packages')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-packages">📦 套裝行程</button>
         <button onclick="setBrowseMode('daytours')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-daytours">🌅 一日遊</button>
+        <button onclick="setBrowseMode('golf')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-golf">⛳ 高爾夫</button>
+        <button onclick="window.open('golf.html','_blank')" style="flex:1;padding:8px 12px;background:#D4860A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px">📄 詳細頁面</button>
       </div>
 
       <div id="filter-bar">
@@ -1258,7 +1260,13 @@ const PACKAGE_TOURS = [
   {id:'PKG009', name:'🏨 五星海島奢華四日', desc:'瑪雅灣+PP島+五星度假村+SPA', days:4, cities:'普吉', price:48000, type:'suite'},
   {id:'PKG010', name:'🎪 文化藝術七日深度遊', desc:'柚木宮+大皇宮+古城+寺廟冥想', days:7, cities:'曼谷,大城,清邁', price:52000, type:'suite'},
   {id:'PKG011', name:'🏮 清邁水燈節五日慶典', desc:'古城水燈放祈福+寺廟慶祝+天燈升空+傳統美食', days:5, cities:'清邁', price:38000, type:'suite', season:'水燈節'},
-  {id:'PKG012', name:'💡 曼谷水燈節四日體驗', desc:'昭披耶河放燈+大皇宮夜景+水燈市集+傳統薈萃', days:4, cities:'曼谷', price:32000, type:'suite', season:'水燈節'}
+  {id:'PKG012', name:'💡 曼谷水燈節四日體驗', desc:'昭披耶河放燈+大皇宮夜景+水燈市集+傳統薈萃', days:4, cities:'曼谷', price:32000, type:'suite', season:'水燈節'},
+
+  /* ═ 高爾夫球專題套餐 ═ */
+  {id:'PKG013', name:'⛳ 曼谷高爾夫五日之旅', desc:'Siam Country Club+Windy Valley+Thai Country Club+五星飯店+教練課程', days:5, cities:'曼谷', price:45000, type:'suite', category:'高爾夫'},
+  {id:'PKG014', name:'🏌️ 清邁山景高爾夫七日', desc:'Alpine Golf+Mountain View Golf+4場球場+山景飯店+高爾夫教練', days:7, cities:'清邁', price:52000, type:'suite', category:'高爾夫'},
+  {id:'PKG015', name:'⛳ 芭堤雅海濱高爾夫四日', desc:'Siam Safari+Ocean View Golf+Dynasty Golf+海邊度假村+私人教練', days:4, cities:'芭堤雅', price:38000, type:'suite', category:'高爾夫'},
+  {id:'PKG016', name:'🏌️ 華欣悠閒高爾夫三日', desc:'Banyan Golf+Royal Hua Hin Golf+海景飯店+早晨球賽+SPA放鬆', days:3, cities:'華欣', price:28000, type:'suite', category:'高爾夫'}
 ];
 
 /* ════ 一日遊行程 ════════════════════════════════ */
@@ -1281,7 +1289,27 @@ const DAY_TOURS = [
   {id:'DAY011', name:'🏮 清邁水燈節放祈福', desc:'古城護城河放燈→寺廟祈福→天燈升空→傳統美食夜宴', city:'清邁', hours:8, price:3200, type:'daytour', season:'水燈節'},
 
   /* 水燈節專題 - 曼谷 1個 */
-  {id:'DAY012', name:'💡 曼谷水燈節慶典遊', desc:'昭披耶河沿岸放燈→水燈市集逛街→寺廟夜間祈福→河濱美食節', city:'曼谷', hours:7, price:2800, type:'daytour', season:'水燈節'}
+  {id:'DAY012', name:'💡 曼谷水燈節慶典遊', desc:'昭披耶河沿岸放燈→水燈市集逛街→寺廟夜間祈福→河濱美食節', city:'曼谷', hours:7, price:2800, type:'daytour', season:'水燈節'},
+
+  /* ═ 高爾夫球專題一日遊 ═ */
+  /* 曼谷人氣球場 */
+  {id:'DAY013', name:'⛳ 曼谷頂級高爾夫一日體驗', desc:'Siam Country Club→18洞標準賽→豐盛球會午餐→練習場教練課程→SPA放鬆', city:'曼谷', hours:8, price:3500, type:'daytour', category:'高爾夫'},
+  {id:'DAY014', name:'🏌️ 曼谷風景高爾夫挑戰賽', desc:'Windy Valley→困難18洞→策略性球賽→球會美食→高爾夫教練指導', city:'曼谷', hours:8, price:3800, type:'daytour', category:'高爾夫'},
+  {id:'DAY015', name:'⛳ 曼谷經典高爾夫之旅', desc:'Thai Country Club→中等難度18洞→新手友善→午間美食→聯誼聚樂', city:'曼谷', hours:8, price:3200, type:'daytour', category:'高爾夫'},
+
+  /* 清邁山景球場 */
+  {id:'DAY016', name:'🏌️ 清邁高山高爾夫體驗', desc:'Alpine Golf Club→山景18洞→高難度挑戰→山寨午餐→清邁景觀茶敘', city:'清邁', hours:8, price:3300, type:'daytour', category:'高爾夫'},
+  {id:'DAY017', name:'⛳ 清邁仙境高爾夫遊', desc:'Mountain View Golf→景觀完美18洞→初中級球友適合→傳統泰餐→下午茶放鬆', city:'清邁', hours:8, price:3000, type:'daytour', category:'高爾夫'},
+  {id:'DAY018', name:'🏌️ 清邁雲上高爾夫之旅', desc:'Misty Mountain Golf→霧中神秘18洞→高度挑戰→山區特色餐→日落觀景', city:'清邁', hours:8, price:3400, type:'daytour', category:'高爾夫'},
+
+  /* 芭堤雅海景球場 */
+  {id:'DAY019', name:'⛳ 芭堤雅海濱高爾夫日', desc:'Siam Safari Golf→18洞海景球道→中上難度→海濱球會餐廳→海灘暮色放鬆', city:'芭堤雅', hours:8, price:3600, type:'daytour', category:'高爾夫'},
+  {id:'DAY020', name:'🏌️ 芭堤雅極限高爾夫挑戰', desc:'Ocean View Golf→困難18洞戰場→高手挑戰→頂級俱樂部午餐→SPA療程', city:'芭堤雅', hours:8, price:3900, type:'daytour', category:'高爾夫'},
+  {id:'DAY021', name:'⛳ 芭堤雅度假高爾夫遊', desc:'Dynasty Golf Pattaya→中等難度18洞→度假首選→海景餐廳美食→下午沙灘', city:'芭堤雅', hours:8, price:3100, type:'daytour', category:'高爾夫'},
+
+  /* 華欣靜謐球場 */
+  {id:'DAY022', name:'🏌️ 華欣高爾夫靜謐之旅', desc:'Banyan Golf Club→優美18洞→靜謐環境→傳統泰式午餐→海邊散步冥想', city:'華欣', hours:8, price:3300, type:'daytour', category:'高爾夫'},
+  {id:'DAY023', name:'⛳ 華欣皇家高爾夫體驗', desc:'Royal Hua Hin Golf→經典18洞→皇家球會風範→高級美食→下午茶時光', city:'華欣', hours:8, price:3200, type:'daytour', category:'高爾夫'}
 ];
 
 /* ════ 狀態 ════════════════════════════════════ */
@@ -1499,6 +1527,7 @@ function filteredSpots(){
 function renderCards(){
   if(S.browseMode==='packages') renderPackages();
   else if(S.browseMode==='daytours') renderDayTours();
+  else if(S.browseMode==='golf') renderGolf();
   else renderAttractions();
 }
 
@@ -1579,15 +1608,80 @@ function renderDayTours(){
   `).join('');
 }
 
+function renderGolf(){
+  const grid = document.getElementById('cards-grid');
+  const q = document.getElementById('search-box').value.trim();
+
+  // 搜尋高爾夫套餐
+  const golfPackages = PACKAGE_TOURS.filter(p => p.category==='高爾夫' && (!q || smartSearch(q, {name:p.name, desc:p.desc})));
+
+  // 搜尋高爾夫一日遊
+  const golfTours = DAY_TOURS.filter(d => d.category==='高爾夫' && (!q || smartSearch(q, {name:d.name, desc:d.desc})));
+
+  if(!golfPackages.length && !golfTours.length){
+    grid.innerHTML='<div id="no-results">🔍 沒有符合的高爾夫套餐或一日遊</div>';
+    return;
+  }
+
+  let html = '';
+
+  // 高爾夫套餐
+  if(golfPackages.length) {
+    html += golfPackages.map(p => `
+      <div class="acard" onclick="selectPackage('${p.id}')">
+        <div class="acard-badges">
+          <span class="badge badge-r" style="background:#D4860A">⛳ 套餐</span>
+          <span class="badge badge-cat">${p.days}天</span>
+        </div>
+        <div class="acard-name">${p.name}</div>
+        <div class="acard-desc">${p.desc}</div>
+        <div class="acard-foot">
+          <span style="font-size:11px;color:#888">${p.cities}</span>
+          <span style="font-size:11px;font-weight:700;color:var(--gold)">NT$ ${p.price.toLocaleString()}</span>
+        </div>
+        <button class="acard-add" onclick="selectPackage('${p.id}',event)">選擇</button>
+      </div>
+    `).join('');
+  }
+
+  // 高爾夫一日遊
+  if(golfTours.length) {
+    html += golfTours.map(d => `
+      <div class="acard" onclick="selectDayTour('${d.id}')">
+        <div class="acard-badges">
+          <span class="badge badge-r" style="background:#D4860A">⛳ 一日遊</span>
+          <span class="badge badge-cat">${d.city}</span>
+        </div>
+        <div class="acard-name">${d.name}</div>
+        <div class="acard-desc">${d.desc}</div>
+        <div class="acard-foot">
+          <span style="font-size:11px;color:#888">⏱ ${d.hours}h</span>
+          <span style="font-size:11px;font-weight:700;color:var(--gold)">NT$ ${d.price.toLocaleString()}</span>
+        </div>
+        <button class="acard-add" onclick="selectDayTour('${d.id}',event)">選擇</button>
+      </div>
+    `).join('');
+  }
+
+  grid.innerHTML = html;
+}
+
 function setBrowseMode(mode){
   S.browseMode = mode;
   document.getElementById('search-box').placeholder =
     mode==='packages'?'搜尋套裝行程…':
-    mode==='daytours'?'搜尋一日遊…':'搜尋景點…';
+    mode==='daytours'?'搜尋一日遊…':
+    mode==='golf'?'搜尋高爾夫球場和套餐…':'搜尋景點…';
 
-  document.querySelectorAll('[id^="mode-btn-"]').forEach(btn => btn.style.background='#ddd', btn.style.color='#333');
-  document.getElementById('mode-btn-'+mode).style.background='#8B3A1A';
-  document.getElementById('mode-btn-'+mode).style.color='#fff';
+  document.querySelectorAll('[id^="mode-btn-"]').forEach(btn => {
+    btn.style.background='#ddd';
+    btn.style.color='#333';
+  });
+  const activeBtn = document.getElementById('mode-btn-'+mode);
+  if(activeBtn) {
+    activeBtn.style.background='#8B3A1A';
+    activeBtn.style.color='#fff';
+  }
 
   S.filterRegion='全部'; S.filterCat='全部';
   renderTags(); renderCards();

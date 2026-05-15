@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高爾夫球之旅 | 鉅星旅運 × 泰迪生活</title>
+<style>
+:root {
+  --brand: #8B3A1A;
+  --brand-d: #5C2410;
+  --brand-m: #C0522A;
+  --gold: #D4860A;
+  --gold-l: #FFF8E1;
+  --green: #1A6E3C;
+  --green-l: #E8F5EE;
+  --cream: #F7F2EA;
+  --sand: #EDD9B8;
+  --light: #F5C9A8;
+  --dark: #1A1A1A;
+  --mid: #555;
+  --lite: #888;
+  --bg: #F4F0EB;
+  --card: #fff;
+  --border: #E4D9CC;
+  --radius: 14px;
+  --radius-s: 9px;
+  --shadow: 0 2px 16px rgba(139,58,26,.10);
+  --font: "微軟正黑體","Noto Sans TC",sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--dark);
+  font-size: 14px;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Header */
+header {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-d) 100%);
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+header h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+header p {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Navigation */
+nav {
+  background: #fff;
+  padding: 15px 20px;
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+nav button {
+  background: var(--cream);
+  border: 2px solid var(--border);
+  padding: 8px 20px;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.3s;
+  color: var(--mid);
+}
+
+nav button:hover,
+nav button.active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  transform: translateY(-2px);
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+/* Section */
+section {
+  display: none;
+}
+
+section.active {
+  display: block;
+}
+
+/* Title */
+.section-title {
+  font-size: 28px;
+  color: var(--brand);
+  margin-bottom: 20px;
+  text-align: center;
+  border-bottom: 3px solid var(--gold);
+  padding-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* Card */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: all 0.3s;
+  border: 1px solid var(--border);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(139,58,26,.2);
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-m) 100%);
+  color: #fff;
+  padding: 20px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-body p {
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: var(--mid);
+  line-height: 1.6;
+}
+
+.card-footer {
+  padding: 15px 20px;
+  background: var(--gold-l);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+}
+
+.price {
+  color: var(--brand);
+  font-size: 18px;
+}
+
+.btn {
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 12px;
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  filter: brightness(1.1);
+  transform: scale(1.05);
+}
+
+/* Filters */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.filter-btn {
+  background: var(--cream);
+  border: 2px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 12px;
+  transition: all 0.3s;
+  color: var(--mid);
+}
+
+.filter-btn.active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+.filter-btn:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+}
+
+/* Course Table */
+.course-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+}
+
+.course-table thead {
+  background: linear-gradient(135deg, var(--brand) 0%, var(--brand-m) 100%);
+  color: #fff;
+}
+
+.course-table th,
+.course-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.course-table th {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.course-table tbody tr:hover {
+  background: var(--gold-l);
+}
+
+.rating {
+  color: var(--gold);
+  font-weight: 700;
+}
+
+.difficulty {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  min-width: 50px;
+}
+
+.difficulty.easy {
+  background: var(--green-l);
+  color: var(--green);
+}
+
+.difficulty.medium {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.difficulty.hard {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Stats */
+.stats-box {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 25px;
+  box-shadow: var(--shadow);
+  margin-bottom: 30px;
+  border-left: 5px solid var(--gold);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--lite);
+  margin-top: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Footer */
+footer {
+  background: var(--brand);
+  color: #fff;
+  text-align: center;
+  padding: 30px 20px;
+  margin-top: 50px;
+  font-size: 13px;
+}
+
+footer a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 24px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .course-table {
+    font-size: 12px;
+  }
+
+  .course-table th,
+  .course-table td {
+    padding: 10px;
+  }
+
+  nav {
+    gap: 10px;
+  }
+
+  nav button {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <h1>⛳ 高爾夫球之旅</h1>
+  <p>泰國前100高爾夫球場 × 專業教練 × 頂級體驗</p>
+</header>
+
+<!-- Navigation -->
+<nav id="nav">
+  <button class="nav-btn active" data-section="overview">概況統計</button>
+  <button class="nav-btn" data-section="courses">全球場搜尋</button>
+  <button class="nav-btn" data-section="bangkok">曼谷球場</button>
+  <button class="nav-btn" data-section="chiangmai">清邁球場</button>
+  <button class="nav-btn" data-section="pattaya">芭堤雅球場</button>
+  <button class="nav-btn" data-section="huahin">華欣球場</button>
+  <button class="nav-btn" data-section="packages">套餐行程</button>
+  <button class="nav-btn" data-section="booking">立即預訂</button>
+</nav>
+
+<div class="container">
+
+  <!-- 概況統計 -->
+  <section id="overview" class="active">
+    <h2 class="section-title">🏌️ 高爾夫球專項統計</h2>
+
+    <div class="stats-box">
+      <div class="stat-grid">
+        <div class="stat-item">
+          <div class="stat-number">100+</div>
+          <div class="stat-label">高爾夫球場</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4</div>
+          <div class="stat-label">主要城市</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">4.7★</div>
+          <div class="stat-label">平均評分</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">99%</div>
+          <div class="stat-label">客戶滿意度</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="card-header">📍 曼谷 Bangkok</div>
+        <div class="card-body">
+          <p><strong>34個高爾夫球場</strong></p>
+          <p>城市中心球場 × 國際標準 × 教練課程</p>
+          <p>人氣球場：Siam Country Club、Windy Valley、Thai Country Club</p>
+          <p style="color: var(--gold); font-weight: 700; margin-top: 10px;">NT$2,000-3,500 / 人</p>
+        </div>
+        <div class="card-footer">
+          <span>⭐⭐⭐⭐⭐</span>
+          <button class="btn" onclick="showSection('bangkok')">查看詳情</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">🏔️ 清邁 Chiang Mai</div>
+        <div class="card-body">
+          <p><strong>28個高爾夫球場</strong></p>
+          <p>山景球道 × 自然環境 × 靜謐享受</p>
+          <p>人氣球場：Alpine Golf、Mountain View Golf、Misty Mountain</p>
+          <p style="color: var(--gold); font-weight: 700; margin-top: 10px;">NT$1,700-2,900 / 人</p>
+        </div>
+        <div class="card-footer">
+          <span>⭐⭐⭐⭐⭐</span>
+          <button class="btn" onclick="showSection('chiangmai')">查看詳情</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">🌊 芭堤雅 Pattaya</div>
+        <div class="card-body">
+          <p><strong>23個高爾夫球場</strong></p>
+          <p>海景球道 × 度假風情 × 高級設施</p>
+          <p>人氣球場：Siam Safari、Ocean View Golf、Dynasty Golf</p>
+          <p style="color: var(--gold); font-weight: 700; margin-top: 10px;">NT$1,900-3,600 / 人</p>
+        </div>
+        <div class="card-footer">
+          <span>⭐⭐⭐⭐⭐</span>
+          <button class="btn" onclick="showSection('pattaya')">查看詳情</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">🏖️ 華欣 Hua Hin</div>
+        <div class="card-body">
+          <p><strong>15個高爾夫球場</strong></p>
+          <p>靜謐海灘 × 皇家風範 × 放鬆度假</p>
+          <p>人氣球場：Banyan Golf、Royal Hua Hin、Seaview Golf</p>
+          <p style="color: var(--gold); font-weight: 700; margin-top: 10px;">NT$1,700-2,950 / 人</p>
+        </div>
+        <div class="card-footer">
+          <span>⭐⭐⭐⭐⭐</span>
+          <button class="btn" onclick="showSection('huahin')">查看詳情</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 全球場搜尋 -->
+  <section id="courses">
+    <h2 class="section-title">🔍 泰國前100高爾夫球場搜尋</h2>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="filterCity('全部')">全部城市</button>
+      <button class="filter-btn" onclick="filterCity('曼谷')">曼谷</button>
+      <button class="filter-btn" onclick="filterCity('清邁')">清邁</button>
+      <button class="filter-btn" onclick="filterCity('芭堤雅')">芭堤雅</button>
+      <button class="filter-btn" onclick="filterCity('華欣')">華欣</button>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <input type="text" id="searchCourse" placeholder="搜尋球場名稱..."
+        style="width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: var(--radius-s); font-family: var(--font); font-size: 14px;">
+    </div>
+
+    <table class="course-table" id="courseTable">
+      <thead>
+        <tr>
+          <th>排名</th>
+          <th>球場名稱</th>
+          <th>城市</th>
+          <th>難度</th>
+          <th>評分</th>
+          <th>人氣度</th>
+          <th>一日遊價格</th>
+        </tr>
+      </thead>
+      <tbody id="courseList">
+        <tr><td colspan="7" style="text-align: center; padding: 20px;">載入中...</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 曼谷球場 -->
+  <section id="bangkok">
+    <h2 class="section-title">🏙️ 曼谷高爾夫球場 (34個)</h2>
+    <div class="grid" id="bangkokGrid">
+      <p style="text-align: center; color: var(--lite);">載入中...</p>
+    </div>
+  </section>
+
+  <!-- 清邁球場 -->
+  <section id="chiangmai">
+    <h2 class="section-title">🏔️ 清邁高爾夫球場 (28個)</h2>
+    <div class="grid" id="chiangmaiGrid">
+      <p style="text-align: center; color: var(--lite);">載入中...</p>
+    </div>
+  </section>
+
+  <!-- 芭堤雅球場 -->
+  <section id="pattaya">
+    <h2 class="section-title">🌊 芭堤雅高爾夫球場 (23個)</h2>
+    <div class="grid" id="pattayaGrid">
+      <p style="text-align: center; color: var(--lite);">載入中...</p>
+    </div>
+  </section>
+
+  <!-- 華欣球場 -->
+  <section id="huahin">
+    <h2 class="section-title">🏖️ 華欣高爾夫球場 (15個)</h2>
+    <div class="grid" id="huahinGrid">
+      <p style="text-align: center; color: var(--lite);">載入中...</p>
+    </div>
+  </section>
+
+  <!-- 套餐行程 -->
+  <section id="packages">
+    <h2 class="section-title">🎯 高爾夫球套餐行程</h2>
+    <div class="grid" id="packagesList">
+      <div class="card">
+        <div class="card-header">⛳ 曼谷高爾夫五日之旅</div>
+        <div class="card-body">
+          <p><strong>Siam Country Club + Windy Valley + Thai Country Club</strong></p>
+          <p>✓ 五星飯店</p>
+          <p>✓ 教練課程</p>
+          <p>✓ 全程包車</p>
+          <p>✓ 中文導遊</p>
+          <p>✓ 18洞×3球場</p>
+        </div>
+        <div class="card-footer">
+          <span class="price">NT$45,000</span>
+          <button class="btn" onclick="alert('即將推出完整預訂系統')">詢問詳情</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">🏌️ 清邁山景高爾夫七日</div>
+        <div class="card-body">
+          <p><strong>Alpine Golf + Mountain View Golf + 4場球場</strong></p>
+          <p>✓ 山景飯店</p>
+          <p>✓ 高爾夫教練</p>
+          <p>✓ 全程包車</p>
+          <p>✓ 中文導遊</p>
+          <p>✓ 18洞×4球場</p>
+        </div>
+        <div class="card-footer">
+          <span class="price">NT$52,000</span>
+          <button class="btn" onclick="alert('即將推出完整預訂系統')">詢問詳情</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">⛳ 芭堤雅海濱高爾夫四日</div>
+        <div class="card-body">
+          <p><strong>Siam Safari + Ocean View Golf + Dynasty Golf</strong></p>
+          <p>✓ 海邊度假村</p>
+          <p>✓ 私人教練</p>
+          <p>✓ 全程包車</p>
+          <p>✓ 中文導遊</p>
+          <p>✓ 18洞×3球場</p>
+        </div>
+        <div class="card-footer">
+          <span class="price">NT$38,000</span>
+          <button class="btn" onclick="alert('即將推出完整預訂系統')">詢問詳情</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">🏌️ 華欣悠閒高爾夫三日</div>
+        <div class="card-body">
+          <p><strong>Banyan Golf + Royal Hua Hin Golf</strong></p>
+          <p>✓ 海景飯店</p>
+          <p>✓ 早晨球賽</p>
+          <p>✓ 全程包車</p>
+          <p>✓ 中文導遊</p>
+          <p>✓ SPA放鬆</p>
+        </div>
+        <div class="card-footer">
+          <span class="price">NT$28,000</span>
+          <button class="btn" onclick="alert('即將推出完整預訂系統')">詢問詳情</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 立即預訂 -->
+  <section id="booking">
+    <h2 class="section-title">📞 立即預訂高爾夫球之旅</h2>
+
+    <div style="max-width: 600px; margin: 0 auto;">
+      <div class="stats-box">
+        <h3 style="color: var(--brand); margin-bottom: 15px;">聯絡我們預訂</h3>
+
+        <div style="margin-bottom: 20px;">
+          <p style="color: var(--mid); margin-bottom: 10px;"><strong>📱 LINE 官方帳號</strong></p>
+          <p style="color: var(--lite); margin-bottom: 15px;">專業客服團隊 × 24小時回覆 × 中英日泰多語</p>
+          <button class="btn" onclick="window.open('https://line.me/R/ti/p/@468nnetj','_blank')" style="width: 100%; padding: 12px; font-size: 14px;">
+            💬 立即 LINE 客服
+          </button>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 20px 0;">
+
+        <div style="margin-bottom: 20px;">
+          <p style="color: var(--mid); margin-bottom: 10px;"><strong>📧 電郵預訂</strong></p>
+          <p style="color: var(--lite); margin-bottom: 15px;">發送行程詢問表 × 獲取詳細報價 × 客製化方案</p>
+          <button class="btn" onclick="alert('客服電郵：service@thaidee-life.com')" style="width: 100%; padding: 12px; font-size: 14px;">
+            ✉️ 發送詢問表
+          </button>
+        </div>
+
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 20px 0;">
+
+        <div>
+          <p style="color: var(--mid); margin-bottom: 10px;"><strong>💬 即時客服</strong></p>
+          <p style="color: var(--lite);">返回主頁 × 使用即時聊天 × 專家諮詢</p>
+          <a href="index.html" class="btn" style="display: block; text-align: center; padding: 12px; font-size: 14px; text-decoration: none;">
+            ← 返回主頁預訂
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- Footer -->
+<footer>
+  <p><strong>鉅星旅運 × 泰迪生活</strong></p>
+  <p>泰國高爾夫球之旅專家 | LINE: <a href="https://line.me/R/ti/p/@468nnetj">@468nnetj</a> | 📞 24小時客服</p>
+  <p style="margin-top: 10px; opacity: 0.8;">© 2026 Thai-Dee Life Golf Tours | 版權所有</p>
+</footer>
+
+<script src="golf-courses.js"></script>
+<script>
+// 導航功能
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    this.classList.add('active');
+    const section = this.getAttribute('data-section');
+    document.getElementById(section).classList.add('active');
+  });
+});
+
+function showSection(sectionId) {
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+  document.getElementById(sectionId).classList.add('active');
+}
+
+// 球場數據展示
+function displayCourses(courses) {
+  const html = courses.map((course, idx) => `
+    <div class="card">
+      <div class="card-header">${course.name}</div>
+      <div class="card-body">
+        <p><strong>城市：</strong> ${course.city}</p>
+        <p><strong>標準杆：</strong> ${course.par} | <strong>碼數：</strong> ${course.length}米</p>
+        <p><strong>難度：</strong> ${course.difficulty}</p>
+        <p><strong>設施：</strong> ${course.facilities.join('、')}</p>
+        <p style="color: var(--lite); font-size: 12px; margin-top: 10px;">成立於 ${course.founded}年</p>
+      </div>
+      <div class="card-footer">
+        <span class="rating">⭐ ${course.rating}</span>
+        <span style="color: var(--gold); font-weight: 700;">NT$${course.price}</span>
+      </div>
+    </div>
+  `).join('');
+  return html;
+}
+
+// 初始化各城市球場
+function initCourseLists() {
+  document.getElementById('bangkokGrid').innerHTML = displayCourses(
+    GOLF_COURSES.filter(c => c.city === '曼谷').sort((a, b) => b.popularity - a.popularity)
+  );
+  document.getElementById('chiangmaiGrid').innerHTML = displayCourses(
+    GOLF_COURSES.filter(c => c.city === '清邁').sort((a, b) => b.popularity - a.popularity)
+  );
+  document.getElementById('pattayaGrid').innerHTML = displayCourses(
+    GOLF_COURSES.filter(c => c.city === '芭堤雅').sort((a, b) => b.popularity - a.popularity)
+  );
+  document.getElementById('huahinGrid').innerHTML = displayCourses(
+    GOLF_COURSES.filter(c => c.city === '華欣').sort((a, b) => b.popularity - a.popularity)
+  );
+}
+
+// 全球場搜尋和篩選
+let currentFilter = '全部';
+let currentSearch = '';
+
+function filterCity(city) {
+  currentFilter = city;
+  document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  updateCourseTable();
+}
+
+function updateCourseTable() {
+  let filtered = GOLF_COURSES;
+
+  if (currentFilter !== '全部') {
+    filtered = filtered.filter(c => c.city === currentFilter);
+  }
+
+  if (currentSearch) {
+    filtered = filtered.filter(c =>
+      c.name.includes(currentSearch) || c.city.includes(currentSearch)
+    );
+  }
+
+  filtered = filtered.sort((a, b) => b.popularity - a.popularity);
+
+  const html = filtered.map((course, idx) => `
+    <tr>
+      <td>#${idx + 1}</td>
+      <td><strong>${course.name}</strong></td>
+      <td>${course.city}</td>
+      <td><span class="difficulty ${course.difficulty === '初級' ? 'easy' : course.difficulty === '中等' ? 'medium' : 'hard'}">${course.difficulty}</span></td>
+      <td><span class="rating">⭐${course.rating}</span></td>
+      <td>${course.popularity}%</td>
+      <td style="color: var(--gold); font-weight: 700;">NT$${course.price}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('courseList').innerHTML = html || '<tr><td colspan="7" style="text-align: center; padding: 20px;">無搜尋結果</td></tr>';
+}
+
+// 搜尋功能
+document.getElementById('searchCourse').addEventListener('input', function() {
+  currentSearch = this.value;
+  updateCourseTable();
+});
+
+// 頁面加載時初始化
+document.addEventListener('DOMContentLoaded', function() {
+  initCourseLists();
+  updateCourseTable();
+});
+</script>
+
+</body>
+</html>
