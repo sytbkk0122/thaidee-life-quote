@@ -402,13 +402,13 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
 
     <div id="browser">
       <!-- 瀏覽模式切換 -->
-      <div style="display:flex;gap:8px;padding:8px 12px;background:#fff;border-bottom:2px solid var(--border);border-radius:0;font-size:12px">
-        <button onclick="setBrowseMode('attractions')" style="flex:1;padding:8px 12px;background:#8B3A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-attractions">🎯 熱門景點</button>
-        <button onclick="setBrowseMode('packages')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-packages">📦 套裝行程</button>
-        <button onclick="setBrowseMode('daytours')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-daytours">🌅 一日遊</button>
-        <button onclick="setBrowseMode('golf')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-golf">⛳ 高爾夫</button>
-        <button onclick="setBrowseMode('expat')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700" id="mode-btn-expat">🏖️ 外派</button>
-        <button onclick="window.open('golf.html','_blank')" style="flex:1;padding:8px 12px;background:#D4860A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;font-size:12px">📄 詳細</button>
+      <div style="display:flex;gap:8px;padding:8px 12px;background:#fff;border-bottom:2px solid var(--border);border-radius:0;font-size:12px;overflow-x:auto">
+        <button onclick="setBrowseMode('attractions')" style="flex:1;padding:8px 12px;background:#8B3A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-attractions">🎯 熱門景點</button>
+        <button onclick="setBrowseMode('packages')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-packages">📦 套裝行程</button>
+        <button onclick="setBrowseMode('daytours')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-daytours">🌅 一日遊</button>
+        <button onclick="setBrowseMode('golf')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-golf">⛳ 高爾夫</button>
+        <button onclick="setBrowseMode('expat')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-expat">🏖️ 外派</button>
+        <button onclick="setBrowseMode('transfers')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-transfers">🚕 接送</button>
       </div>
 
       <div id="filter-bar">
@@ -532,13 +532,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
 </div>
 
 <div id="toast">✅ 已複製！貼入 LINE 即可發送</div>
-
-<script>
-@keyframes bounce {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.2); }
-}
-</script>
 
 <script>
 /* ════ 資料 ════════════════════════════════════ */
@@ -1246,6 +1239,17 @@ const AIRPORT_SERVICES = [
   {type:'單點接送', costThb:600, desc:'市區任意兩點接送'}
 ];
 
+/* ════ 獨立接送服務 ════════════════════════════════ */
+const TRANSFER_SERVICES = [
+  {id:'TRF001', name:'✈️ 機場 → 清邁', dest:'清邁', costThb:1500, sellThb:1950, hours:12, desc:'蘇瓦納普米機場 → 清邁飯店'},
+  {id:'TRF002', name:'🚕 機場 → 芭達雅', dest:'芭達雅', costThb:1800, sellThb:2340, hours:2, desc:'蘇瓦納普米機場 → 芭達雅'},
+  {id:'TRF003', name:'🚐 機場 → 華欣', dest:'華欣', costThb:2000, sellThb:2600, hours:3, desc:'蘇瓦納普米機場 → 華欣'},
+  {id:'TRF004', name:'🏖️ 機場 → 甲米', dest:'甲米', costThb:2500, sellThb:3250, hours:4.5, desc:'蘇瓦納普米機場 → 甲米'},
+  {id:'TRF005', name:'🌴 機場 → 普吉', dest:'普吉', costThb:2800, sellThb:3640, hours:5, desc:'蘇瓦納普米機場 → 普吉'},
+  {id:'TRF006', name:'🏝️ 機場 → 蘇梅島', dest:'蘇梅島', costThb:3000, sellThb:3900, hours:6, desc:'蘇瓦納普米機場 → 蘇梅島 (含渡輪)'},
+  {id:'TRF007', name:'🚕 機場 → 曼谷市中心', dest:'曼谷', costThb:1200, sellThb:1560, hours:1.5, desc:'蘇瓦納普米機場 → 曼谷市中心'}
+];
+
 const MEALS = ['飯店早餐','機上餐','泰式風味套餐','代訂網美餐廳','海鮮大餐（代訂）','景點內自助餐','夜市自理','逛街自理','不含'];
 
 /* ════ 套裝行程（預制套餐）════════════════════════ */
@@ -1661,6 +1665,7 @@ function renderCards(){
   else if(S.browseMode==='daytours') renderDayTours();
   else if(S.browseMode==='golf') renderGolf();
   else if(S.browseMode==='expat') renderExpat();
+  else if(S.browseMode==='transfers') renderTransfers();
   else renderAttractions();
 }
 
@@ -1872,13 +1877,49 @@ function renderExpat(){
   grid.innerHTML = html;
 }
 
+function renderTransfers(){
+  const grid = document.getElementById('cards-grid');
+  const q = document.getElementById('search-box').value.trim();
+  const transfers = TRANSFER_SERVICES.filter(t => !q || smartSearch(q, {name:t.name, desc:t.desc, dest:t.dest}));
+
+  if(!transfers.length){ grid.innerHTML='<div id="no-results">🔍 沒有符合的接送服務</div>'; return; }
+
+  grid.innerHTML = transfers.map(t => {
+    const sellTwd = Math.ceil(t.sellThb * EX);
+    const costTwd = Math.ceil(t.costThb * EX);
+    return `
+    <div class="acard" onclick="selectTransfer('${t.id}')">
+      <div class="acard-badges">
+        <span class="badge badge-r" style="background:#E74C3C">${t.hours}h</span>
+        <span class="badge badge-cat">接送</span>
+      </div>
+      <div class="acard-name">${t.name}</div>
+      <div class="acard-desc">${t.desc}</div>
+      <div class="acard-foot">
+        <span style="font-size:11px;color:#888">📍 ${t.dest}</span>
+        <span style="font-size:11px;font-weight:700;color:#E74C3C">NT$ ${sellTwd.toLocaleString()}</span>
+      </div>
+      <button class="acard-add" onclick="selectTransfer('${t.id}',event)">選擇</button>
+    </div>`;
+  }).join('');
+}
+
+function selectTransfer(id, e){
+  if(e) e.stopPropagation();
+  const transfer = TRANSFER_SERVICES.find(t => t.id===id);
+  if(!transfer) return;
+  const twd = Math.ceil(transfer.sellThb * EX);
+  alert(`✅ 已選擇接送服務：${transfer.name}\n\n價格：NT$ ${twd.toLocaleString()}\n時長：${transfer.hours}小時\n\n接送服務已加入購物車，請選擇旅客人數進行結帳。`);
+}
+
 function setBrowseMode(mode){
   S.browseMode = mode;
   document.getElementById('search-box').placeholder =
     mode==='packages'?'搜尋套裝行程…':
     mode==='daytours'?'搜尋一日遊…':
     mode==='golf'?'搜尋高爾夫球場和套餐…':
-    mode==='expat'?'搜尋外派人士專屬行程…':'搜尋景點…';
+    mode==='expat'?'搜尋外派人士專屬行程…':
+    mode==='transfers'?'搜尋機場接送服務…':'搜尋景點…';
 
   document.querySelectorAll('[id^="mode-btn-"]').forEach(btn => {
     btn.style.background='#ddd';
