@@ -1939,14 +1939,26 @@ function selectPackage(id, e){
   if(e) e.stopPropagation();
   const pkg = PACKAGE_TOURS.find(p => p.id===id);
   if(!pkg) return;
-  alert(`✅ 已選擇套裝行程：${pkg.name}\n\n價格：THB ${pkg.price.toLocaleString()}\n天數：${pkg.days}天\n\n套裝行程已加入購物車，請選擇旅客人數進行結帳。`);
+  const persons = prompt(`✅ 已選擇套裝行程：${pkg.name}\n\n▸ 套裝價格：THB ${pkg.price.toLocaleString()}\n▸ 天數：${pkg.days}天\n\n請輸入旅客人數 (1-20人)：`, '2');
+  if(!persons) return;
+  const n = parseInt(persons);
+  if(isNaN(n) || n<1 || n>20){alert('請輸入1-20之間的數字');return;}
+  const totalThb = pkg.price * n;
+  const totalTwd = Math.ceil(totalThb * 0.92);
+  alert(`✅ 已加入購物車\n\n套裝行程：${pkg.name}\n旅客人數：${n}人\n小計：THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})\n\n請進行結帳 (可點右下角的客服LINE聯繫我們)`);
 }
 
 function selectDayTour(id, e){
   if(e) e.stopPropagation();
   const tour = DAY_TOURS.find(d => d.id===id);
   if(!tour) return;
-  alert(`✅ 已選擇一日遊：${tour.name}\n\n價格：THB ${tour.price.toLocaleString()}/人\n城市：${tour.city}\n\n一日遊已加入購物車，請選擇旅客人數進行結帳。`);
+  const persons = prompt(`✅ 已選擇一日遊：${tour.name}\n\n▸ 每人價格：THB ${tour.price.toLocaleString()}\n▸ 城市：${tour.city}\n\n請輸入旅客人數 (1-20人)：`, '2');
+  if(!persons) return;
+  const n = parseInt(persons);
+  if(isNaN(n) || n<1 || n>20){alert('請輸入1-20之間的數字');return;}
+  const totalThb = tour.price * n;
+  const totalTwd = Math.ceil(totalThb * 0.92);
+  alert(`✅ 已加入購物車\n\n一日遊：${tour.name}\n旅客人數：${n}人\n小計：THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})\n\n請進行結帳 (可點右下角的客服LINE聯繫我們)`);
 }
 
 function renderTags(){
