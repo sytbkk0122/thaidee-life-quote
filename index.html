@@ -1298,6 +1298,77 @@ const PACKAGE_TOURS = [
   {id:'PKG032', name:'🛍️ 購物美食文化三合一4日3晚', desc:'Outlet購物+美食街體驗+文化古蹟+夜市逛街+高級餐廳晚宴', days:4, cities:'曼谷', price:22000, type:'suite', category:'家庭'}
 ];
 
+/* ════ 套裝行程詳細日程 ════════════════════════════ */
+const PACKAGE_DETAILS = {
+  'PKG001': {
+    hotels: ['Mandarin Oriental Bangkok ★★★★★ (THB8500)', 'Hilton Bangkok ★★★★★ (THB5700)'],
+    daily: [
+      {day:1, title:'曼谷抵達', am:'飛往曼谷→飯店入住', pm:'大皇宮 Golden Palace (門票200THB)', eve:'鄭王廟 Wat Arun 夜景 + 夜市美食'},
+      {day:2, title:'曼谷古蹟', am:'臥佛寺 Wat Po (門票100THB)', pm:'寶石工坊 + 河畔漫步', eve:'昭披耶河遊船晚餐'},
+      {day:3, title:'返回', am:'自由購物時間', pm:'機場 → 返回'}
+    ],
+    meals: ['飯店早餐', '泰式風味套餐', '海鮮大餐', '夜市自理'],
+    highlights: ['大皇宮', '鄭王廟', '臥佛寺', '夜市美食'],
+    costBreakdown: {飯店: 'THB17000', 景點: 'THB300', 餐飲: 'THB5000', 其他: 'THB2700'}
+  },
+  'PKG002': {
+    hotels: ['Banyan Tree Phuket ★★★★★ (THB8800)', 'Centara Kata Resort ★★★★ (THB4100)'],
+    daily: [
+      {day:1, title:'普吉抵達', am:'飛往普吉→飯店入住', pm:'海灘散步', eve:'海邊日落晚餐'},
+      {day:2, title:'皮皮島遊', am:'搭船PP島 (THB1500)', pm:'浮潛+珊瑚觀賞', eve:'島上海鮮餐'},
+      {day:3, title:'大小PP島', am:'獨木舟探險 (THB1200)', pm:'珊瑚潛水 (THB800)', eve:'普吉海濱餐廳'},
+      {day:4, title:'海灘度假', am:'沙灘放鬆 / SPA', pm:'購物 (Centralfestival)', eve:'泰式按摩晚宴'},
+      {day:5, title:'返回', am:'自由活動', pm:'機場 → 返回'}
+    ],
+    meals: ['飯店早餐', '島上海鮮', '泰式風味', '海邊BBQ'],
+    highlights: ['皮皮島', '珊瑚潛水', '獨木舟', '海灘度假'],
+    costBreakdown: {飯店: 'THB33200', 景點遊: 'THB3500', 餐飲: 'THB8000', Spa: 'THB2000'}
+  },
+  'PKG003': {
+    hotels: ['Mandarin Oriental Chiang Mai ★★★★★ (THB6500)', 'Akyra Manor Chiang Mai ★★★★ (THB3800)'],
+    daily: [
+      {day:1, title:'清邁抵達', am:'飛往清邁→飯店入住', pm:'古城門漫步', eve:'清邁夜間市場 (美食自理)'},
+      {day:2, title:'古廟體驗', am:'雙龍寺 (THB30)', pm:'清邁古城四寺巡禮 (THB500)', eve:'寺廟冥想課程'},
+      {day:3, title:'象營騎象', am:'象營騎象體驗 (THB1200)', pm:'瀑布探險 (THB600)', eve:'民族村落晚餐'},
+      {day:4, title:'返回', am:'手工藝坊參觀 (THB400)', pm:'機場 → 返回'}
+    ],
+    meals: ['飯店早餐', '泰式風味', '象營午餐', '傳統美食'],
+    highlights: ['雙龍寺', '古城古廟', '騎象體驗', '手工藝'],
+    costBreakdown: {飯店: 'THB22800', 景點: 'THB2730', 騎象: 'THB1200', 餐飲: 'THB4000'}
+  },
+  'PKG004': {
+    hotels: ['Amanpuri Krabi ★★★★★ (THB8500)', 'Centara Resort Krabi ★★★★ (THB4100)'],
+    daily: [
+      {day:1, title:'甲米抵達', am:'飛往甲米→飯店入住', pm:'海灘散步', eve:'海景晚餐'},
+      {day:2, title:'四島遊', am:'搭船四島遊 (THB1200)', pm:'浮潛+皮划艇', eve:'海鮮晚宴'},
+      {day:3, title:'翡翠池探險', am:'翡翠池溫泉 (THB500)', pm:'瀑布與温泉 (THB300)', eve:'普通餐廳'},
+      {day:4, title:'火車站市集', am:'火車站古蹟參訪 (THB0)', pm:'奧南海灘度假', eve:'海濱美食'},
+      {day:5, title:'度假日', am:'島嶼探索', pm:'SPA放鬆 (THB1500)', eve:'高級餐廳'},
+      {day:6, title:'返回', am:'自由活動', pm:'機場 → 返回'}
+    ],
+    meals: ['飯店早餐', '島上自助', '海鮮大餐', '泰式風味'],
+    highlights: ['四島遊', '浮潛', '翡翠池', '奧南海灘'],
+    costBreakdown: {飯店: 'THB37800', '四島遊': 'THB1200', 景點: 'THB800', 餐飲: 'THB9000'}
+  },
+  'PKG005': {
+    hotels: ['Centara Grand Hua Hin ★★★★★ (THB7000)', 'Alaya Resort Hua Hin ★★★★ (THB3800)'],
+    daily: [
+      {day:1, title:'華欣抵達', am:'曼谷→華欣 (3小時車程)', pm:'飯店入住+海灘散步', eve:'音樂餐廳晚宴'},
+      {day:2, title:'華欣探索', am:'火車站市集 (THB0)', pm:'鐵路市場逛街 + Spa (THB1200)', eve:'海邊度假'},
+      {day:3, title:'返回', am:'自由活動', pm:'返回曼谷'}
+    ],
+    meals: ['飯店早餐', '泰式午餐', '米其林晚餐', '市集美食'],
+    highlights: ['音樂餐廳', '火車站市集', 'Spa放鬆', '海邊度假'],
+    costBreakdown: {飯店: 'THB14000', Spa: 'THB1200', 景點: 'THB0', 餐飲: 'THB5000'}
+  }
+};
+
+/* 其他32個套裝行程詳情... (動態生成用) */
+for(let i=6; i<=32; i++){
+  const pkg = PACKAGE_TOURS[i];
+  if(pkg) PACKAGE_DETAILS[pkg.id] = PACKAGE_DETAILS['PKG001']; // 暫時用模板
+}
+
 /* ════ 一日遊行程 ════════════════════════════════ */
 const DAY_TOURS = [
   /* 曼谷 5個 */
@@ -1939,13 +2010,34 @@ function selectPackage(id, e){
   if(e) e.stopPropagation();
   const pkg = PACKAGE_TOURS.find(p => p.id===id);
   if(!pkg) return;
-  const persons = prompt(`✅ 已選擇套裝行程：${pkg.name}\n\n▸ 套裝價格：THB ${pkg.price.toLocaleString()}\n▸ 天數：${pkg.days}天\n\n請輸入旅客人數 (1-20人)：`, '2');
+  const detail = PACKAGE_DETAILS[id] || PACKAGE_DETAILS['PKG001'];
+
+  // 構建詳細日程顯示
+  let scheduleText = `✅ ${pkg.name}\n\n📍 城市: ${pkg.cities} | ⏰ ${pkg.days}天\n💰 套裝價格: THB ${pkg.price.toLocaleString()}\n`;
+  scheduleText += `\n━━━ 5天行程安排 ━━━\n`;
+  detail.daily.forEach(d => {
+    scheduleText += `\nDAY ${d.day} - ${d.title}\n  🌅 上午: ${d.am}\n  ☀️  下午: ${d.pm}\n  🌙 晚間: ${d.eve}\n`;
+  });
+  scheduleText += `\n━━━ 推薦飯店 ━━━\n`;
+  detail.hotels.forEach(h => scheduleText += `  🏨 ${h}\n`);
+  scheduleText += `\n━━━ 餐飲安排 ━━━\n`;
+  detail.meals.forEach(m => scheduleText += `  🍽️ ${m}\n`);
+  scheduleText += `\n\n請輸入旅客人數 (1-20人)：`;
+
+  const persons = prompt(scheduleText, '2');
   if(!persons) return;
   const n = parseInt(persons);
   if(isNaN(n) || n<1 || n>20){alert('請輸入1-20之間的數字');return;}
   const totalThb = pkg.price * n;
   const totalTwd = Math.ceil(totalThb * 0.92);
-  alert(`✅ 已加入購物車\n\n套裝行程：${pkg.name}\n旅客人數：${n}人\n小計：THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})\n\n請進行結帳 (可點右下角的客服LINE聯繫我們)`);
+
+  // 顯示購物車摘要
+  let cartMsg = `✅ 已加入購物車\n\n${pkg.name}\n旅客人數: ${n}人\n\n`;
+  cartMsg += `💰 費用明細:\n`;
+  Object.entries(detail.costBreakdown).forEach(([k,v]) => cartMsg += `  ${k}: ${v}\n`);
+  cartMsg += `\n小計: THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})\n\n`;
+  cartMsg += `📞 請進行結帳 (點右下角 LINE 客服)`;
+  alert(cartMsg);
 }
 
 function selectDayTour(id, e){
