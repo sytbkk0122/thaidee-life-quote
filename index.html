@@ -409,6 +409,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
         <button onclick="setBrowseMode('golf')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-golf">⛳ 高爾夫</button>
         <button onclick="setBrowseMode('expat')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-expat">🏖️ 外派</button>
         <button onclick="setBrowseMode('transfers')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-transfers">🚕 接送</button>
+        <button onclick="setBrowseMode('info')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-info">ℹ️ 資訊中心</button>
       </div>
 
       <div id="filter-bar">
@@ -1737,6 +1738,10 @@ function renderCards(){
   else if(S.browseMode==='golf') renderGolf();
   else if(S.browseMode==='expat') renderExpat();
   else if(S.browseMode==='transfers') renderTransfers();
+  else if(S.browseMode==='info') {
+    const grid = document.getElementById('cards-grid');
+    grid.innerHTML = renderTravelInfo();
+  }
   else renderAttractions();
 }
 
@@ -2004,6 +2009,81 @@ function setBrowseMode(mode){
 
   S.filterRegion='全部'; S.filterCat='全部';
   renderTags(); renderCards();
+}
+
+function setBrowseMode(mode){
+  S.browseMode = mode;
+  renderTags(); renderCards(); renderHotelSelect(); renderTransfers(); renderGolf(); renderPackages(); renderDayTours();
+  updatePrice();
+}
+
+/* ════ 旅遊資訊中心 ════════════════════════════ */
+const TRAVEL_INFO = {
+  '簽證': {
+    title: '泰國簽證完全指南',
+    items: [
+      {name: '落地簽 (VOA)', desc: '抵達時申請，15天有效期，無需事前準備，快速便捷', price: '2000 THB (約NT$1840)', required: '護照+照片+表格'},
+      {name: '電子簽 (e-Visa)', desc: '線上事先申請，60天有效期，處理時間3-5天，正式官方', price: '2000 THB (約NT$1840)', required: '護照掃描檔'},
+      {name: '觀光簽 (60天)', desc: '台灣駐曼谷經文處申請，60天單次入境，最正式', price: '免費', required: '護照+表格'},
+      {name: '落地簽須知', desc: '✓ 護照有效期6個月以上 ✓ 現金20,000THB或信用卡 ✓ 準備回程機票 ✓ 醫療保險建議', price: '免費檢查', required: ''}
+    ]
+  },
+  '必備物品': {
+    title: '泰國行前物品清單',
+    items: [
+      {name: '重要證件', desc: '護照 | 簽證 | 回程機票列印 | 護照影本 | 信用卡+現金', price: '必帶', required: '✓'},
+      {name: '衣物', desc: '輕薄衣物(主要) | 泳衣 | 輕外套(冷氣房) | 舒適運動鞋 | 沙灘涼鞋', price: '必帶', required: '✓'},
+      {name: '盥洗用品', desc: '防曬霜(50+) | 蚊蟲防護 | 曬傷藥膏 | 腸胃藥 | 基礎化妝品', price: '必帶', required: '✓'},
+      {name: '電子產品', desc: '手機+充電線 | 轉接頭(2圓孔) | 行動電源 | 相機', price: '必帶', required: '✓'},
+      {name: '可選物品', desc: '墨鏡 | 帽子 | 防水袋 | 瑜伽墊 | 運動手環', price: '選帶', required: ''}
+    ]
+  },
+  '小費和購物': {
+    title: '小費、匯率、購物指南',
+    items: [
+      {name: '小費文化', desc: '🏨 飯店行李員：20-50THB | 🚗 計程車：約5-10% | 🍽️ 餐廳：10-15% | 💇 美髮/Spa：10-15%', price: '建議', required: '✓'},
+      {name: '匯率參考', desc: '1 THB ≈ NT$0.92 | 建議帶少量現金 | 機場ATM匯率最好 | 信用卡可直接使用', price: '參考', required: ''},
+      {name: '購物地點', desc: '🛍️ MBK Center | 🏬 Siam Paragon | 🏪 Central World | 🌙 Chatuchak夜市', price: '推薦', required: ''},
+      {name: '購物退稅', desc: '超過2000THB可申請退稅(7%) | 機場出境前處理 | 需護照+發票', price: '可省NT$180', required: ''}
+    ]
+  },
+  '安全和常見Q&A': {
+    title: '安全提示和常見問題',
+    items: [
+      {name: '安全提示', desc: '✓ 避免偏遠地區夜間活動 ✓ 貴重物品寄放飯店 ✓ 尊重王室和佛教信仰 ✓ 政治敏感地避開', price: '重要', required: '✓'},
+      {name: 'Q: 要帶多少現金?', desc: 'A: 建議1000-2000THB + 信用卡。飯店、購物、飛機票都可刷卡。機場和便利店ATM隨處可得。', price: '', required: ''},
+      {name: 'Q: 英文夠嗎?', desc: 'A: 旅遊區英文足夠。我們提供中文導遊和翻譯協助。建議下載Google翻譯離線版本。', price: '', required: ''},
+      {name: 'Q: 行李限制?', desc: 'A: 廉價航空通常1件+5kg手提。託運行李需查詢航空公司。我們提供行李寄運服務建議。', price: '', required: ''}
+    ]
+  }
+};
+
+function renderTravelInfo(){
+  const container = document.getElementById('cards-container') || document.createElement('div');
+  let html = '<div style="padding:20px; max-width:1200px">';
+
+  Object.entries(TRAVEL_INFO).forEach(([key, section]) => {
+    html += `<div style="margin-bottom:30px">
+      <h2 style="font-size:20px; color:#8B3A1A; margin-bottom:15px; border-bottom:2px solid #D4860A; padding-bottom:10px">
+        📌 ${section.title}
+      </h2>`;
+
+    section.items.forEach((item, i) => {
+      html += `<div style="background:#fff; border-left:4px solid #8B3A1A; padding:15px; margin-bottom:12px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+          <strong style="font-size:15px; color:#333">${item.name}</strong>
+          <span style="color:#D4860A; font-weight:700; font-size:13px">${item.price}</span>
+        </div>
+        <p style="color:#666; font-size:13px; line-height:1.6; margin:0">${item.desc}</p>
+        ${item.required ? `<div style="margin-top:8px; padding-top:8px; border-top:1px solid #eee; color:#1A6E3C; font-size:12px">✓ ${item.required}</div>` : ''}
+      </div>`;
+    });
+
+    html += '</div>';
+  });
+
+  html += '</div>';
+  return html;
 }
 
 function selectPackage(id, e){
