@@ -410,6 +410,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
         <button onclick="setBrowseMode('expat')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-expat">🏖️ 外派</button>
         <button onclick="setBrowseMode('transfers')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-transfers">🚕 接送</button>
         <button onclick="setBrowseMode('info')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-info">ℹ️ 資訊中心</button>
+        <button onclick="setBrowseMode('service')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-service">💬 客服中心</button>
       </div>
 
       <div id="filter-bar">
@@ -1742,6 +1743,10 @@ function renderCards(){
     const grid = document.getElementById('cards-grid');
     grid.innerHTML = renderTravelInfo();
   }
+  else if(S.browseMode==='service') {
+    const grid = document.getElementById('cards-grid');
+    grid.innerHTML = renderServiceCenter();
+  }
   else renderAttractions();
 }
 
@@ -2057,6 +2062,126 @@ const TRAVEL_INFO = {
     ]
   }
 };
+
+/* ════ 客服中心 ════════════════════════════ */
+const SERVICE_CENTER = {
+  '聯絡方式': [
+    {icon: '💬', method: 'LINE 官方帳號', value: '@468nnetj', desc: '24小時線上回覆 (推薦)', time: '秒級回應'},
+    {icon: '📱', method: '手機', value: '+886-2-XXXX-XXXX', desc: '即時通話支援', time: '工作時間'},
+    {icon: '✉️', method: '電子郵件', value: 'service@thaidee.com', desc: '詳細問題說明', time: '1小時內回覆'},
+    {icon: '🌐', method: '微信', value: 'thaidee-life', desc: 'WeChat 客服', time: '秒級回應'},
+    {icon: '🆘', method: '緊急聯絡', value: '+66-8-XXXX-XXXX', desc: '泰國當地緊急電話 (24h)', time: '即時'}
+  ],
+  '工作時間': [
+    {day: '週一 - 週五', time: '09:00 - 18:00', note: '標準工作時間'},
+    {day: '週六 - 週日', time: '10:00 - 16:00', note: '週末值班'},
+    {day: '假日', time: '隨時可聯絡', note: '緊急狀況全天支援'},
+    {day: 'LINE / WeChat', time: '24/7', note: '自動回覆 + 人工協助'},
+  ],
+  '常見問題': [
+    {q: '如何更改或取消預訂?', a: '✓ 出發7天前：免費取消 ✓ 出發3-7天：收50%費用 ✓ 出發3天內：無法取消，建議改期'},
+    {q: '天氣不好會取消行程嗎?', a: '✓ 颱風或警報等級：自動改期或退款 ✓ 小雨：照常進行 ✓ 大雨：可選擇改期'},
+    {q: '可以臨時增加或減少人數?', a: '✓ 出發前7天可調整人數 ✓ 出發前3天：需付額外費用 ✓ 出發當天：無法調整'},
+    {q: '行程中景點要花多長時間?', a: '✓ 景點停留通常1-3小時 ✓ 交通時間0.5-2小時 ✓ 詳細時程表會在出發前提供'},
+    {q: '如果遲到會怎樣?', a: '✓ 遲到5分鐘：等候 ✓ 遲到15分鐘以上：可能會跳過您的接點 ✓ 建議提早20分鐘到達'}
+  ],
+  'LINE菜單': [
+    {trigger: '📅 查詢預訂', action: '輸入預訂編號查詢狀態'},
+    {trigger: '❓ 常見問題', action: '自動推薦常見答案'},
+    {trigger: '🔄 修改行程', action: '人工協助修改預訂'},
+    {trigger: '💰 價格查詢', action: '查詢團隊優惠和早鳥折扣'},
+    {trigger: '📸 客戶評價', action: '查看其他客人的遊記照片'},
+    {trigger: '🆘 投訴 / 建議', action: '直接連線主管處理'}
+  ]
+};
+
+function renderServiceCenter(){
+  let html = '<div style="padding:20px; max-width:1200px">';
+
+  // 聯絡方式
+  html += `<div style="margin-bottom:30px">
+    <h2 style="font-size:20px; color:#8B3A1A; margin-bottom:15px; border-bottom:2px solid #D4860A; padding-bottom:10px">
+      📞 聯絡方式
+    </h2>
+    <div style="display:grid; gap:12px">`;
+
+  SERVICE_CENTER['聯絡方式'].forEach(item => {
+    html += `<div style="background:#fff; border-left:4px solid #D4860A; padding:15px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+        <strong style="font-size:15px">${item.icon} ${item.method}</strong>
+        <span style="color:#1A6E3C; font-weight:700; font-size:12px">${item.time}</span>
+      </div>
+      <div style="font-family:monospace; color:#333; font-size:14px; margin-bottom:5px; background:#f5f5f5; padding:8px; border-radius:4px">${item.value}</div>
+      <div style="color:#666; font-size:13px">${item.desc}</div>
+    </div>`;
+  });
+
+  html += '</div></div>';
+
+  // 工作時間
+  html += `<div style="margin-bottom:30px">
+    <h2 style="font-size:20px; color:#8B3A1A; margin-bottom:15px; border-bottom:2px solid #D4860A; padding-bottom:10px">
+      🕐 客服工作時間
+    </h2>
+    <div style="display:grid; gap:12px">`;
+
+  SERVICE_CENTER['工作時間'].forEach(item => {
+    html += `<div style="background:#fff; padding:12px 15px; border-radius:6px; border-left:4px solid #1A6E3C; display:flex; justify-content:space-between">
+      <strong style="color:#333">${item.day}</strong>
+      <span style="color:#D4860A; font-weight:700">${item.time}</span>
+      <span style="color:#888; font-size:12px">${item.note}</span>
+    </div>`;
+  });
+
+  html += '</div></div>';
+
+  // 常見問題
+  html += `<div style="margin-bottom:30px">
+    <h2 style="font-size:20px; color:#8B3A1A; margin-bottom:15px; border-bottom:2px solid #D4860A; padding-bottom:10px">
+      ❓ 常見問題 (FAQ)
+    </h2>
+    <div style="display:grid; gap:12px">`;
+
+  SERVICE_CENTER['常見問題'].forEach(item => {
+    html += `<details style="background:#fff; padding:15px; border-radius:6px; border-left:4px solid #8B3A1A; cursor:pointer">
+      <summary style="font-weight:700; color:#333; font-size:14px">❔ ${item.q}</summary>
+      <div style="margin-top:10px; padding-top:10px; border-top:1px solid #eee; color:#666; font-size:13px; line-height:1.6">${item.a}</div>
+    </details>`;
+  });
+
+  html += '</div></div>';
+
+  // LINE菜單
+  html += `<div style="margin-bottom:30px">
+    <h2 style="font-size:20px; color:#8B3A1A; margin-bottom:15px; border-bottom:2px solid #D4860A; padding-bottom:10px">
+      💬 LINE官方帳號菜單功能
+    </h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px">`;
+
+  SERVICE_CENTER['LINE菜單'].forEach(item => {
+    html += `<div style="background:linear-gradient(135deg, #00B900 0%, #009900 100%); color:#fff; padding:15px; border-radius:6px; text-align:center">
+      <div style="font-weight:700; font-size:14px; margin-bottom:8px">${item.trigger}</div>
+      <div style="font-size:12px; opacity:0.9">${item.action}</div>
+    </div>`;
+  });
+
+  html += '</div></div>';
+
+  // 快速聯絡按鈕
+  html += `<div style="margin-bottom:30px">
+    <h2 style="font-size:20px; color:#8B3A1A; margin-bottom:15px; border-bottom:2px solid #D4860A; padding-bottom:10px">
+      🚀 快速聯絡
+    </h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px">
+      <a href="https://line.me/R/ti/p/@468nnetj" style="background:#00B900; color:#fff; padding:15px; border-radius:6px; text-align:center; text-decoration:none; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px">💬 加LINE客服</a>
+      <a href="tel:+886-2-XXXX-XXXX" style="background:#D4860A; color:#fff; padding:15px; border-radius:6px; text-align:center; text-decoration:none; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px">📱 撥打電話</a>
+      <a href="mailto:service@thaidee.com" style="background:#8B3A1A; color:#fff; padding:15px; border-radius:6px; text-align:center; text-decoration:none; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px">✉️ 發送郵件</a>
+    </div>
+  </div>`;
+
+  html += '</div>';
+  return html;
+}
 
 function renderTravelInfo(){
   const container = document.getElementById('cards-container') || document.createElement('div');
