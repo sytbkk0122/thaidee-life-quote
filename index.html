@@ -2478,10 +2478,10 @@ function getCostCacheKey(){
   // 基於行程結構和人數的唯一密鑰
   const adults = parseInt(document.getElementById('c-adults').value)||1;
   const rooms  = parseInt(document.getElementById('c-rooms').value)||1;
-  const dayStr = S.days.map(d =>
-    (d.am.map(s=>s.id) + d.pm.map(s=>s.id) + d.eve.map(s=>s.id)).join(',') +
-    '|' + d.hotel + '|' + d.vehicle + '|' + d.airport
-  ).join(';');
+  const dayStr = S.days.map(d => {
+    const ids = [...d.am.map(s=>s.id), ...d.pm.map(s=>s.id), ...d.eve.map(s=>s.id)].join(',');
+    return ids + '|' + d.hotel + '|' + d.vehicle + '|' + d.airport;
+  }).join(';');
   return `${adults}|${rooms}|${dayStr}`;
 }
 
