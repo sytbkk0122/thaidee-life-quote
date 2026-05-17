@@ -476,6 +476,20 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
   </div>
 </div>
 
+<!-- 一日遊詳細行程表 Modal -->
+<div id="daytour-details-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:1900;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:700px;padding:0;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+    <div style="padding:24px;border-bottom:2px solid #f0ebe4">
+      <h2 id="daytour-title" style="font-size:18px;font-weight:700;margin:0;color:var(--brand)">行程詳情</h2>
+    </div>
+    <div id="daytour-content" style="padding:24px;max-height:60vh;overflow-y:auto;color:var(--dark);font-size:13px;line-height:1.6"></div>
+    <div style="padding:16px 24px;border-top:2px solid #f0ebe4;display:flex;gap:10px;justify-content:flex-end">
+      <button onclick="closeDayTourDetails()" style="padding:10px 20px;border:1px solid var(--border);border-radius:8px;background:#fff;color:var(--dark);cursor:pointer;font-weight:600;font-family:var(--font)">返回</button>
+      <button id="daytour-select-btn" onclick="confirmSelectDayTour()" style="padding:10px 20px;border:none;border-radius:8px;background:var(--brand);color:#fff;cursor:pointer;font-weight:600;font-family:var(--font)">✅ 選擇此行程</button>
+    </div>
+  </div>
+</div>
+
 <!-- 下單表單 Modal -->
 <div id="order-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:none;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:14px;width:100%;max-width:400px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
@@ -1371,6 +1385,85 @@ for(let i=6; i<=32; i++){
   if(pkg) PACKAGE_DETAILS[pkg.id] = PACKAGE_DETAILS['PKG001']; // 暫時用模板
 }
 
+/* ════ 一日遊詳細行程表 ════════════════════════════════════ */
+const DAY_TOUR_DETAILS = {
+  'DAY001': {
+    title: '🏛️ 曼谷古蹟一日遊',
+    schedule: [
+      {time: '08:00', activity: '飯店出發', location: '飯店大廳'},
+      {time: '08:30-10:30', activity: '大皇宮參訪', location: '大皇宮 (門票200THB)', desc: '泰國最著名的皇家宮殿，金碧輝煌的建築'},
+      {time: '10:45-11:45', activity: '鄭王廟參拜', location: '鄭王廟 Wat Arun (門票50THB)', desc: '昭披耶河沿岸的傳奇寺廟'},
+      {time: '12:00-13:30', activity: '午餐', location: '當地泰式餐廳', desc: '泰式傳統午餐'},
+      {time: '14:00-15:30', activity: '臥佛寺參觀', location: '臥佛寺 Wat Po (門票100THB)', desc: '全球最大臥佛像，長46公尺'},
+      {time: '16:00-17:00', activity: '寶石工坊', location: '泰國寶石工坊', desc: '購買泰國寶石和工藝品'},
+      {time: '17:30-18:30', activity: '晚餐', location: '河景餐廳', desc: '昭披耶河邊享用晚餐'},
+      {time: '19:00', activity: '返回飯店', location: '飯店大廳'}
+    ],
+    meals: ['酒店自備午餐或自理', '晚餐於河景餐廳自理'],
+    includes: ['✓ 專業泰國導遊', '✓ 全程空調車輛接送', '✓ 各景點門票', '✓ 瓶裝水', '✓ 保險'],
+    excludes: ['✗ 餐飲(除景點內)', '✗ 個人購物', '✗ 小費'],
+    dress: '輕便舒適服裝，寺廟參訪需穿著得體(膝蓋以下、肩膀覆蓋)',
+    prepare: ['護照/身份證', '相機', '太陽帽', '防曬霜', '舒適鞋子'],
+    pickup: '07:30 飯店大廳接客',
+    language: '英文導遊',
+    physical: '中等體力',
+    bestFor: '文化愛好者、首次訪曼谷'
+  },
+  'DAY002': {
+    title: '🌴 夜市美食之旅',
+    schedule: [
+      {time: '14:00', activity: '飯店出發', location: '飯店大廳'},
+      {time: '14:30-15:30', activity: '水上市場遊覽', location: '丹能莎多水上市場', desc: '傳統水上交易市場，乘坐小舟穿梭'},
+      {time: '16:00-16:45', activity: '浮動市場遊覽', location: '安帕瓦浮動市場', desc: '傍晚最熱鬧的水上市集'},
+      {time: '17:00-18:00', activity: '美食品嚐', location: '市場周邊', desc: '邊逛邊吃水上市場特色小食'},
+      {time: '18:30-20:00', activity: '夜市探險', location: '曼谷夜市', desc: '品嚐地道泰國夜市美食'},
+      {time: '20:30', activity: '返回飯店', location: '飯店大廳'}
+    ],
+    meals: ['下午茶自理', '夜市美食自理(導遊推薦)'],
+    includes: ['✓ 交通接送', '✓ 水上市場門票', '✓ 導遊費用', '✓ 保險'],
+    excludes: ['✗ 餐飲', '✗ 小舟租賃額外費用'],
+    dress: '輕便衣物，涼鞋，防水背包',
+    prepare: ['現金(購買食物)', '防曬霜', '帽子', '相機', '手機充電器'],
+    pickup: '13:30 飯店大廳接客',
+    language: '英文導遊',
+    physical: '輕鬆',
+    bestFor: '美食愛好者、購物愛好者'
+  },
+  'DAY003': {
+    title: '🛕 寺廟冥想靈修日',
+    schedule: [
+      {time: '06:00', activity: '飯店出發', location: '飯店大廳'},
+      {time: '06:30-07:30', activity: '翡翠佛寺冥想', location: '翡翠佛寺 Wat Phra Kaew', desc: '泰國最神聖的寺廟，清晨冥想體驗'},
+      {time: '08:00-09:00', activity: '早齋素食', location: '寺廟內', desc: '僧侶準備的傳統素食早餐'},
+      {time: '09:30-10:30', activity: '四面佛祈福', location: '四面佛亭', desc: '許願與祈福儀式'},
+      {time: '11:00-12:00', activity: '金山寺攀登', location: '金山寺 Wat Saket', desc: '攀登227級階梯至山頂，俯瞰曼谷'},
+      {time: '12:30-14:00', activity: '午餐靜修', location: '安靜素食餐廳', desc: '品嚐清淡素食'},
+      {time: '14:30-16:00', activity: '靜坐冥想課程', location: '寺廟禪堂', desc: '專業教士教授冥想技巧'},
+      {time: '16:30-17:30', activity: '經文誦經', location: '大殿', desc: '隨僧侶誦經體驗'},
+      {time: '18:00', activity: '返回飯店', location: '飯店大廳'}
+    ],
+    meals: ['寺廟素食早齋', '素食午餐', '寺廟晚茶'],
+    includes: ['✓ 全程導遊', '✓ 所有餐飲', '✓ 寺廟門票', '✓ 冥想課程', '✓ 保險'],
+    excludes: ['✗ 個人購物'],
+    dress: '整潔、尊重的服裝，覆蓋肩膀和膝蓋，無帽',
+    prepare: ['舒適鞋子(可脫)', '毛巾', '瑜伽墊(提供)', '靈性開放的心態'],
+    pickup: '05:30 飯店大廳接客',
+    language: '英文導遊 + 中文冥想教士',
+    physical: '中等(登金山寺)',
+    bestFor: '靈性探尋者、冥想愛好者、文化深度旅遊'
+  }
+};
+
+// 為其他一日遊填充詳細信息 (使用DAY001作為模板)
+Object.keys(DAY_TOUR_DETAILS).forEach(key => {
+  if(!DAY_TOUR_DETAILS[key].schedule) {
+    DAY_TOUR_DETAILS[key] = {
+      ...DAY_TOUR_DETAILS['DAY001'],
+      title: DAY_TOURS.find(t => t.id === key)?.name || '一日遊'
+    };
+  }
+});
+
 /* ════ 一日遊行程 ════════════════════════════════ */
 const DAY_TOURS = [
   /* 曼谷 5個 */
@@ -2245,10 +2338,92 @@ function selectPackage(id, e){
   alert(cartMsg);
 }
 
-function selectDayTour(id, e){
+let selectedDayTourId = null;
+
+function showDayTourDetails(id, e){
   if(e) e.stopPropagation();
+  selectedDayTourId = id;
   const tour = DAY_TOURS.find(d => d.id===id);
+  const details = DAY_TOUR_DETAILS[id] || DAY_TOUR_DETAILS['DAY001'];
+
   if(!tour) return;
+
+  // 生成詳細行程表HTML
+  let html = `<h3 style="font-size:14px;color:var(--brand);margin:16px 0 10px;font-weight:700">📅 完整行程時間表</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
+      <tr style="background:#f5f0eb;border-bottom:1px solid var(--border)">
+        <td style="padding:8px;font-weight:600;width:20%">時間</td>
+        <td style="padding:8px;font-weight:600;width:25%">活動</td>
+        <td style="padding:8px;font-weight:600">地點及說明</td>
+      </tr>`;
+
+  details.schedule?.forEach(s => {
+    html += `<tr style="border-bottom:1px solid #ede9e0;hover:{background:#fafaf8}">
+      <td style="padding:8px;color:#666">${s.time}</td>
+      <td style="padding:8px;font-weight:600">${s.activity}</td>
+      <td style="padding:8px"><strong>${s.location}</strong><br><span style="color:#888;font-size:12px">${s.desc}</span></td>
+    </tr>`;
+  });
+  html += `</table>`;
+
+  // 餐飲安排
+  html += `<h3 style="font-size:14px;color:var(--brand);margin:16px 0 10px;font-weight:700">🍽️ 餐飲安排</h3>
+    <ul style="margin:0;padding-left:20px;line-height:1.8">`;
+  details.meals?.forEach(m => {
+    html += `<li>${m}</li>`;
+  });
+  html += `</ul>`;
+
+  // 包含項目
+  html += `<h3 style="font-size:14px;color:var(--brand);margin:16px 0 10px;font-weight:700">✅ 行程包含</h3>
+    <ul style="margin:0;padding-left:20px;line-height:1.8">`;
+  details.includes?.forEach(i => {
+    html += `<li style="color:#1a6e3c">${i}</li>`;
+  });
+  html += `</ul>`;
+
+  // 不包含項目
+  html += `<h3 style="font-size:14px;color:var(--brand);margin:16px 0 10px;font-weight:700">❌ 不包含項目</h3>
+    <ul style="margin:0;padding-left:20px;line-height:1.8">`;
+  details.excludes?.forEach(i => {
+    html += `<li style="color:#d32f2f">${i}</li>`;
+  });
+  html += `</ul>`;
+
+  // 著裝及準備
+  html += `<h3 style="font-size:14px;color:var(--brand);margin:16px 0 10px;font-weight:700">👕 著裝建議</h3>
+    <p style="margin:0;color:#666">${details.dress}</p>
+
+    <h3 style="font-size:14px;color:var(--brand);margin:16px 0 10px;font-weight:700">📋 建議準備物品</h3>
+    <ul style="margin:0;padding-left:20px;line-height:1.8">`;
+  details.prepare?.forEach(p => {
+    html += `<li>${p}</li>`;
+  });
+  html += `</ul>`;
+
+  // 行程資訊
+  html += `<div style="background:#f5f0eb;padding:12px;border-radius:8px;margin-top:16px;font-size:12px">
+    <div style="margin:4px 0"><strong>接送時間：</strong> ${details.pickup}</div>
+    <div style="margin:4px 0"><strong>導遊語言：</strong> ${details.language}</div>
+    <div style="margin:4px 0"><strong>體力要求：</strong> ${details.physical}</div>
+    <div style="margin:4px 0"><strong>適合對象：</strong> ${details.bestFor}</div>
+    <div style="margin:4px 0;font-weight:700;color:var(--brand)">💰 每人價格：THB ${tour.price.toLocaleString()}</div>
+  </div>`;
+
+  document.getElementById('daytour-title').textContent = details.title;
+  document.getElementById('daytour-content').innerHTML = html;
+  document.getElementById('daytour-details-modal').style.display = 'flex';
+}
+
+function closeDayTourDetails(){
+  document.getElementById('daytour-details-modal').style.display = 'none';
+  selectedDayTourId = null;
+}
+
+function confirmSelectDayTour(){
+  if(!selectedDayTourId) return;
+  closeDayTourDetails();
+  const tour = DAY_TOURS.find(d => d.id===selectedDayTourId);
   const persons = prompt(`✅ 已選擇一日遊：${tour.name}\n\n▸ 每人價格：THB ${tour.price.toLocaleString()}\n▸ 城市：${tour.city}\n\n請輸入旅客人數 (1-20人)：`, '2');
   if(!persons) return;
   const n = parseInt(persons);
@@ -2256,6 +2431,10 @@ function selectDayTour(id, e){
   const totalThb = tour.price * n;
   const totalTwd = Math.ceil(totalThb * 0.92);
   alert(`✅ 已加入購物車\n\n一日遊：${tour.name}\n旅客人數：${n}人\n小計：THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})\n\n請進行結帳 (可點右下角的客服LINE聯繫我們)`);
+}
+
+function selectDayTour(id, e){
+  showDayTourDetails(id, e);
 }
 
 function renderTags(){
