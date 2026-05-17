@@ -491,9 +491,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
 </div>
 
 <!-- 下單表單 Modal -->
-<div id="order-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:none;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:14px;width:100%;max-width:400px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-    <h2 style="font-size:16px;margin-bottom:16px;color:var(--brand)">📧 確認下單資訊</h2>
+<div id="order-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:20px">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:450px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3);margin:auto">
+    <h2 style="font-size:16px;margin-bottom:8px;color:var(--brand)">📧 確認下單資訊</h2>
+    <div id="order-summary" style="background:#f5f0eb;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;line-height:1.6">
+      <div><strong>📍 行程：</strong> <span id="order-tour-name">尚未選擇</span></div>
+      <div><strong>👥 人數：</strong> <span id="order-tour-persons">─</span> 人</div>
+      <div style="color:var(--brand);font-weight:700;margin-top:4px">💰 <span id="order-tour-price">─</span></div>
+    </div>
     <div style="margin-bottom:12px">
       <label style="display:block;font-size:12px;color:var(--lite);margin-bottom:4px">姓名 *</label>
       <input id="order-name" type="text" placeholder="請輸入姓名" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-family:var(--font);font-size:13px;outline:none">
@@ -2430,7 +2435,31 @@ function confirmSelectDayTour(){
   if(isNaN(n) || n<1 || n>20){alert('請輸入1-20之間的數字');return;}
   const totalThb = tour.price * n;
   const totalTwd = Math.ceil(totalThb * 0.92);
-  alert(`✅ 已加入購物車\n\n一日遊：${tour.name}\n旅客人數：${n}人\n小計：THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})\n\n請進行結帳 (可點右下角的客服LINE聯繫我們)`);
+
+  // 儲存一日遊信息到全局變量
+  window.selectedDayTourInfo = {
+    id: tour.id,
+    name: tour.name,
+    persons: n,
+    pricePerPerson: tour.price,
+    totalThb: totalThb,
+    totalTwd: totalTwd,
+    city: tour.city
+  };
+
+  // 預填訂單表單並打開
+  document.getElementById('order-name').value = '';
+  document.getElementById('order-email').value = '';
+  document.getElementById('order-phone').value = '';
+  document.getElementById('order-note').value = `一日遊：${tour.name}\n人數：${n}人\n總計：THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})`;
+
+  // 填充訂單摘要
+  document.getElementById('order-tour-name').textContent = tour.name;
+  document.getElementById('order-tour-persons').textContent = n;
+  document.getElementById('order-tour-price').textContent = `THB ${totalThb.toLocaleString()} (NT$${totalTwd.toLocaleString()})`;
+
+  // 顯示下單表單
+  document.getElementById('order-modal').style.display='flex';
 }
 
 function selectDayTour(id, e){
