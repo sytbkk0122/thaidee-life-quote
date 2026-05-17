@@ -404,12 +404,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14
       <!-- 瀏覽模式切換 -->
       <div style="display:flex;gap:8px;padding:8px 12px;background:#fff;border-bottom:2px solid var(--border);border-radius:0;font-size:12px;overflow-x:auto">
         <button onclick="setBrowseMode('attractions')" style="flex:1;padding:8px 12px;background:#8B3A1A;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-attractions">🎯 熱門景點</button>
+        <button onclick="setBrowseMode('hotdaytours')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-hotdaytours">🔥 熱門一日遊</button>
         <button onclick="setBrowseMode('packages')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-packages">📦 套裝行程</button>
-        <button onclick="setBrowseMode('daytours')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-daytours">🌅 一日遊</button>
+        <button onclick="setBrowseMode('daytours')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-daytours">🌅 全部一日遊</button>
         <button onclick="setBrowseMode('golf')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-golf">⛳ 高爾夫</button>
-        <button onclick="setBrowseMode('expat')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-expat">🏖️ 外派</button>
         <button onclick="setBrowseMode('transfers')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-transfers">🚕 接送</button>
-        <button onclick="setBrowseMode('info')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-info">ℹ️ 資訊中心</button>
         <button onclick="setBrowseMode('service')" style="flex:1;padding:8px 12px;background:#ddd;color:#333;border:none;border-radius:6px;cursor:pointer;font-weight:700;min-width:80px" id="mode-btn-service">💬 客服中心</button>
       </div>
 
@@ -2271,14 +2270,10 @@ function filteredSpots(){
 
 function renderCards(){
   if(S.browseMode==='packages') renderPackages();
+  else if(S.browseMode==='hotdaytours') renderHotDayTours();
   else if(S.browseMode==='daytours') renderDayTours();
   else if(S.browseMode==='golf') renderGolf();
-  else if(S.browseMode==='expat') renderExpat();
   else if(S.browseMode==='transfers') renderTransfers();
-  else if(S.browseMode==='info') {
-    const grid = document.getElementById('cards-grid');
-    grid.innerHTML = renderTravelInfo();
-  }
   else if(S.browseMode==='service') {
     const grid = document.getElementById('cards-grid');
     grid.innerHTML = renderServiceCenter();
@@ -2335,6 +2330,39 @@ function renderPackages(){
         <span style="font-size:11px;font-weight:700;color:var(--brand)">THB ${p.price.toLocaleString()}</span>
       </div>
       <button class="acard-add" onclick="selectPackage('${p.id}',event)">選擇</button>
+    </div>
+  `).join('');
+}
+
+function renderHotDayTours(){
+  const grid = document.getElementById('cards-grid');
+
+  // 世界杯系列優先，然後按人氣排序（ID越小越新）
+  const hotTours = DAY_TOURS
+    .filter(d => d.id.startsWith('WC') || d.id.startsWith('DAY00'))
+    .sort((a, b) => {
+      // 世界杯系列優先
+      if(a.id.startsWith('WC') && !b.id.startsWith('WC')) return -1;
+      if(!a.id.startsWith('WC') && b.id.startsWith('WC')) return 1;
+      // 同類別內按ID排序
+      return a.id.localeCompare(b.id);
+    });
+
+  if(!hotTours.length){ grid.innerHTML='<div id="no-results">🔍 沒有熱門一日遊</div>'; return; }
+
+  grid.innerHTML = hotTours.map(d => `
+    <div class="acard" onclick="selectDayTour('${d.id}')">
+      <div class="acard-badges">
+        ${d.id.startsWith('WC') ? '<span class="badge" style="background:#FF6B6B">⚽ 世界杯</span>' : '<span class="badge badge-r" style="background:var(--gold)">🔥 熱門</span>'}
+        <span class="badge badge-cat">${d.city}</span>
+      </div>
+      <div class="acard-name">${d.name}</div>
+      <div class="acard-desc">${d.desc}</div>
+      <div class="acard-foot">
+        <span style="font-size:11px;color:#888">⏱ ${d.hours}h</span>
+        <span style="font-size:11px;font-weight:700;color:var(--green)">THB ${d.price.toLocaleString()}</span>
+      </div>
+      <button class="acard-add" onclick="selectDayTour('${d.id}',event)">選擇</button>
     </div>
   `).join('');
 }
