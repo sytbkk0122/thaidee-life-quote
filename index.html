@@ -1325,7 +1325,7 @@ const PACKAGE_DETAILS = {
     hotels: ['Mandarin Oriental Bangkok ★★★★★ (THB8500)', 'Hilton Bangkok ★★★★★ (THB5700)'],
     daily: [
       {day:1, title:'曼谷抵達', am:'飛往曼谷→飯店入住', pm:'大皇宮 Golden Palace (門票200THB)', eve:'鄭王廟 Wat Arun 夜景 + 夜市美食'},
-      {day:2, title:'曼谷古蹟', am:'臥佛寺 Wat Po (門票100THB)', pm:'寶石工坊 + 河畔漫步', eve:'昭披耶河遊船晚餐'},
+      {day:2, title:'曼谷古蹟', am:'臥佛寺 Wat Po (門票100THB)', pm:'河畔漫步', eve:'昭披耶河遊船晚餐'},
       {day:3, title:'返回', am:'自由購物時間', pm:'機場 → 返回'}
     ],
     meals: ['飯店早餐', '泰式風味套餐', '海鮮大餐', '夜市自理'],
@@ -1400,8 +1400,8 @@ const DAY_TOUR_DETAILS = {
       {time: '10:45-11:45', activity: '鄭王廟參拜', location: '鄭王廟 Wat Arun (門票50THB)', desc: '昭披耶河沿岸的傳奇寺廟'},
       {time: '12:00-13:30', activity: '午餐', location: '當地泰式餐廳', desc: '泰式傳統午餐'},
       {time: '14:00-15:30', activity: '臥佛寺參觀', location: '臥佛寺 Wat Po (門票100THB)', desc: '全球最大臥佛像，長46公尺'},
-      {time: '16:00-17:00', activity: '寶石工坊', location: '泰國寶石工坊', desc: '購買泰國寶石和工藝品'},
-      {time: '17:30-18:30', activity: '晚餐', location: '河景餐廳', desc: '昭披耶河邊享用晚餐'},
+      {time: '16:00-18:00', activity: '河畔休閒漫步', location: '昭披耶河濱', desc: '沿著河畔漫步，欣賞曼谷夕陽'},
+      {time: '18:00-19:00', activity: '晚餐', location: '河景餐廳', desc: '昭披耶河邊享用晚餐'},
       {time: '19:00', activity: '返回飯店', location: '飯店大廳'}
     ],
     meals: ['酒店自備午餐或自理', '晚餐於河景餐廳自理'],
@@ -1472,7 +1472,7 @@ Object.keys(DAY_TOUR_DETAILS).forEach(key => {
 /* ════ 一日遊行程 ════════════════════════════════ */
 const DAY_TOURS = [
   /* 曼谷 5個 */
-  {id:'DAY001', name:'🏛️ 曼谷古蹟一日遊', desc:'大皇宮→鄭王廟→臥佛寺→寶石工坊', city:'曼谷', hours:8, price:2800, type:'daytour'},
+  {id:'DAY001', name:'🏛️ 曼谷古蹟一日遊', desc:'大皇宮→鄭王廟→臥佛寺→河畔漫步', city:'曼谷', hours:8, price:2800, type:'daytour'},
   {id:'DAY002', name:'🌴 夜市美食之旅', desc:'路邊攤→水上市場→浮動市場→夜市小食', city:'曼谷', hours:6, price:1800, type:'daytour'},
   {id:'DAY003', name:'🛕 寺廟冥想靈修日', desc:'翡翠佛寺→四面佛→金山寺→靜坐冥想', city:'曼谷', hours:7, price:2200, type:'daytour'},
   {id:'DAY004', name:'🎡 週末假日樂園', desc:'杜莎蠟像館→暹邏廣場→賽福瑞公園', city:'曼谷', hours:8, price:2600, type:'daytour'},
