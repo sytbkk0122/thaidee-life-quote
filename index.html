@@ -1313,10 +1313,10 @@ const PACKAGE_TOURS = [
   {id:'PKG028', name:'🍤 芭達雅海鮮美食3日2晚', desc:'海濱餐廳品嚐+漁港採購體驗+海鮮烹飪課程+浮動市場美食+高級海鮮晚宴', days:3, cities:'芭堤雅', price:28000, type:'suite', category:'美食'},
 
   /* ═ 家庭訪客專題（待客之心） ═ */
-  {id:'PKG029', name:'👨‍👩‍👧 家庭友善曼谷5日4晚', desc:'大皇宮+水上市集+親子樂園+美食之旅+購物中心+輕鬆行程', days:5, cities:'曼谷', price:25000, type:'suite', category:'家庭'},
+  {id:'PKG029', name:'👨‍👩‍👧 家庭友善曼谷5日4晚', desc:'大皇宮+水上市集+親子樂園+美食之旅+廟宇祈福+輕鬆行程', days:5, cities:'曼谷', price:25000, type:'suite', category:'家庭'},
   {id:'PKG030', name:'🧓 長輩友善文化之旅4日3晚', desc:'無障礙景點+舒適步調+搭乘嘟嘟車+廟宇祈福+傳統美食+溫和活動', days:4, cities:'曼谷,大城', price:18000, type:'suite', category:'家庭'},
   {id:'PKG031', name:'👦 兒童樂園冒險3日2晚', desc:'水上樂園+暹羅廣場遊樂+杜莎蠟像館+動物園+兒童餐廳+安全舒適', days:3, cities:'曼谷', price:16000, type:'suite', category:'家庭'},
-  {id:'PKG032', name:'🛍️ 購物美食文化三合一4日3晚', desc:'Outlet購物+美食街體驗+文化古蹟+夜市逛街+高級餐廳晚宴', days:4, cities:'曼谷', price:22000, type:'suite', category:'家庭'}
+  {id:'PKG032', name:'🏛️ 美食文化古蹟三合一4日3晚', desc:'古蹟廟宇+美食街體驗+文化參訪+夜間廟宇祈福+高級餐廳晚宴', days:4, cities:'曼谷', price:22000, type:'suite', category:'家庭'}
 ];
 
 /* ════ 套裝行程詳細日程 ════════════════════════════ */
@@ -1525,7 +1525,7 @@ const DAY_TOUR_DETAILS = {
     title: '🎭 蒂芬妮人妖秀精彩夜',
     schedule: [
       {time: '14:00', activity: '飯店出發', location: '飯店大廳'},
-      {time: '14:30-17:00', activity: '步行街自由探險', location: '芭達雅步行街 Walking Street', desc: '著名夜生活街道、購物、咖啡廳'},
+      {time: '14:30-17:00', activity: '廟宇參訪與海灘散步', location: '芭達雅廟宇與海濱', desc: '參訪本地廟宇，沙灘散步欣賞風景'},
       {time: '17:00-18:30', activity: '馬殺雞放鬆', location: '泰式按摩館', desc: '2小時泰式傳統按摩'},
       {time: '19:00-20:00', activity: '晚餐', location: '海濱餐廳', desc: '享用海景晚餐'},
       {time: '20:30-22:30', activity: '蒂芬妮人妖秀', location: 'Tiffany\'s Show', desc: '全球最著名人妖秀，華麗表演'},
@@ -1571,9 +1571,9 @@ const DAY_TOUR_DETAILS = {
       {time: '10:30-12:30', activity: '3D藝術博物館', location: '3D Art Museum', desc: '互動式藝術展覽，每個角度都能拍照'},
       {time: '12:45-13:45', activity: '午餐', location: '博物館餐廳', desc: '國際美食自助'},
       {time: '14:00-15:00', activity: '真理寺參訪', location: '真理寺 Sanctuary of Truth', desc: '雄偉的木製寺廟古蹟'},
-      {time: '15:30-17:00', activity: '木雕村欣賞', location: '木雕工藝村', desc: '欣賞傳統木雕工藝品'},
-      {time: '17:15-18:00', activity: '網美咖啡廳打卡', location: '設計咖啡館', desc: 'IG網紅咖啡廳拍照'},
-      {time: '18:30-19:30', activity: '夜間步行街', location: '芭達雅步行街', desc: '逛街購物、品嚐小食'},
+      {time: '15:30-16:30', activity: '廟宇祈福參訪', location: '芭達雅廟宇', desc: '參訪當地古蹟廟宇，體驗泰國信仰文化'},
+      {time: '16:45-17:30', activity: '網美咖啡廳打卡', location: '設計咖啡館', desc: 'IG網紅咖啡廳拍照'},
+      {time: '18:00-19:00', activity: '海邊夕陽漫步', location: '芭達雅海灘', desc: '沙灘散步，欣賞美麗夕陽'},
       {time: '20:00', activity: '返回飯店', location: '飯店大廳'}
     ],
     meals: ['早茶自備', '午餐於博物館', '晚餐於步行街自理'],
@@ -1633,8 +1633,8 @@ const DAY_TOURS = [
   /* 芭達雅 5個 - 社交媒體最夯 */
   {id:'DAY005B', name:'🏝️ 格蘭島浮潛海上天堂', desc:'快艇出海→格蘭島浮潛→水上摩托車→香蕉船→海灘日落→晚間燒烤BBQ', city:'芭達雅', hours:8, price:2900, type:'daytour'},
   {id:'DAY005C', name:'🎭 蒂芬妮人妖秀精彩夜', desc:'下午步行街探險→馬殺雞放鬆→蒂芬妮人妖秀VIP座位→夜市美食→海濱酒吧小酌', city:'芭達雅', hours:7, price:2600, type:'daytour'},
-  {id:'DAY005D', name:'🌊 四面水上市場水鄉漂流', desc:'四面水上市場購物→手搖船遊水鄉→在地小食嘗鮮→下午沙灘放鬆→海景咖啡廳日落時光', city:'芭達雅', hours:6, price:1900, type:'daytour'},
-  {id:'DAY005E', name:'🎨 3D藝術館網紅打卡日', desc:'3D藝術博物館沉浸體驗→真理寺古蹟參訪→網美咖啡廳打卡→木雕村工藝品欣賞→夜間步行街逛街', city:'芭達雅', hours:7, price:2200, type:'daytour'},
+  {id:'DAY005D', name:'🌊 四面水上市場水鄉漂流', desc:'四面水上市場遊覽→手搖船遊水鄉→在地小食嘗鮮→下午沙灘放鬆→海景咖啡廳日落時光', city:'芭達雅', hours:6, price:1900, type:'daytour'},
+  {id:'DAY005E', name:'🎨 3D藝術館網紅打卡日', desc:'3D藝術博物館沉浸體驗→真理寺古蹟參訪→網美咖啡廳打卡→木雕工坊參觀→廟宇祈福參訪', city:'芭達雅', hours:7, price:2200, type:'daytour'},
   {id:'DAY005F', name:'🦓 野生動物園叢林冒險', desc:'象園騎象餵食→老虎園近距互動→鱷魚農場表演→水上樂園玩樂→動物園美食廣場享用晚餐', city:'芭達雅', hours:8, price:2800, type:'daytour'},
 
   /* 清邁 5個 */
@@ -1648,7 +1648,7 @@ const DAY_TOURS = [
   {id:'DAY011', name:'🏮 清邁水燈節放祈福', desc:'古城護城河放燈→寺廟祈福→天燈升空→傳統美食夜宴', city:'清邁', hours:8, price:3200, type:'daytour', season:'水燈節'},
 
   /* 水燈節專題 - 曼谷 1個 */
-  {id:'DAY012', name:'💡 曼谷水燈節慶典遊', desc:'昭披耶河沿岸放燈→水燈市集逛街→寺廟夜間祈福→河濱美食節', city:'曼谷', hours:7, price:2800, type:'daytour', season:'水燈節'},
+  {id:'DAY012', name:'💡 曼谷水燈節慶典遊', desc:'昭披耶河沿岸放燈→水燈市集參訪→寺廟夜間祈福→河濱美食節', city:'曼谷', hours:7, price:2800, type:'daytour', season:'水燈節'},
 
   /* ═ 高爾夫球專題一日遊 ═ */
   /* 曼谷人氣球場 */
@@ -1689,10 +1689,10 @@ const DAY_TOURS = [
   {id:'DAY035', name:'🍤 芭達雅海鮮美食日', desc:'漁港晨訪→海鮮採購體驗→漁夫用餐→海鮮烹飪課程→浮動市場美食探險→高級海鮮晚宴品嚐', city:'芭堤雅', hours:8, price:3000, type:'daytour', category:'美食'},
 
   /* ═ 家庭訪客一日遊 ═ */
-  {id:'DAY036', name:'👨‍👩‍👧 家庭友善曼谷古蹟日', desc:'大皇宮→鄭王廟(無障礙路線)→舒適嘟嘟車遊歷→水上市集悠閒逛街→親子餐廳用餐→輕鬆樂園遊玩', city:'曼谷', hours:8, price:2400, type:'daytour', category:'家庭'},
+  {id:'DAY036', name:'👨‍👩‍👧 家庭友善曼谷古蹟日', desc:'大皇宮→鄭王廟(無障礙路線)→舒適嘟嘟車遊歷→水上市集參訪→親子餐廳用餐→輕鬆樂園遊玩', city:'曼谷', hours:8, price:2400, type:'daytour', category:'家庭'},
   {id:'DAY037', name:'🧓 長輩友善文化一日', desc:'舒適步調參訪→無障礙廟宇祈福→嘟嘟車代步→傳統美食安排→休息時間充足→溫和文化講解→回憶分享時光', city:'曼谷', hours:6, price:1900, type:'daytour', category:'家庭'},
   {id:'DAY038', name:'👦 兒童樂園冒險日', desc:'水上樂園玩樂→暹羅廣場兒童區→杜莎蠟像館互動→動物園親近→兒童餐廳用餐→安全活動設計→家庭笑聲時光', city:'曼谷', hours:8, price:2200, type:'daytour', category:'家庭'},
-  {id:'DAY039', name:'🛍️ 購物美食文化一日', desc:'Outlet名牌購物→美食街品嚐→古蹟文化參訪→夜市逛街淘寶→高級餐廳晚宴→家庭團聚時光→購物收穫分享', city:'曼谷', hours:8, price:2600, type:'daytour', category:'家庭'}
+  {id:'DAY039', name:'🏛️ 美食文化古蹟一日', desc:'古蹟廟宇參訪→美食街品嚐→傳統市場文化體驗→夜間廟宇祈福→高級餐廳晚宴→家庭團聚時光→文化分享交流', city:'曼谷', hours:8, price:2600, type:'daytour', category:'家庭'}
 ];
 
 /* ════ 狀態 ════════════════════════════════════ */
